@@ -27,3 +27,6 @@ server/prisma/migrations/*.sql.bak
 .vscode/
 .idea/
 *.swp
+
+# Design prototypes (not part of the app)
+stitch_bankcare_service_management_system/
