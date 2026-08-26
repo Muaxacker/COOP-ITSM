@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: bankcare-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-bankcare_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bankcare_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-bankcare_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bankcare_user} -d ${POSTGRES_DB:-bankcare_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: bankcare-server
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-bankcare_user}:${POSTGRES_PASSWORD:-bankcare_pass}@postgres:5432/${POSTGRES_DB:-bankcare_db}?schema=public
+      JWT_SECRET: ${JWT_SECRET:-bankcare-jwt-secret-change-in-production}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      PORT: 5000
+      NODE_ENV: production
+      CLIENT_URL: ${CLIENT_URL:-http://localhost}
+    ports:
+      - "5000:5000"
+    command: >
+      sh -c "npx prisma migrate deploy && node dist/server.js"
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: bankcare-client
+    restart: unless-stopped
+    depends_on:
+      - server
+    ports:
+      - "80:80"
+
+volumes:
+  postgres_data:

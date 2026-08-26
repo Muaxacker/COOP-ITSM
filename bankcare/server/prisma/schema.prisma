@@ -1,0 +1,181 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CUSTOMER
+  OFFICER
+  MANAGER
+  ADMIN
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum RequestStatus {
+  NEW
+  REVIEWED
+  ASSIGNED
+  INVESTIGATING
+  RESOLVED
+  CLOSED
+  REOPENED
+  OVERDUE
+  ESCALATED
+}
+
+enum ActivityAction {
+  REQUEST_CREATED
+  REQUEST_REVIEWED
+  REQUEST_ASSIGNED
+  REQUEST_REASSIGNED
+  STATUS_CHANGED
+  NOTE_ADDED
+  INVESTIGATION_STARTED
+  ESCALATED
+  RESOLVED
+  REOPENED
+  CLOSED
+  DEADLINE_WARNING
+  OVERDUE_MARKED
+}
+
+enum NotificationType {
+  REQUEST_UPDATE
+  DEADLINE_WARNING
+  OVERDUE
+  RESOLUTION
+  ASSIGNMENT
+  ESCALATION
+  GENERAL
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role
+  departmentId String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  department          Department?       @relation(fields: [departmentId], references: [id])
+  requestsAsCustomer  ServiceRequest[]  @relation("CustomerRequests")
+  requestsAsOfficer   ServiceRequest[]  @relation("OfficerRequests")
+  activities          RequestActivity[]
+  notifications       Notification[]
+  feedback            Feedback[]
+
+  @@map("users")
+}
+
+model Department {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users      User[]
+  categories ServiceCategory[]
+
+  @@map("departments")
+}
+
+model ServiceCategory {
+  id                   String   @id @default(uuid())
+  name                 String   @unique
+  description          String?
+  departmentId         String
+  defaultDeadlineHours Int      @default(24)
+  defaultPriority      Priority @default(MEDIUM)
+  isActive             Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  department Department       @relation(fields: [departmentId], references: [id])
+  requests   ServiceRequest[]
+
+  @@map("service_categories")
+}
+
+model ServiceRequest {
+  id               String        @id @default(uuid())
+  requestNumber    String        @unique
+  customerId       String
+  categoryId       String
+  assignedOfficerId String?
+  title            String
+  description      String
+  priority         Priority      @default(MEDIUM)
+  status           RequestStatus @default(NEW)
+  deadline         DateTime
+  resolvedAt       DateTime?
+  closedAt         DateTime?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  customer         User            @relation("CustomerRequests", fields: [customerId], references: [id])
+  category         ServiceCategory @relation(fields: [categoryId], references: [id])
+  assignedOfficer  User?           @relation("OfficerRequests", fields: [assignedOfficerId], references: [id])
+  activities       RequestActivity[]
+  notifications    Notification[]
+  feedback         Feedback?
+
+  @@map("service_requests")
+}
+
+model RequestActivity {
+  id                String         @id @default(uuid())
+  requestId         String
+  userId            String
+  action            ActivityAction
+  description       String
+  isCustomerVisible Boolean        @default(false)
+  createdAt         DateTime       @default(now())
+
+  request ServiceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  user    User           @relation(fields: [userId], references: [id])
+
+  @@map("request_activities")
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  requestId String?
+  title     String
+  message   String
+  type      NotificationType
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  request ServiceRequest? @relation(fields: [requestId], references: [id], onDelete: SetNull)
+
+  @@map("notifications")
+}
+
+model Feedback {
+  id         String   @id @default(uuid())
+  requestId  String   @unique
+  customerId String
+  rating     Int
+  comment    String?
+  createdAt  DateTime @default(now())
+
+  request  ServiceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  customer User           @relation(fields: [customerId], references: [id])
+
+  @@map("feedback")
+}
