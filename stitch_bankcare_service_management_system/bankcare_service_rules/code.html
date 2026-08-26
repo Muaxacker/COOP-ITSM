@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Service Rules - BankCare</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed": "#141b2f",
+                    "on-tertiary-fixed-variant": "#40465c",
+                    "inverse-on-surface": "#f3f0f1",
+                    "outline": "#74777d",
+                    "on-surface-variant": "#44474b",
+                    "outline-variant": "#c5c6cc",
+                    "secondary-fixed-dim": "#84d5cc",
+                    "tertiary-container": "#001950",
+                    "inverse-surface": "#303031",
+                    "on-secondary-container": "#0c6f67",
+                    "background": "#fbf9f9",
+                    "on-secondary": "#ffffff",
+                    "surface-dim": "#dcd9da",
+                    "on-primary-container": "#7b8592",
+                    "error-container": "#ffdad6",
+                    "primary-fixed": "#dae3f2",
+                    "primary": "#000000",
+                    "tertiary-fixed-dim": "#c0c5e1",
+                    "surface-container-highest": "#e4e2e3",
+                    "on-surface": "#1b1b1c",
+                    "on-secondary-fixed": "#00201d",
+                    "on-primary-fixed": "#131c27",
+                    "secondary-container": "#99efe5",
+                    "surface-container": "#f0edee",
+                    "secondary-fixed": "#a0f1e8",
+                    "on-tertiary-container": "#7d839c",
+                    "inverse-primary": "#bdc7d6",
+                    "secondary": "#006a63",
+                    "error": "#ba1a1a",
+                    "tertiary-fixed": "#dce1fd",
+                    "surface-container-low": "#f6f3f4",
+                    "surface-container-high": "#eae7e8",
+                    "primary-container": "#0b1f33",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-variant": "#e4e2e3",
+                    "on-primary-fixed-variant": "#3e4854",
+                    "surface-bright": "#fbf9f9",
+                    "surface": "#f7f9fc",
+                    "on-background": "#1b1b1c",
+                    "on-secondary-fixed-variant": "#00504a",
+                    "on-error": "#ffffff",
+                    "primary-fixed-dim": "#bdc7d6",
+                    "on-tertiary": "#ffffff",
+                    "tertiary": "#000000",
+                    "on-primary": "#ffffff",
+                    "surface-tint": "#565f6c",
+                    "on-error-container": "#93000a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-sm": "8px",
+                    "gutter": "24px",
+                    "stack-xs": "4px",
+                    "sidebar-width": "280px",
+                    "container-max": "1440px",
+                    "stack-lg": "24px",
+                    "margin-mobile": "16px",
+                    "stack-md": "16px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "brand-display": ["Inter"],
+                    "header-xl": ["Inter"],
+                    "header-xl-mobile": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "header-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "brand-display": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "header-xl": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "header-xl-mobile": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "header-lg": ["18px", {"lineHeight": "24px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased h-screen overflow-hidden flex">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-full py-stack-lg bg-surface-container-low dark:bg-surface-container-low w-[280px] h-full fixed left-0 top-0 border-r border-outline-variant/30">
+<div class="px-gutter mb-stack-lg flex items-center gap-stack-sm">
+<span class="font-brand-display text-brand-display text-primary dark:text-primary-fixed">BankCare</span>
+</div>
+<div class="px-gutter mb-stack-lg flex items-center gap-stack-sm">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-semibold shrink-0">
+<span class="material-symbols-outlined">person</span>
+</div>
+<div>
+<div class="font-label-sm text-label-sm text-on-surface">Sara</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">Service Officer</div>
+</div>
+</div>
+<ul class="flex flex-col px-stack-sm gap-stack-xs flex-1">
+<li class="rounded-lg hover:bg-surface-container-high transition-colors cursor-pointer active:scale-95 transition-transform">
+<a class="flex items-center gap-stack-sm px-4 py-3 text-on-surface-variant font-medium font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                    Dashboard
+                </a>
+</li>
+<li class="rounded-lg hover:bg-surface-container-high transition-colors cursor-pointer active:scale-95 transition-transform">
+<a class="flex items-center gap-stack-sm px-4 py-3 text-on-surface-variant font-medium font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined" data-icon="list_alt">list_alt</span>
+                    Requests
+                </a>
+</li>
+<li class="rounded-lg hover:bg-surface-container-high transition-colors cursor-pointer active:scale-95 transition-transform">
+<a class="flex items-center gap-stack-sm px-4 py-3 text-on-surface-variant font-medium font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined" data-icon="error">error</span>
+                    Urgent
+                </a>
+</li>
+<li class="rounded-lg hover:bg-surface-container-high transition-colors cursor-pointer active:scale-95 transition-transform">
+<a class="flex items-center gap-stack-sm px-4 py-3 text-on-surface-variant font-medium font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined" data-icon="event">event</span>
+                    Deadlines
+                </a>
+</li>
+<li class="rounded-lg hover:bg-surface-container-high transition-colors cursor-pointer active:scale-95 transition-transform">
+<a class="flex items-center gap-stack-sm px-4 py-3 text-on-surface-variant font-medium font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+                    Customers
+                </a>
+</li>
+<li class="rounded-lg hover:bg-surface-container-high transition-colors cursor-pointer active:scale-95 transition-transform">
+<a class="flex items-center gap-stack-sm px-4 py-3 text-on-surface-variant font-medium font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+                    Reports
+                </a>
+</li>
+<li class="rounded-lg hover:bg-surface-container-high transition-colors cursor-pointer active:scale-95 transition-transform bg-secondary-container">
+<a class="flex items-center gap-stack-sm px-4 py-3 text-on-secondary-container font-semibold font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined fill" data-icon="settings">settings</span>
+                    Settings
+                </a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 ml-0 md:ml-[280px] flex flex-col h-screen overflow-hidden">
+<!-- TopAppBar -->
+<header class="h-16 w-full flex items-center justify-between px-gutter border-b border-outline-variant bg-surface dark:bg-surface shrink-0 z-40 relative">
+<div class="flex items-center gap-stack-md flex-1">
+<div class="hidden md:flex items-center gap-stack-sm">
+<h1 class="font-header-lg text-header-lg text-primary dark:text-primary-fixed">BankCare Service</h1>
+</div>
+<!-- Mobile Menu Button -->
+<button class="md:hidden p-2 text-on-surface-variant hover:text-primary transition-all duration-200">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="relative max-w-md w-full ml-auto md:ml-stack-lg hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-full font-body-md text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-shadow" placeholder="Search..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-stack-md ml-stack-md">
+<button class="hidden lg:flex items-center justify-center bg-primary text-on-primary px-4 py-2 rounded-lg font-label-sm text-label-sm hover:bg-primary/90 transition-colors">
+                    New Request
+                </button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-all duration-200 relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+</div>
+</header>
+<!-- Page Content -->
+<div class="flex-1 overflow-y-auto bg-background p-margin-mobile md:p-gutter">
+<div class="max-w-container-max mx-auto">
+<!-- Header Section -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-stack-md mb-stack-lg">
+<div>
+<h2 class="font-header-xl-mobile md:font-header-xl text-header-xl-mobile md:text-header-xl text-on-surface mb-stack-xs">Service Rules Configuration</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+                            Configure Service Level Agreements (SLAs) to define exactly how quickly different types of service requests must be handled. These rules ensure consistent service quality across all departments.
+                        </p>
+</div>
+<button class="flex items-center justify-center gap-stack-xs bg-primary text-on-primary px-6 py-2.5 rounded-lg font-label-sm text-label-sm hover:bg-primary/90 transition-colors whitespace-nowrap shrink-0">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                        Add Service Rule
+                    </button>
+</div>
+<!-- Bento Grid Layout for Settings Data -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-stack-lg">
+<!-- Main Data Table Container (Spans 12 cols on desktop) -->
+<div class="xl:col-span-12 bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+<!-- Table Toolbar -->
+<div class="px-stack-lg py-stack-md border-b border-outline-variant flex flex-wrap items-center justify-between gap-stack-md bg-surface-container-low/50">
+<div class="flex items-center gap-stack-sm">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">filter_list</span>
+<select class="pl-9 pr-8 py-1.5 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary appearance-none cursor-pointer">
+<option>All Departments</option>
+<option>Card Services</option>
+<option>Account Mgmt</option>
+<option>Lending</option>
+</select>
+</div>
+<div class="hidden sm:flex gap-2">
+<span class="px-3 py-1 bg-surface-container-high rounded-full font-label-sm text-label-sm text-on-surface-variant cursor-pointer hover:bg-surface-container transition-colors">High Priority</span>
+<span class="px-3 py-1 bg-surface-container-high rounded-full font-label-sm text-label-sm text-on-surface-variant cursor-pointer hover:bg-surface-container transition-colors">Overdue Rules</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded transition-colors">
+<span class="material-symbols-outlined text-[20px]">view_column</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded transition-colors">
+<span class="material-symbols-outlined text-[20px]">download</span>
+</button>
+</div>
+</div>
+<!-- Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-lowest border-b border-outline-variant">
+<th class="px-stack-lg py-3 font-label-sm text-label-sm text-on-surface-variant font-semibold">Request Type</th>
+<th class="px-stack-lg py-3 font-label-sm text-label-sm text-on-surface-variant font-semibold">Priority</th>
+<th class="px-stack-lg py-3 font-label-sm text-label-sm text-on-surface-variant font-semibold">Deadline (SLA)</th>
+<th class="px-stack-lg py-3 font-label-sm text-label-sm text-on-surface-variant font-semibold">Assigned Department</th>
+<th class="px-stack-lg py-3 font-label-sm text-label-sm text-on-surface-variant font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md">
+<!-- Row 1 -->
+<tr class="border-b border-outline-variant hover:bg-surface-container-low transition-colors group">
+<td class="px-stack-lg py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center text-on-surface-variant shrink-0">
+<span class="material-symbols-outlined text-[18px]">credit_card</span>
+</div>
+<span class="font-medium text-on-surface">ATM - Card Retained</span>
+</div>
+</td>
+<td class="px-stack-lg py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                                                High
+                                            </span>
+</td>
+<td class="px-stack-lg py-4 text-on-surface">4 hours</td>
+<td class="px-stack-lg py-4 text-on-surface-variant">Card Services</td>
+<td class="px-stack-lg py-4 text-right">
+<button class="text-on-surface-variant hover:text-primary p-1 opacity-0 group-hover:opacity-100 transition-all">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="border-b border-outline-variant hover:bg-surface-container-low transition-colors group">
+<td class="px-stack-lg py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center text-on-surface-variant shrink-0">
+<span class="material-symbols-outlined text-[18px]">account_balance</span>
+</div>
+<span class="font-medium text-on-surface">Account Closure Request</span>
+</div>
+</td>
+<td class="px-stack-lg py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-variant text-on-surface-variant font-label-sm text-label-sm font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                                                Medium
+                                            </span>
+</td>
+<td class="px-stack-lg py-4 text-on-surface">24 hours</td>
+<td class="px-stack-lg py-4 text-on-surface-variant">Account Management</td>
+<td class="px-stack-lg py-4 text-right">
+<button class="text-on-surface-variant hover:text-primary p-1 opacity-0 group-hover:opacity-100 transition-all">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="border-b border-outline-variant hover:bg-surface-container-low transition-colors group">
+<td class="px-stack-lg py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center text-on-surface-variant shrink-0">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+</div>
+<span class="font-medium text-on-surface">Dispute Transaction</span>
+</div>
+</td>
+<td class="px-stack-lg py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                                                High
+                                            </span>
+</td>
+<td class="px-stack-lg py-4 text-on-surface">8 hours</td>
+<td class="px-stack-lg py-4 text-on-surface-variant">Fraud &amp; Disputes</td>
+<td class="px-stack-lg py-4 text-right">
+<button class="text-on-surface-variant hover:text-primary p-1 opacity-0 group-hover:opacity-100 transition-all">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="border-b border-outline-variant hover:bg-surface-container-low transition-colors group">
+<td class="px-stack-lg py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center text-on-surface-variant shrink-0">
+<span class="material-symbols-outlined text-[18px]">password</span>
+</div>
+<span class="font-medium text-on-surface">Password Reset Escalation</span>
+</div>
+</td>
+<td class="px-stack-lg py-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-variant text-on-surface-variant font-label-sm text-label-sm font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                                                Low
+                                            </span>
+</td>
+<td class="px-stack-lg py-4 text-on-surface">48 hours</td>
+<td class="px-stack-lg py-4 text-on-surface-variant">IT Support</td>
+<td class="px-stack-lg py-4 text-right">
+<button class="text-on-surface-variant hover:text-primary p-1 opacity-0 group-hover:opacity-100 transition-all">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-stack-lg py-4 border-t border-outline-variant flex items-center justify-between bg-surface-container-lowest">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Showing 1 to 4 of 24 rules</span>
+<div class="flex gap-2">
+<button class="p-1 rounded border border-outline-variant text-outline-variant cursor-not-allowed">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<button class="p-1 rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

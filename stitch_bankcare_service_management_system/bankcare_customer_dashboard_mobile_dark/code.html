@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BankCare Customer Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-container": "#92e3da",
+                        "primary-fixed": "#e1e2eb",
+                        "on-error": "#690005",
+                        "on-background": "#d4e4fa",
+                        "outline-variant": "#45474b",
+                        "border-subtle": "#2d333d",
+                        "tertiary-fixed": "#e0e2ec",
+                        "on-surface-variant": "#c6c6cb",
+                        "on-tertiary-fixed-variant": "#44474e",
+                        "inverse-on-surface": "#233143",
+                        "tertiary-container": "#0b0e15",
+                        "on-surface": "#d4e4fa",
+                        "surface-container-low": "#0d1c2d",
+                        "text-secondary": "#94a3b8",
+                        "tertiary": "#c4c6d0",
+                        "primary-fixed-dim": "#c4c6cf",
+                        "primary": "#c4c6cf",
+                        "surface-container": "#122131",
+                        "primary-container": "#0b0e14",
+                        "surface-container-high": "#1c2b3c",
+                        "on-error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#44474e",
+                        "on-primary-container": "#797b83",
+                        "on-tertiary": "#2d3038",
+                        "on-secondary-fixed-variant": "#00504a",
+                        "on-secondary-fixed": "#00201d",
+                        "surface-tint": "#c4c6cf",
+                        "background": "#0b0e14",
+                        "error": "#ff897d",
+                        "surface-bright": "#2c3a4c",
+                        "surface-dim": "#051424",
+                        "on-tertiary-container": "#787b84",
+                        "text-primary": "#f7f9fc",
+                        "secondary-fixed-dim": "#84d5cc",
+                        "secondary-fixed": "#a0f1e8",
+                        "surface": "#1c1f26",
+                        "on-tertiary-fixed": "#191c22",
+                        "secondary-container": "#006861",
+                        "surface-container-highest": "#273647",
+                        "on-primary-fixed": "#191c22",
+                        "on-secondary": "#003733",
+                        "inverse-surface": "#d4e4fa",
+                        "on-primary": "#2e3037",
+                        "accent-teal": "#00a399",
+                        "inverse-primary": "#5c5e66",
+                        "surface-variant": "#273647",
+                        "error-container": "#93000a",
+                        "surface-container-lowest": "#010f1f",
+                        "outline": "#909095",
+                        "secondary": "#84d5cc",
+                        "tertiary-fixed-dim": "#c4c6d0"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-md": "16px",
+                        "stack-xs": "4px",
+                        "gutter": "24px",
+                        "container-max": "1440px",
+                        "stack-sm": "8px",
+                        "sidebar-width": "280px",
+                        "margin-mobile": "16px",
+                        "stack-lg": "24px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "header-xl-mobile": ["Inter"],
+                        "brand-display": ["Inter"],
+                        "header-lg": ["Inter"],
+                        "header-xl": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "header-xl-mobile": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "brand-display": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "header-lg": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "header-xl": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-text-primary min-h-screen pb-safe">
+<!-- TopAppBar -->
+<header class="w-full sticky top-0 z-50 bg-background dark:bg-background border-b border-border-subtle dark:border-border-subtle flex items-center justify-between px-margin-mobile h-16 w-full">
+<div class="flex items-center gap-stack-sm hover:bg-white/5 transition-colors active:scale-95 duration-200 rounded-lg p-2 cursor-pointer">
+<span class="material-symbols-outlined text-primary dark:text-primary">menu</span>
+</div>
+<div class="font-brand-display text-brand-display text-primary dark:text-primary font-bold tracking-tight">BankCare</div>
+<div class="flex items-center gap-stack-sm">
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors cursor-pointer">notifications</span>
+<img alt="User Avatar" class="w-8 h-8 rounded-full object-cover border border-border-subtle cursor-pointer hover:border-accent-teal transition-colors" data-alt="A small, circular avatar portrait of a professional woman with a warm smile, set against a dark, corporate-themed background. The lighting is soft and cinematic, highlighting her features clearly, maintaining a modern, fintech aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHGCKBKvG8YRLAdFw2WaRLP0XTed2dn9QAG7Ivno-uLn_m7WEu72gRawlOhBB7p3CqZHrHkB_sDziHLYUQbZOTnf8nMYktG5xtBUQPaf4VnmVDwLXR4jtnjc_e7lybRf90eMl5Z1jlq8X0DMHiKD7DSrk8BLyhigu_Fdid3SWieWXe2fXrJaQQWsxG3LfQ-IKKsF98L0WSiI8BPiTCMUastjNCfRkTJJGgwT9XiD5fONo_p_mKLKzeJg"/>
+</div>
+</header>
+<!-- Main Content -->
+<main class="px-margin-mobile pt-stack-lg pb-[100px] max-w-container-max mx-auto md:px-gutter">
+<!-- Welcome Section -->
+<section class="mb-stack-lg">
+<h1 class="font-header-xl-mobile text-header-xl-mobile md:font-header-xl md:text-header-xl mb-stack-xs">Good Morning, Sara</h1>
+<p class="font-body-md text-body-md text-text-secondary">Here is a summary of your recent support activity and active requests.</p>
+</section>
+<!-- Action Buttons (Bento Grid Style) -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-stack-md mb-stack-lg">
+<button class="bg-surface-container hover:bg-surface-container-high border border-border-subtle rounded-xl p-stack-md flex flex-col items-start gap-stack-sm transition-colors group">
+<div class="w-10 h-10 rounded-lg bg-secondary-container/20 flex items-center justify-center text-accent-teal mb-stack-xs group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+</div>
+<h2 class="font-header-lg text-header-lg text-text-primary">New Request</h2>
+<p class="font-body-md text-body-md text-text-secondary text-left">Submit a new inquiry or report an issue.</p>
+</button>
+<button class="bg-surface-container hover:bg-surface-container-high border border-border-subtle rounded-xl p-stack-md flex flex-col items-start gap-stack-sm transition-colors group">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-secondary mb-stack-xs group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">support_agent</span>
+</div>
+<h2 class="font-header-lg text-header-lg text-text-primary">Support</h2>
+<p class="font-body-md text-body-md text-text-secondary text-left">Access FAQs, guides, and contact options.</p>
+</button>
+</section>
+<!-- Active Requests Section -->
+<section class="mb-stack-lg">
+<h3 class="font-header-lg text-header-lg text-text-primary mb-stack-md">Active Requests</h3>
+<div class="bg-surface border border-border-subtle rounded-xl p-stack-md hover:bg-white/5 transition-colors cursor-pointer">
+<div class="flex justify-between items-start mb-stack-sm">
+<div>
+<div class="font-label-sm text-label-sm text-text-secondary mb-stack-xs">REQ #892-A</div>
+<h4 class="font-header-lg text-header-lg text-text-primary">ATM Card Retention</h4>
+</div>
+<span class="bg-surface-container-highest text-secondary border border-border-subtle px-2 py-1 rounded font-label-sm text-label-sm">In Progress</span>
+</div>
+<div class="w-full bg-surface-container-lowest rounded-full h-2 mt-stack-md border border-border-subtle">
+<div class="bg-accent-teal h-2 rounded-full" style="width: 60%"></div>
+</div>
+<p class="font-label-sm text-label-sm text-text-secondary mt-stack-xs text-right">Estimated resolution: 2 days</p>
+</div>
+</section>
+<!-- Recent Activity Section -->
+<section>
+<h3 class="font-header-lg text-header-lg text-text-primary mb-stack-md">Recent Activity</h3>
+<div class="bg-surface border border-border-subtle rounded-xl overflow-hidden">
+<div class="flex items-center gap-stack-md p-stack-md border-b border-border-subtle hover:bg-white/5 transition-colors">
+<div class="w-8 h-8 rounded-full bg-secondary-container/20 flex items-center justify-center text-accent-teal flex-shrink-0">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+</div>
+<div>
+<h4 class="font-body-md text-body-md text-text-primary font-medium">Address Update Approved</h4>
+<p class="font-label-sm text-label-sm text-text-secondary">Today, 09:42 AM</p>
+</div>
+</div>
+<div class="flex items-center gap-stack-md p-stack-md border-b border-border-subtle hover:bg-white/5 transition-colors">
+<div class="w-8 h-8 rounded-full bg-error-container/20 flex items-center justify-center text-error flex-shrink-0">
+<span class="material-symbols-outlined text-sm">warning</span>
+</div>
+<div>
+<h4 class="font-body-md text-body-md text-text-primary font-medium">Unrecognized Login Attempt</h4>
+<p class="font-label-sm text-label-sm text-text-secondary">Yesterday, 11:20 PM</p>
+</div>
+</div>
+<div class="flex items-center gap-stack-md p-stack-md hover:bg-white/5 transition-colors">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined text-sm">mail</span>
+</div>
+<div>
+<h4 class="font-body-md text-body-md text-text-primary font-medium">Secure Message Received</h4>
+<p class="font-label-sm text-label-sm text-text-secondary">Oct 12, 02:15 PM</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 bg-surface-container dark:bg-surface-container border-t border-border-subtle dark:border-border-subtle flex justify-around items-center h-20 px-2 pb-safe w-full md:hidden">
+<a class="flex flex-col items-center justify-center text-accent-teal dark:text-accent-teal bg-secondary-container/20 rounded-xl px-3 py-1 hover:text-primary dark:hover:text-primary transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-sm text-label-sm mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="font-label-sm text-label-sm mt-1">Requests</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-label-sm text-label-sm mt-1">Alerts</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary transition-all active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm text-label-sm mt-1">Profile</span>
+</a>
+</nav>
+</body></html>

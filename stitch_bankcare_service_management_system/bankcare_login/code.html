@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BankCare - Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#0b1f33",
+                        "surface-container": "#eceef1",
+                        "on-surface": "#1b1b1c",
+                        "on-tertiary-container": "#7d839c",
+                        "on-surface-variant": "#44474c",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed": "#131c27",
+                        "on-secondary-fixed": "#00201d",
+                        "tertiary-fixed-dim": "#c0c5e1",
+                        "surface-container-low": "#f6f3f4",
+                        "secondary-container": "#99efe5",
+                        "surface-tint": "#565f6c",
+                        "primary-fixed": "#dae3f2",
+                        "surface-variant": "#e4e2e3",
+                        "secondary-fixed-dim": "#84d5cc",
+                        "primary-fixed-dim": "#bdc7d6",
+                        "tertiary": "#000000",
+                        "inverse-on-surface": "#f3f0f1",
+                        "background": "#fbf9f9",
+                        "inverse-primary": "#bdc7d6",
+                        "on-tertiary": "#ffffff",
+                        "surface": "#f7f9fc",
+                        "on-primary-container": "#7b8592",
+                        "on-secondary-container": "#0c6f67",
+                        "secondary-fixed": "#a0f1e8",
+                        "on-error": "#ffffff",
+                        "tertiary-container": "#001950",
+                        "on-secondary-fixed-variant": "#00504a",
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "outline": "#74777d",
+                        "on-tertiary-fixed-variant": "#40465c",
+                        "on-tertiary-fixed": "#141b2f",
+                        "error-container": "#ffdad6",
+                        "secondary": "#006a63",
+                        "surface-bright": "#fbf9f9",
+                        "surface-container-highest": "#e4e2e3",
+                        "surface-dim": "#dcd9da",
+                        "inverse-surface": "#303031",
+                        "tertiary-fixed": "#dce1fd",
+                        "on-background": "#1b1b1c",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed-variant": "#3e4854",
+                        "outline-variant": "#c5c6cc",
+                        "primary": "#000000",
+                        "surface-container-high": "#eae7e8",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "24px",
+                        "stack-md": "16px",
+                        "sidebar-width": "280px",
+                        "gutter": "24px",
+                        "margin-mobile": "16px",
+                        "stack-xs": "4px",
+                        "stack-sm": "8px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "header-xl": ["Inter"],
+                        "body-md": ["Inter"],
+                        "header-xl-mobile": ["Inter"],
+                        "brand-display": ["Inter"],
+                        "header-lg": ["Inter"],
+                        "label-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "header-xl": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "header-xl-mobile": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "brand-display": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "header-lg": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen flex items-center justify-center p-margin-mobile md:p-gutter">
+<main class="w-full max-w-md">
+<!-- Logo and Branding -->
+<div class="text-center mb-stack-lg">
+<div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary-container text-on-primary-container mb-stack-sm">
+<span class="material-symbols-outlined text-4xl" data-weight="fill" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+</div>
+<h1 class="font-brand-display text-brand-display text-primary">BankCare</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-stack-xs">Banking Service Management</p>
+</div>
+<!-- Login Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-stack-lg shadow-sm">
+<form action="#" class="space-y-stack-md" method="POST">
+<!-- Email Field -->
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface mb-stack-xs" for="email">Email / Username</label>
+<div class="relative">
+<input class="w-full rounded-lg border-outline-variant bg-surface-container-lowest text-on-surface placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-1 focus:ring-primary h-11 px-3 transition-colors" id="email" name="email" placeholder="Enter your email or username" required="" type="text"/>
+</div>
+</div>
+<!-- Password Field -->
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface mb-stack-xs" for="password">Password</label>
+<div class="relative">
+<input class="w-full rounded-lg border-outline-variant bg-surface-container-lowest text-on-surface placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-1 focus:ring-primary h-11 px-3 pr-10 transition-colors" id="password" name="password" placeholder="Enter your password" required="" type="password"/>
+<button aria-label="Toggle password visibility" class="absolute inset-y-0 right-0 flex items-center pr-3 text-on-surface-variant hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+</div>
+</div>
+<!-- Options -->
+<div class="flex items-center justify-between py-stack-xs">
+<div class="flex items-center">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary bg-surface-container-lowest cursor-pointer" id="remember" name="remember" type="checkbox"/>
+<label class="ml-2 font-body-md text-body-md text-on-surface cursor-pointer" for="remember">Remember me</label>
+</div>
+<a class="font-label-sm text-label-sm text-secondary hover:text-primary transition-colors" href="#">Forgot password?</a>
+</div>
+<!-- Submit Button -->
+<button class="w-full h-11 bg-secondary text-on-secondary rounded-lg font-label-sm text-label-sm hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary transition-all flex items-center justify-center gap-2 mt-stack-md group" type="submit">
+                    Sign In
+                    <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</form>
+</div>
+<!-- Footer -->
+<div class="text-center mt-stack-lg">
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="lock">lock</span>
+                Secure banking platform
+            </p>
+</div>
+</main>
+<script>
+        // Simple password toggle logic for the interactive feel
+        const togglePassword = document.querySelector('button[aria-label="Toggle password visibility"]');
+        const passwordInput = document.getElementById('password');
+        const icon = togglePassword.querySelector('.material-symbols-outlined');
+
+        togglePassword.addEventListener('click', function (e) {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            icon.textContent = type === 'password' ? 'visibility' : 'visibility_off';
+            icon.setAttribute('data-icon', type === 'password' ? 'visibility' : 'visibility_off');
+        });
+    </script>
+</body></html>

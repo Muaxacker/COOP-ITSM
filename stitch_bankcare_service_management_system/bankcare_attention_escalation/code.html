@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Needs Attention - BankCare</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#eceef1",
+                        "surface-container-low": "#f6f3f4",
+                        "secondary-fixed-dim": "#84d5cc",
+                        "on-secondary-fixed": "#00201d",
+                        "surface-tint": "#565f6c",
+                        "surface-container-high": "#eae7e8",
+                        "inverse-on-surface": "#f3f0f1",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#dcd9da",
+                        "on-surface": "#191c1e",
+                        "tertiary-fixed-dim": "#c0c5e1",
+                        "on-primary-container": "#7b8592",
+                        "outline": "#74777d",
+                        "surface": "#f7f9fc",
+                        "on-secondary-container": "#0c6f67",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#e4e2e3",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed-variant": "#3e4854",
+                        "tertiary-fixed": "#dce1fd",
+                        "on-tertiary-fixed": "#141b2f",
+                        "on-surface-variant": "#44474b",
+                        "primary-fixed-dim": "#bdc7d6",
+                        "primary-container": "#131c27",
+                        "inverse-surface": "#303031",
+                        "outline-variant": "#c5c6cc",
+                        "secondary-container": "#99efe5",
+                        "secondary-fixed": "#a0f1e8",
+                        "tertiary": "#000000",
+                        "on-tertiary-fixed-variant": "#40465c",
+                        "surface-container-highest": "#e4e2e3",
+                        "on-primary-fixed": "#131c27",
+                        "primary-fixed": "#dae3f2",
+                        "error": "#ba1a1a",
+                        "on-background": "#1b1b1c",
+                        "secondary": "#006a63",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#000000",
+                        "surface-bright": "#fbf9f9",
+                        "error-container": "#ffdad6",
+                        "tertiary-container": "#141b2f",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#00504a",
+                        "on-tertiary-container": "#7d839c",
+                        "inverse-primary": "#bdc7d6",
+                        "background": "#fbf9f9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sidebar-width": "280px",
+                        "gutter": "24px",
+                        "stack-md": "16px",
+                        "stack-sm": "8px",
+                        "margin-mobile": "16px",
+                        "stack-lg": "24px",
+                        "container-max": "1440px",
+                        "stack-xs": "4px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "header-xl": ["Inter"],
+                        "brand-display": ["Inter"],
+                        "header-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "header-xl-mobile": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "header-xl": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "brand-display": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "header-lg": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "header-xl-mobile": ["20px", { "lineHeight": "28px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface font-sans min-h-screen flex antialiased">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-full w-sidebar-width left-0 top-0 fixed bg-primary-container dark:bg-primary-container border-r border-outline-variant/10 py-stack-lg z-50">
+<div class="px-gutter mb-stack-lg">
+<h1 class="font-brand-display text-brand-display text-on-primary-container dark:text-on-primary-fixed">BankCare</h1>
+</div>
+<div class="flex flex-col flex-grow w-full">
+<a class="flex items-center gap-stack-md px-gutter py-stack-md text-on-primary-container/70 dark:text-on-primary-container/70 hover:text-on-primary hover:bg-on-primary-fixed-variant/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-stack-md px-gutter py-stack-md text-on-primary-container/70 dark:text-on-primary-container/70 hover:text-on-primary hover:bg-on-primary-fixed-variant/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="pending_actions">pending_actions</span>
+<span class="font-body-md text-body-md">Requests</span>
+</a>
+<a class="flex items-center gap-stack-md px-gutter py-stack-md text-secondary-fixed dark:text-secondary-fixed-dim border-l-4 border-secondary opacity-100 transition-all bg-on-primary-fixed-variant/20" href="#">
+<span class="material-symbols-outlined" data-icon="notifications" style="font-variation-settings: 'FILL' 1;">notifications</span>
+<span class="font-body-md text-body-md font-semibold">Alerts</span>
+</a>
+<a class="flex items-center gap-stack-md px-gutter py-stack-md text-on-primary-container/70 dark:text-on-primary-container/70 hover:text-on-primary hover:bg-on-primary-fixed-variant/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-body-md text-body-md">Profile</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-grow md:ml-sidebar-width flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="docked full-width top-0 sticky z-40 border-b border-outline-variant flat no shadows flex justify-between items-center h-16 px-gutter bg-surface-container-lowest dark:bg-surface-container-low">
+<div class="flex items-center gap-stack-sm md:hidden">
+<h1 class="font-brand-display text-brand-display text-primary dark:text-primary-fixed">BankCare</h1>
+</div>
+<div class="hidden md:block">
+<!-- Empty space for layout balance on desktop -->
+</div>
+<div class="flex items-center gap-stack-sm">
+<button class="text-on-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-high rounded-full p-2 transition-all tap:scale-95 duration-100">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container dark:hover:bg-surface-container-high rounded-full p-2 transition-all tap:scale-95 duration-100">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="ml-stack-sm w-8 h-8 rounded-full bg-surface-variant overflow-hidden border border-outline-variant">
+<img alt="Sara Fatima" class="w-full h-full object-cover" data-alt="A professional headshot of Sara Fatima, a corporate banking manager, wearing a dark blazer over a light blouse, smiling warmly against a blurred bright modern office background. High quality, well lit." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3NdbclyZslTd_Fl1KlIMsWUtAfBPWWKGceVomC4doHV2YfFgzbUPXa5WbWUxWNkb9krsfu-22Win6vEFOtwyGB2HLCuSA_OenRKV83BQLmmn7u---XcGgg9y4zF17_77zUPPqw5SXAjxVXIJuz--tduxTLkul_I_eqdXqBQGjLKDfHWgUWyz40nVBccXpEQV7FiOLPPtdqsnc9Jam8D0iQkc8x5beAKrLDTMPxVucjrkKK9A1ow7VrA"/>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="p-margin-mobile md:p-gutter max-w-container-max mx-auto w-full flex-grow flex flex-col gap-stack-lg">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-stack-sm">
+<div>
+<h2 class="font-header-xl-mobile md:font-header-xl text-header-xl-mobile md:text-header-xl text-on-surface">Needs Attention</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Review and manage escalated service requests requiring immediate action.</p>
+</div>
+</div>
+<!-- Dashboard Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-stack-lg">
+<!-- Overdue Section -->
+<section class="flex flex-col gap-stack-md">
+<h3 class="font-header-lg text-header-lg text-error flex items-center gap-stack-xs">
+<span class="material-symbols-outlined" data-icon="error">error</span>
+                        Overdue
+                    </h3>
+<!-- Escalation Card -->
+<div class="bg-surface-container-lowest border border-error/30 rounded-lg p-stack-lg relative overflow-hidden shadow-sm flex flex-col h-full">
+<div class="absolute top-0 left-0 w-1 h-full bg-error"></div>
+<div class="flex justify-between items-start mb-stack-md">
+<div>
+<div class="flex items-center gap-stack-sm mb-stack-xs">
+<span class="font-label-sm text-label-sm bg-error-container text-on-error-container px-2 py-1 rounded-full uppercase tracking-wider">Critical</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">SR-126</span>
+</div>
+<h4 class="font-header-lg text-header-lg text-on-surface">Mobile Banking Problem</h4>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Overdue by</span>
+<span class="font-header-lg text-header-lg text-error font-bold tracking-tight">1h 12m</span>
+</div>
+</div>
+<div class="flex flex-col gap-stack-sm mb-stack-lg flex-grow">
+<div class="flex justify-between items-center py-stack-sm border-b border-outline-variant/50">
+<span class="font-body-md text-body-md text-on-surface-variant">Assigned to</span>
+<div class="flex items-center gap-stack-sm">
+<div class="w-6 h-6 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed font-label-sm text-label-sm font-bold">K</div>
+<span class="font-body-md text-body-md text-on-surface font-medium">Khalid</span>
+</div>
+</div>
+<div class="flex justify-between items-center py-stack-sm border-b border-outline-variant/50">
+<span class="font-body-md text-body-md text-on-surface-variant">Reported</span>
+<span class="font-body-md text-body-md text-on-surface">Today, 08:30 AM</span>
+</div>
+<div class="flex justify-between items-center py-stack-sm">
+<span class="font-body-md text-body-md text-on-surface-variant">SLA Target</span>
+<span class="font-body-md text-body-md text-on-surface">Today, 12:30 PM</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-stack-sm mt-auto pt-stack-md border-t border-outline-variant/20">
+<button class="bg-primary text-on-primary font-label-sm text-label-sm px-4 py-2 rounded-DEFAULT hover:bg-surface-tint transition-colors flex items-center gap-stack-xs flex-1 justify-center">
+<span class="material-symbols-outlined text-[18px]" data-icon="open_in_new">open_in_new</span>
+                                Open Case
+                            </button>
+<button class="bg-secondary-container text-on-secondary-container font-label-sm text-label-sm px-4 py-2 rounded-DEFAULT hover:bg-secondary-fixed transition-colors flex items-center gap-stack-xs flex-1 justify-center">
+<span class="material-symbols-outlined text-[18px]" data-icon="person_add">person_add</span>
+                                Reassign
+                            </button>
+<button class="bg-surface-container border border-outline-variant text-on-surface font-label-sm text-label-sm px-4 py-2 rounded-DEFAULT hover:bg-surface-container-high transition-colors flex items-center gap-stack-xs w-full justify-center mt-stack-xs">
+<span class="material-symbols-outlined text-[18px]" data-icon="call">call</span>
+                                Contact Officer
+                            </button>
+</div>
+</div>
+</section>
+<!-- Deadline Approaching Section -->
+<section class="flex flex-col gap-stack-md">
+<h3 class="font-header-lg text-header-lg text-on-secondary-fixed-variant flex items-center gap-stack-xs">
+<span class="material-symbols-outlined" data-icon="warning">warning</span>
+                        Deadline Approaching
+                    </h3>
+<!-- Warning Card -->
+<div class="bg-surface-container-lowest border border-secondary-fixed-dim/50 rounded-lg p-stack-lg relative overflow-hidden shadow-sm flex flex-col h-full">
+<div class="absolute top-0 left-0 w-1 h-full bg-secondary-fixed-dim"></div>
+<div class="flex justify-between items-start mb-stack-md">
+<div>
+<div class="flex items-center gap-stack-sm mb-stack-xs">
+<span class="font-label-sm text-label-sm bg-surface-container-highest text-on-surface px-2 py-1 rounded-full uppercase tracking-wider">High</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">SR-118</span>
+</div>
+<h4 class="font-header-lg text-header-lg text-on-surface">ATM Problem</h4>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Remaining</span>
+<span class="font-header-lg text-header-lg text-on-secondary-fixed-variant font-bold tracking-tight">35m</span>
+</div>
+</div>
+<div class="flex flex-col gap-stack-sm mb-stack-lg flex-grow">
+<div class="flex justify-between items-center py-stack-sm border-b border-outline-variant/50">
+<span class="font-body-md text-body-md text-on-surface-variant">Location</span>
+<span class="font-body-md text-body-md text-on-surface">Branch 42 - Main St</span>
+</div>
+<div class="flex justify-between items-center py-stack-sm border-b border-outline-variant/50">
+<span class="font-body-md text-body-md text-on-surface-variant">Status</span>
+<span class="font-body-md text-body-md text-on-surface flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-secondary-fixed-dim inline-block"></span> In Progress</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-stack-sm mt-auto pt-stack-md border-t border-outline-variant/20">
+<button class="bg-primary text-on-primary font-label-sm text-label-sm px-4 py-2 rounded-DEFAULT hover:bg-surface-tint transition-colors flex items-center gap-stack-xs w-full justify-center">
+<span class="material-symbols-outlined text-[18px]" data-icon="open_in_new">open_in_new</span>
+                                Open Case
+                            </button>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 w-full bg-surface-container-lowest dark:bg-surface-container-low border-t border-outline-variant/20 z-50 flex justify-around items-center h-16 pb-safe">
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl mb-1" data-icon="dashboard">dashboard</span>
+<span class="font-label-sm text-[10px]">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl mb-1" data-icon="pending_actions">pending_actions</span>
+<span class="font-label-sm text-[10px]">Requests</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-primary" href="#">
+<span class="material-symbols-outlined text-2xl mb-1" data-icon="notifications" style="font-variation-settings: 'FILL' 1;">notifications</span>
+<span class="font-label-sm text-[10px] font-bold">Alerts</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl mb-1" data-icon="person">person</span>
+<span class="font-label-sm text-[10px]">Profile</span>
+</a>
+</nav>
+</body></html>

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BankCare Service Officer Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-surface": "#1b1b1c",
+                    "on-primary-container": "#7b8592",
+                    "surface-container-low": "#f6f3f4",
+                    "tertiary-fixed": "#dce1fd",
+                    "tertiary-fixed-dim": "#c0c5e1",
+                    "secondary-fixed": "#a0f1e8",
+                    "surface-dim": "#dcd9da",
+                    "on-secondary-container": "#0c6f67",
+                    "on-primary-fixed-variant": "#3e4854",
+                    "secondary-container": "#99efe5",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-fixed-variant": "#00504a",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed-dim": "#bdc7d6",
+                    "surface-container": "#f0edee",
+                    "secondary-fixed-dim": "#84d5cc",
+                    "surface": "#f7f9fc",
+                    "primary-container": "#0b1f33",
+                    "surface-container-high": "#eae7e8",
+                    "surface-container-highest": "#e4e2e3",
+                    "on-primary-fixed": "#131c27",
+                    "surface-variant": "#e4e2e3",
+                    "error-container": "#ffdad6",
+                    "outline": "#74777d",
+                    "on-secondary-fixed": "#00201d",
+                    "inverse-primary": "#bdc7d6",
+                    "inverse-surface": "#303031",
+                    "on-surface-variant": "#44474b",
+                    "on-tertiary-fixed-variant": "#40465c",
+                    "on-background": "#1b1b1c",
+                    "tertiary-container": "#141b2f",
+                    "primary-fixed": "#dae3f2",
+                    "on-error-container": "#93000a",
+                    "surface-bright": "#fbf9f9",
+                    "secondary": "#006a63",
+                    "on-error": "#ffffff",
+                    "surface-tint": "#565f6c",
+                    "on-primary": "#ffffff",
+                    "outline-variant": "#c5c6cc",
+                    "background": "#fbf9f9",
+                    "on-secondary": "#ffffff",
+                    "inverse-on-surface": "#f3f0f1",
+                    "tertiary": "#000000",
+                    "error": "#ba1a1a",
+                    "primary": "#000000",
+                    "on-tertiary-container": "#7d839c",
+                    "on-tertiary-fixed": "#141b2f"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-md": "16px",
+                    "stack-xs": "4px",
+                    "stack-sm": "8px",
+                    "sidebar-width": "280px",
+                    "gutter": "24px",
+                    "margin-mobile": "16px",
+                    "container-max": "1440px",
+                    "stack-lg": "24px"
+            },
+            "fontFamily": {
+                    "body-md": [
+                            "Inter"
+                    ],
+                    "brand-display": [
+                            "Inter"
+                    ],
+                    "header-xl": [
+                            "Inter"
+                    ],
+                    "header-lg": [
+                            "Inter"
+                    ],
+                    "header-xl-mobile": [
+                            "Inter"
+                    ],
+                    "label-sm": [
+                            "Inter"
+                    ]
+            },
+            "fontSize": {
+                    "body-md": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "brand-display": [
+                            "32px",
+                            {
+                                    "lineHeight": "40px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "header-xl": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "header-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "header-xl-mobile": [
+                            "20px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "label-sm": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "letterSpacing": "0.01em",
+                                    "fontWeight": "500"
+                            }
+                    ]
+            }
+        },
+        },
+      }
+    </script>
+</head>
+<body class="bg-surface font-body-md text-body-md text-on-surface h-screen overflow-hidden flex">
+<!-- SideNavBar -->
+<nav class="hidden md:flex w-[280px] h-full fixed left-0 top-0 bg-surface-container-low flex-col py-stack-lg z-50 shadow-[1px_0_0_0_theme(colors.outline-variant)]">
+<div class="px-stack-lg mb-stack-lg">
+<h1 class="font-brand-display text-brand-display text-primary">BankCare</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-stack-xs">Service Officer</p>
+</div>
+<ul class="flex flex-col gap-stack-xs px-stack-sm flex-grow">
+<!-- Active Tab -->
+<li>
+<a class="flex items-center gap-stack-sm px-stack-md py-stack-sm rounded-lg text-on-secondary-container bg-secondary-container font-semibold cursor-pointer active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+                    Dashboard
+                </a>
+</li>
+<!-- Inactive Tabs -->
+<li>
+<a class="flex items-center gap-stack-sm px-stack-md py-stack-sm rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors cursor-pointer active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">list_alt</span>
+                    Requests
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-stack-sm px-stack-md py-stack-sm rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors cursor-pointer active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">error</span>
+                    Urgent
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-stack-sm px-stack-md py-stack-sm rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors cursor-pointer active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">event</span>
+                    Deadlines
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-stack-sm px-stack-md py-stack-sm rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors cursor-pointer active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">group</span>
+                    Customers
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-stack-sm px-stack-md py-stack-sm rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors cursor-pointer active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">assessment</span>
+                    Reports
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-stack-sm px-stack-md py-stack-sm rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors cursor-pointer active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">settings</span>
+                    Settings
+                </a>
+</li>
+</ul>
+<div class="mt-auto px-stack-lg pt-stack-md border-t border-outline-variant flex items-center gap-stack-md">
+<div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden">
+<img alt="Sara" class="w-full h-full object-cover" data-alt="Professional corporate headshot of a female bank service officer, smiling slightly, bright natural lighting, modern office background, shallow depth of field, high resolution, 85mm portrait." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOaChjKhtA1La7gtbbOmIdffWPWZy2Mcw9en4A-JYUA_3AjbIqFPGOVHnXGQE7TmJrffGKGxN09VLXtzMg7ktGRKyoxNSSqD4SM0Mwpnfz5VGeVN37Er9qjp6sdC2FjKlXu9xjOBc9E5q_kO4VU1J8IyorxWw5gszWLzoYkYKhWuLruH-TPFz1H6dClb4ppcT13CSyd2B1TBIdtYX62dUPftkqWPCLZS5t6lt2gtepA_aC-qEFkxgVFg"/>
+</div>
+<div>
+<p class="font-body-md text-body-md font-semibold text-on-surface">Sara</p>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">View Profile</a>
+</div>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="flex-1 md:ml-[280px] flex flex-col h-screen overflow-hidden bg-surface">
+<!-- TopAppBar -->
+<header class="h-16 w-full flex-shrink-0 bg-surface border-b border-outline-variant flex items-center justify-between px-gutter z-40 transition-all duration-200">
+<div class="flex items-center gap-stack-md">
+<h2 class="font-header-lg text-header-lg text-primary font-bold hidden md:block">BankCare Service</h2>
+</div>
+<div class="flex items-center gap-stack-lg">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">search</span>
+<input class="w-64 h-10 pl-10 pr-4 bg-surface-container-low border border-outline-variant rounded-lg font-body-md text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors placeholder:text-on-surface-variant" placeholder="Search requests..." type="text"/>
+</div>
+<div class="flex items-center gap-stack-sm text-on-surface-variant">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high hover:text-primary transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+<button class="h-10 px-stack-md bg-primary text-on-primary font-label-sm text-label-sm font-semibold rounded-lg hover:bg-inverse-surface transition-colors flex items-center gap-stack-xs">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                    New Request
+                </button>
+</div>
+</header>
+<!-- Scrollable Canvas -->
+<main class="flex-1 overflow-y-auto p-gutter">
+<div class="max-w-container-max mx-auto space-y-stack-lg">
+<!-- Welcome Section -->
+<section>
+<h1 class="font-header-xl text-header-xl md:font-brand-display md:text-brand-display text-primary">Good morning, Sara 👋</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-stack-xs">Here is an overview of your active service requests today.</p>
+</section>
+<!-- Stats Bento Grid -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-stack-md">
+<!-- Stat Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg flex flex-col gap-stack-sm hover:shadow-sm transition-shadow">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Open Requests</span>
+<span class="material-symbols-outlined text-secondary">folder_open</span>
+</div>
+<div class="flex items-baseline gap-stack-xs">
+<span class="font-brand-display text-brand-display text-on-surface">24</span>
+</div>
+<div class="h-1 w-full bg-surface-container-high rounded-full mt-stack-xs overflow-hidden">
+<div class="h-full bg-secondary w-[60%] rounded-full"></div>
+</div>
+</div>
+<!-- Stat Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg flex flex-col gap-stack-sm hover:shadow-sm transition-shadow">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">New Today</span>
+<span class="material-symbols-outlined text-secondary">fiber_new</span>
+</div>
+<div class="flex items-baseline gap-stack-xs">
+<span class="font-brand-display text-brand-display text-on-surface">7</span>
+<span class="font-label-sm text-label-sm text-secondary">+2 from yesterday</span>
+</div>
+<div class="h-1 w-full bg-surface-container-high rounded-full mt-stack-xs overflow-hidden">
+<div class="h-full bg-secondary-container w-[30%] rounded-full"></div>
+</div>
+</div>
+<!-- Stat Card 3 (Urgent) -->
+<div class="bg-error-container border border-error/20 rounded-xl p-stack-lg flex flex-col gap-stack-sm hover:shadow-sm transition-shadow">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-error-container uppercase tracking-wider font-semibold">Due Soon</span>
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+<div class="flex items-baseline gap-stack-xs">
+<span class="font-brand-display text-brand-display text-on-error-container">3</span>
+<span class="font-label-sm text-label-sm text-error font-medium">Action Required</span>
+</div>
+</div>
+<!-- Stat Card 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg flex flex-col gap-stack-sm hover:shadow-sm transition-shadow">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Completed</span>
+<span class="material-symbols-outlined text-secondary">check_circle</span>
+</div>
+<div class="flex items-baseline gap-stack-xs">
+<span class="font-brand-display text-brand-display text-on-surface">18</span>
+</div>
+<div class="h-1 w-full bg-surface-container-high rounded-full mt-stack-xs overflow-hidden">
+<div class="h-full bg-secondary-container w-[80%] rounded-full"></div>
+</div>
+</div>
+</section>
+<!-- Main Content List -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden flex flex-col">
+<div class="p-stack-lg border-b border-outline-variant flex items-center justify-between bg-surface-container-lowest">
+<h3 class="font-header-lg text-header-lg text-on-surface">Requests needing attention</h3>
+<button class="font-label-sm text-label-sm text-primary hover:text-secondary transition-colors font-semibold flex items-center gap-stack-xs">
+                            View All <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+<div class="flex flex-col">
+<!-- List Item 1 -->
+<div class="p-stack-md flex items-center justify-between border-b border-outline-variant hover:bg-surface-container-low transition-colors group cursor-pointer">
+<div class="flex items-center gap-stack-md">
+<div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center text-error">
+<span class="material-symbols-outlined">credit_card</span>
+</div>
+<div>
+<div class="flex items-center gap-stack-sm">
+<h4 class="font-body-md text-body-md font-semibold text-on-surface group-hover:text-primary transition-colors">SR-124 ATM Card</h4>
+<span class="px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-[10px] font-bold uppercase tracking-wider">High Priority</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">Card replacement request - Delivery issue reported.</p>
+</div>
+</div>
+<div class="flex items-center gap-stack-lg text-right">
+<div class="hidden sm:block">
+<p class="font-body-md text-body-md text-on-surface">John Doe</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">ID: 849302</p>
+</div>
+<div class="hidden md:block">
+<p class="font-label-sm text-label-sm text-error font-semibold">Due in 2 hrs</p>
+</div>
+<button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-surface-container-high text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+<!-- List Item 2 -->
+<div class="p-stack-md flex items-center justify-between border-b border-outline-variant hover:bg-surface-container-low transition-colors group cursor-pointer">
+<div class="flex items-center gap-stack-md">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">sync_alt</span>
+</div>
+<div>
+<div class="flex items-center gap-stack-sm">
+<h4 class="font-body-md text-body-md font-semibold text-on-surface group-hover:text-primary transition-colors">SR-126 Transfer</h4>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-[10px] font-bold uppercase tracking-wider">Medium Priority</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">International wire transfer pending compliance check.</p>
+</div>
+</div>
+<div class="flex items-center gap-stack-lg text-right">
+<div class="hidden sm:block">
+<p class="font-body-md text-body-md text-on-surface">Acme Corp</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">ID: 102934</p>
+</div>
+<div class="hidden md:block">
+<p class="font-label-sm text-label-sm text-on-surface-variant">Due today</p>
+</div>
+<button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-surface-container-high text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+<!-- List Item 3 -->
+<div class="p-stack-md flex items-center justify-between hover:bg-surface-container-low transition-colors group cursor-pointer">
+<div class="flex items-center gap-stack-md">
+<div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center text-error">
+<span class="material-symbols-outlined">phone_iphone</span>
+</div>
+<div>
+<div class="flex items-center gap-stack-sm">
+<h4 class="font-body-md text-body-md font-semibold text-on-surface group-hover:text-primary transition-colors">SR-129 Mobile Banking</h4>
+<span class="px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-[10px] font-bold uppercase tracking-wider">High Priority</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">Account locked after multiple failed login attempts.</p>
+</div>
+</div>
+<div class="flex items-center gap-stack-lg text-right">
+<div class="hidden sm:block">
+<p class="font-body-md text-body-md text-on-surface">Maria Garcia</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">ID: 556721</p>
+</div>
+<div class="hidden md:block">
+<p class="font-label-sm text-label-sm text-error font-semibold">Due in 4 hrs</p>
+</div>
+<button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-surface-container-high text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+</body></html>

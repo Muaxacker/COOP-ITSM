@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BankCare - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#006a63",
+                        "on-secondary-fixed-variant": "#00504a",
+                        "error-container": "#ffdad6",
+                        "tertiary": "#000000",
+                        "surface": "#f7f9fc",
+                        "on-primary-fixed": "#131c27",
+                        "surface-container-high": "#eae7e8",
+                        "tertiary-fixed": "#dce1fd",
+                        "primary-fixed-dim": "#bdc7d6",
+                        "on-tertiary": "#ffffff",
+                        "primary-container": "#0b1f33",
+                        "on-surface-variant": "#44474c",
+                        "surface-container": "#eceef1",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-container": "#9deee5",
+                        "surface-dim": "#dcd9da",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed": "#00201d",
+                        "on-surface": "#1b1b1c",
+                        "surface-container-highest": "#e4e2e3",
+                        "tertiary-container": "#141b2f",
+                        "on-tertiary-fixed": "#141b2f",
+                        "on-tertiary-container": "#7d839c",
+                        "surface-container-low": "#f6f3f4",
+                        "inverse-on-surface": "#f3f0f1",
+                        "on-error-container": "#93000a",
+                        "primary": "#000000",
+                        "on-background": "#1b1b1c",
+                        "on-tertiary-fixed-variant": "#40465c",
+                        "on-secondary-container": "#0c6f67",
+                        "background": "#fbf9f9",
+                        "on-primary-fixed-variant": "#3e4854",
+                        "surface-variant": "#e4e2e3",
+                        "surface-tint": "#565f6c",
+                        "outline": "#74777d",
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#a0f1e8",
+                        "secondary-fixed-dim": "#84d5cc",
+                        "on-primary-container": "#7b8592",
+                        "inverse-primary": "#bdc7d6",
+                        "primary-fixed": "#dae3f2",
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#303031",
+                        "surface-bright": "#fbf9f9",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#c0c5e1",
+                        "outline-variant": "#c5c6cc"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "container-max": "1440px",
+                        "sidebar-width": "280px",
+                        "stack-lg": "24px",
+                        "stack-xs": "4px",
+                        "gutter": "24px",
+                        "stack-sm": "8px",
+                        "stack-md": "16px"
+                    },
+                    "fontFamily": {
+                        "header-xl-mobile": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "brand-display": ["Inter"],
+                        "body-md": ["Inter"],
+                        "header-lg": ["Inter"],
+                        "header-xl": ["Inter"]
+                    },
+                    "fontSize": {
+                        "header-xl-mobile": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "brand-display": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "header-lg": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "header-xl": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+        /* Hide scrollbar for clean horizontal scrolling */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased md:flex">
+<!-- TopAppBar (Mobile & Desktop) -->
+<header class="docked full-width top-0 sticky z-40 bg-surface-container-lowest dark:bg-surface-container-low border-b border-outline-variant flex justify-between items-center h-16 px-gutter md:ml-sidebar-width w-full md:w-[calc(100%-280px)]">
+<div class="flex items-center gap-2">
+<span class="font-brand-display text-brand-display text-primary dark:text-primary-fixed md:hidden">BankCare</span>
+</div>
+<div class="flex items-center gap-stack-md">
+<button aria-label="Notifications" class="hover:bg-surface-container dark:hover:bg-surface-container-high rounded-full p-2 transition-all text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button aria-label="Settings" class="hover:bg-surface-container dark:hover:bg-surface-container-high rounded-full p-2 transition-all text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<img alt="Sara Fatima" class="w-8 h-8 rounded-full object-cover border border-outline-variant" data-alt="A small circular profile picture of a professional woman with dark hair, smiling subtly against a neutral light background. The lighting is soft and corporate, matching a clean, modern banking app interface. The colors are muted and professional." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0vJHswxn86_F130vUH37loXsBmKhu0KkrRnckd3hdujRsakGKH0_h_u50rqeY1M8GcMzyayXQQi3gs0r0-b1soa7S4iAnKGUmcOFZ7hHtS04fbJHWv-MuhAMF0yjp3YZTZEo9RjGN4kpNMLGR_hAEpHRAjHdkdJqUfLZffa-2Ouo-FES0yfpKh7lZQaixAbjhLnaKhmS-6ge1A8p7E81sf4K4HOHV9TL34G1sDDhhJlNvsIb6mU8csg"/>
+</div>
+</header>
+<!-- SideNavBar (Desktop Only) -->
+<nav class="hidden md:flex bg-primary-container dark:bg-primary-container border-r border-outline-variant/10 fixed h-full w-sidebar-width left-0 top-0 flex-col py-stack-lg z-50">
+<div class="px-gutter mb-stack-lg">
+<span class="font-brand-display text-brand-display text-on-primary-container dark:text-on-primary-fixed">BankCare</span>
+</div>
+<div class="flex-1 flex flex-col gap-2">
+<a class="flex items-center gap-stack-md px-gutter py-stack-md text-secondary-fixed dark:text-secondary-fixed-dim border-l-4 border-secondary bg-on-primary-fixed-variant/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard" data-weight="fill">dashboard</span>
+<span class="font-body-md text-body-md font-semibold">Dashboard</span>
+</a>
+<a class="flex items-center gap-stack-md px-gutter py-stack-md text-on-primary-container/70 dark:text-on-primary-container/70 hover:text-on-primary hover:bg-on-primary-fixed-variant/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="pending_actions">pending_actions</span>
+<span class="font-body-md text-body-md">Requests</span>
+</a>
+<a class="flex items-center gap-stack-md px-gutter py-stack-md text-on-primary-container/70 dark:text-on-primary-container/70 hover:text-on-primary hover:bg-on-primary-fixed-variant/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="font-body-md text-body-md">Alerts</span>
+</a>
+<a class="flex items-center gap-stack-md px-gutter py-stack-md text-on-primary-container/70 dark:text-on-primary-container/70 hover:text-on-primary hover:bg-on-primary-fixed-variant/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-body-md text-body-md">Profile</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 px-margin-mobile py-stack-lg md:px-gutter md:ml-sidebar-width max-w-container-max w-full mx-auto flex flex-col gap-stack-lg pb-24 md:pb-stack-lg">
+<!-- Welcome Header -->
+<section class="flex flex-col gap-stack-xs">
+<h1 class="font-header-xl-mobile text-header-xl-mobile md:font-header-xl md:text-header-xl text-on-surface">Good Morning, Sara</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Here is a summary of your recent activity and requests.</p>
+</section>
+<!-- Quick Actions -->
+<section class="grid grid-cols-2 gap-stack-sm md:gap-stack-md">
+<button class="bg-primary text-on-primary rounded-lg py-3 px-4 flex flex-col items-center justify-center gap-stack-xs hover:bg-primary/90 transition-colors shadow-sm">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+<span class="font-label-sm text-label-sm font-semibold">New Request</span>
+</button>
+<button class="bg-secondary-container text-on-secondary-container rounded-lg py-3 px-4 flex flex-col items-center justify-center gap-stack-xs hover:bg-secondary-container/90 transition-colors border border-outline-variant/20">
+<span class="material-symbols-outlined" data-icon="support_agent">support_agent</span>
+<span class="font-label-sm text-label-sm font-semibold">Support</span>
+</button>
+</section>
+<!-- Active Requests Summary -->
+<section class="flex flex-col gap-stack-sm">
+<div class="flex justify-between items-end">
+<h2 class="font-header-lg text-header-lg text-on-surface">Active Requests</h2>
+<a class="font-label-sm text-label-sm text-secondary hover:underline" href="#">View All</a>
+</div>
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-4 flex flex-col gap-stack-sm shadow-sm relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-secondary"></div>
+<div class="flex justify-between items-start">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Req #892-A</span>
+<h3 class="font-body-md text-body-md font-semibold text-on-surface mt-1">ATM Card Retention</h3>
+</div>
+<span class="bg-secondary-container/30 text-on-secondary-container font-label-sm text-label-sm px-2 py-1 rounded-full flex items-center gap-1 border border-secondary/20">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+                        In Progress
+                    </span>
+</div>
+<div class="mt-2 text-on-surface-variant font-body-md text-body-md text-sm">
+                    Branch investigating retained card at Main St. ATM. Expected resolution: 24hrs.
+                </div>
+<div class="w-full bg-surface-variant h-1.5 rounded-full mt-2 overflow-hidden">
+<div class="bg-secondary h-full w-2/3 rounded-full"></div>
+</div>
+</div>
+</section>
+<!-- Recent Activity Feed -->
+<section class="flex flex-col gap-stack-sm flex-1">
+<h2 class="font-header-lg text-header-lg text-on-surface">Recent Activity</h2>
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+<!-- Activity Item 1 -->
+<div class="flex items-start gap-4 p-4 border-b border-outline-variant/50 hover:bg-surface-container-low transition-colors">
+<div class="bg-surface-container rounded-full p-2 text-on-surface-variant shrink-0 mt-1">
+<span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span>
+</div>
+<div class="flex flex-col flex-1">
+<span class="font-body-md text-body-md font-medium text-on-surface">Address Update Approved</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Your residential address has been successfully updated.</span>
+<span class="font-label-sm text-label-sm text-outline mt-2 text-xs">Today, 09:41 AM</span>
+</div>
+</div>
+<!-- Activity Item 2 -->
+<div class="flex items-start gap-4 p-4 border-b border-outline-variant/50 hover:bg-surface-container-low transition-colors">
+<div class="bg-error-container/30 rounded-full p-2 text-on-error-container shrink-0 mt-1">
+<span class="material-symbols-outlined text-sm" data-icon="warning">warning</span>
+</div>
+<div class="flex flex-col flex-1">
+<span class="font-body-md text-body-md font-medium text-on-surface">Unrecognized Login Attempt</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">We detected a login attempt from a new device.</span>
+<span class="font-label-sm text-label-sm text-outline mt-2 text-xs">Yesterday, 14:22 PM</span>
+</div>
+</div>
+<!-- Activity Item 3 -->
+<div class="flex items-start gap-4 p-4 hover:bg-surface-container-low transition-colors">
+<div class="bg-surface-container rounded-full p-2 text-on-surface-variant shrink-0 mt-1">
+<span class="material-symbols-outlined text-sm" data-icon="mail">mail</span>
+</div>
+<div class="flex flex-col flex-1">
+<span class="font-body-md text-body-md font-medium text-on-surface">Secure Message Received</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">New message from your relationship manager.</span>
+<span class="font-label-sm text-label-sm text-outline mt-2 text-xs">Oct 24, 11:05 AM</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Mobile Bottom Navigation (Visible only on mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant/50 flex justify-around items-center h-16 z-40 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+<a class="flex flex-col items-center justify-center gap-1 w-1/4 text-secondary h-full" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard" data-weight="fill">dashboard</span>
+<span class="font-label-sm text-[10px] font-semibold">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 w-1/4 text-on-surface-variant hover:text-on-surface h-full" href="#">
+<span class="material-symbols-outlined" data-icon="pending_actions">pending_actions</span>
+<span class="font-label-sm text-[10px]">Requests</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 w-1/4 text-on-surface-variant hover:text-on-surface h-full relative" href="#">
+<div class="absolute top-2 right-6 w-2 h-2 bg-error rounded-full"></div>
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="font-label-sm text-[10px]">Alerts</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 w-1/4 text-on-surface-variant hover:text-on-surface h-full" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-sm text-[10px]">Profile</span>
+</a>
+</nav>
+</body></html>

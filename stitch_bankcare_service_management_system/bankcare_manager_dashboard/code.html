@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BankCare - Manager Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#eceef1",
+                        "surface-container-low": "#f6f3f4",
+                        "secondary-fixed-dim": "#84d5cc",
+                        "on-secondary-fixed": "#00201d",
+                        "surface-tint": "#565f6c",
+                        "surface-container-high": "#eae7e8",
+                        "inverse-on-surface": "#f3f0f1",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#dcd9da",
+                        "on-surface": "#191c1e",
+                        "tertiary-fixed-dim": "#c0c5e1",
+                        "on-primary-container": "#7b8592",
+                        "outline": "#74777d",
+                        "surface": "#f7f9fc",
+                        "on-secondary-container": "#0c6f67",
+                        "on-tertiary": "#ffffff",
+                        "surface-variant": "#e4e2e3",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed-variant": "#3e4854",
+                        "tertiary-fixed": "#dce1fd",
+                        "on-tertiary-fixed": "#141b2f",
+                        "on-surface-variant": "#44474b",
+                        "primary-fixed-dim": "#bdc7d6",
+                        "primary-container": "#131c27",
+                        "inverse-surface": "#303031",
+                        "outline-variant": "#c5c6cc",
+                        "secondary-container": "#99efe5",
+                        "secondary-fixed": "#a0f1e8",
+                        "tertiary": "#000000",
+                        "on-tertiary-fixed-variant": "#40465c",
+                        "surface-container-highest": "#e4e2e3",
+                        "on-primary-fixed": "#131c27",
+                        "primary-fixed": "#dae3f2",
+                        "error": "#ba1a1a",
+                        "on-background": "#1b1b1c",
+                        "secondary": "#006a63",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#000000",
+                        "surface-bright": "#fbf9f9",
+                        "error-container": "#ffdad6",
+                        "tertiary-container": "#141b2f",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#00504a",
+                        "on-tertiary-container": "#7d839c",
+                        "inverse-primary": "#bdc7d6",
+                        "background": "#fbf9f9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sidebar-width": "280px",
+                        "gutter": "24px",
+                        "stack-md": "16px",
+                        "stack-sm": "8px",
+                        "margin-mobile": "16px",
+                        "stack-lg": "24px",
+                        "container-max": "1440px",
+                        "stack-xs": "4px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "header-xl": ["Inter"],
+                        "brand-display": ["Inter"],
+                        "header-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "header-xl-mobile": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "header-xl": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "brand-display": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "header-lg": ["18px", { "lineHeight": "24px", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "header-xl-mobile": ["20px", { "lineHeight": "28px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col md:flex-row">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-full py-stack-lg fixed h-full w-sidebar-width left-0 top-0 bg-primary-container dark:bg-primary-container border-r border-outline-variant/10 z-50">
+<div class="px-gutter mb-stack-lg">
+<h1 class="font-brand-display text-brand-display text-on-primary-container dark:text-on-primary-fixed">BankCare</h1>
+</div>
+<ul class="flex flex-col gap-stack-sm flex-grow">
+<li>
+<a class="flex items-center gap-stack-md px-gutter py-stack-md text-secondary-fixed dark:text-secondary-fixed-dim border-l-4 border-secondary opacity-100 transition-all bg-on-primary-fixed-variant/20" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-stack-md px-gutter py-stack-md text-on-primary-container/70 dark:text-on-primary-container/70 hover:text-on-primary hover:bg-on-primary-fixed-variant/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="pending_actions">pending_actions</span>
+<span class="font-body-md text-body-md">Requests</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-stack-md px-gutter py-stack-md text-on-primary-container/70 dark:text-on-primary-container/70 hover:text-on-primary hover:bg-on-primary-fixed-variant/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="font-body-md text-body-md">Alerts</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-stack-md px-gutter py-stack-md text-on-primary-container/70 dark:text-on-primary-container/70 hover:text-on-primary hover:bg-on-primary-fixed-variant/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-body-md text-body-md">Profile</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-grow flex flex-col md:ml-sidebar-width w-full md:w-[calc(100%-280px)]">
+<!-- TopAppBar -->
+<header class="docked full-width top-0 sticky z-40 border-b border-outline-variant flex justify-between items-center h-16 px-gutter bg-surface-container-lowest dark:bg-surface-container-low text-on-surface dark:text-on-surface">
+<div class="flex items-center gap-stack-sm md:hidden">
+<span class="material-symbols-outlined text-primary cursor-pointer">menu</span>
+<h1 class="font-brand-display text-brand-display text-primary dark:text-primary-fixed text-xl">BankCare</h1>
+</div>
+<div class="hidden md:block">
+<!-- Title handled by page context or search if needed -->
+<span class="font-header-lg text-header-lg text-on-surface">BankCare Manager</span>
+</div>
+<div class="flex items-center gap-stack-md">
+<button class="hover:bg-surface-container dark:hover:bg-surface-container-high rounded-full p-2 transition-all active:scale-95 duration-100 text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="hover:bg-surface-container dark:hover:bg-surface-container-high rounded-full p-2 transition-all active:scale-95 duration-100 text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-variant cursor-pointer ml-stack-sm">
+<img alt="Sara Fatima" class="w-full h-full object-cover" data-alt="A professional headshot of a confident female bank manager named Fatima, wearing modern corporate attire in a bright, modern banking office setting. The lighting is soft and flattering, exuding trust and capability." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBc1ehfcT7MoCQhPt-XxjmrEPRNDv4QN2PkrqIrRplyROdOfBhU5ChbfMlCK_aAD7lS1NSTEzhbHjyIOw_SAqUBZuSAGdDtXZSw4TJ8JQzvY3sTbh7HLupU2oHzWwYt0Be1DSUJaNKwHgJW-aXsq66hAENoWZsmDHNPURo_y1FBM-M13bkFxIa5Am91TLSgHup4R-8mcS-zbDNhg8OyDbUgPJR_IFzpBa3xamsUPhNHrX617hRRBZxkbw"/>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<main class="p-margin-mobile md:p-gutter flex-grow bg-surface">
+<div class="max-w-container-max mx-auto">
+<div class="flex flex-col gap-stack-lg">
+<!-- Page Header -->
+<div>
+<h2 class="font-header-xl-mobile md:font-header-xl text-header-xl-mobile md:text-header-xl text-on-surface">Branch Overview</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-stack-xs">Welcome back, Fatima. Here is today's summary.</p>
+</div>
+<!-- Top Metrics (Bento Style) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-stack-md">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg flex flex-col justify-between">
+<div class="flex items-center justify-between mb-stack-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Total Requests</span>
+<span class="material-symbols-outlined text-outline">list_alt</span>
+</div>
+<div class="font-brand-display text-brand-display text-on-surface">128</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg flex flex-col justify-between">
+<div class="flex items-center justify-between mb-stack-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Resolved</span>
+<span class="material-symbols-outlined text-secondary">check_circle</span>
+</div>
+<div class="font-brand-display text-brand-display text-on-surface">117</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg flex flex-col justify-between">
+<div class="flex items-center justify-between mb-stack-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Late</span>
+<span class="material-symbols-outlined text-error">warning</span>
+</div>
+<div class="font-brand-display text-brand-display text-error">9</div>
+</div>
+</div>
+<!-- Middle Section: Performance & Needs Attention -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-stack-lg">
+<!-- Performance Chart/Bar -->
+<div class="lg:col-span-2 bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg">
+<h3 class="font-header-lg text-header-lg text-on-surface mb-stack-md">Performance</h3>
+<div class="flex flex-col h-[200px] justify-center gap-stack-md">
+<div class="flex justify-between items-end">
+<span class="font-body-md text-body-md text-on-surface-variant">On-Time Resolution</span>
+<span class="font-header-xl text-header-xl text-primary">91%</span>
+</div>
+<div class="w-full bg-surface-container-high h-4 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 91%;"></div>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-stack-sm">Target: 95%. You are slightly below target this week.</p>
+</div>
+</div>
+<!-- Needs Attention List -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-lg flex flex-col">
+<h3 class="font-header-lg text-header-lg text-on-surface mb-stack-md flex items-center gap-2">
+<span class="material-symbols-outlined text-error" data-weight="fill">error</span>
+                                Needs Attention
+                            </h3>
+<ul class="flex flex-col gap-stack-sm flex-grow overflow-y-auto">
+<li class="p-stack-sm border border-outline-variant/50 rounded-lg flex justify-between items-center bg-error-container/10">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">SR-126</span>
+<span class="font-body-md text-body-md text-on-surface font-medium">Mobile Banking</span>
+</div>
+<span class="px-2 py-1 bg-error-container text-on-error-container font-label-sm text-label-sm rounded-full">Overdue</span>
+</li>
+<li class="p-stack-sm border border-outline-variant/50 rounded-lg flex justify-between items-center bg-surface-container-high/30">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">SR-118</span>
+<span class="font-body-md text-body-md text-on-surface font-medium">ATM</span>
+</div>
+<span class="px-2 py-1 bg-surface-variant text-on-surface-variant font-label-sm text-label-sm rounded-full">Due Soon</span>
+</li>
+<li class="p-stack-sm border border-outline-variant/50 rounded-lg flex justify-between items-center bg-error-container/10">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">SR-109</span>
+<span class="font-body-md text-body-md text-on-surface font-medium">Transfer</span>
+</div>
+<span class="px-2 py-1 bg-error-container text-on-error-container font-label-sm text-label-sm rounded-full">Overdue</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
