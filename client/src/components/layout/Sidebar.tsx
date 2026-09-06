@@ -11,14 +11,11 @@ import {
   Menu,
   X,
   Server,
-  Bell,
   PlusCircle,
   Wrench,
   Shield,
-  User,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
-import { useNotifications } from '../../hooks/useNotifications';
 import { cn } from '../../utils';
 import { Role } from '../../types';
 
@@ -71,7 +68,6 @@ const ROLE_LABELS: Record<Role, string> = {
 
 export function Sidebar() {
   const { user, logout } = useAuth();
-  const { unreadCount } = useNotifications();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -129,43 +125,6 @@ export function Sidebar() {
 
       {/* User Section */}
       <div className="px-3 pb-8 border-t border-slate-800/80 pt-3 space-y-2">
-        <Link
-          to="/notifications"
-          onClick={() => setMobileOpen(false)}
-          className={cn(
-            'flex items-center justify-between gap-2.5 px-3.5 py-2 rounded-md text-sm font-semibold transition-colors duration-100',
-            location.pathname === '/notifications'
-              ? 'bg-slate-800 text-white font-semibold'
-              : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
-          )}
-        >
-          <span className="flex items-center gap-2.5">
-            <Bell className="w-3.5 h-3.5" />
-            Notifications
-          </span>
-          {unreadCount > 0 && (
-            <span className="bg-rose-900/60 text-rose-200 border border-rose-700/80 text-xs rounded px-2 py-0.5 font-mono font-bold">
-              {unreadCount > 9 ? '9+' : unreadCount}
-            </span>
-          )}
-        </Link>
-
-        <Link
-          to="/profile"
-          onClick={() => setMobileOpen(false)}
-          className={cn(
-            'flex items-center gap-2.5 px-3.5 py-2 rounded-md text-sm font-semibold transition-colors duration-100',
-            location.pathname === '/profile'
-              ? 'bg-slate-800 text-white font-semibold'
-              : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
-          )}
-        >
-          <span className="flex items-center gap-2.5">
-            <User className="w-3.5 h-3.5" />
-            Profile
-          </span>
-        </Link>
-
         {/* User Card with Avatar */}
         <div className="p-3 rounded-md bg-slate-900/90 border border-slate-800/80 space-y-2">
           <div className="flex items-center gap-2.5">
