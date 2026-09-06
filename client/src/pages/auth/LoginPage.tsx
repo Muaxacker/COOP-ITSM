@@ -4,7 +4,6 @@ import {
   Eye,
   EyeOff,
   Building2,
-  ShieldCheck,
   Lock,
   Mail,
   ArrowRight,
@@ -67,21 +66,8 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0A101D] flex flex-col justify-between p-4 sm:p-6">
-      {/* Top Header Bar */}
-      <div className="w-full max-w-5xl mx-auto flex items-center justify-between py-2 text-xs">
-        <div className="flex items-center gap-2 text-slate-400">
-          <Building2 className="w-4 h-4 text-brand-400" />
-          <span className="font-semibold text-slate-300">Cooperative Bank of Oromia</span>
-        </div>
-        <div className="flex items-center gap-1.5 font-mono text-[11px] text-emerald-400 bg-emerald-950/40 border border-emerald-800/60 px-2.5 py-1 rounded">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          Production Gateway Online
-        </div>
-      </div>
-
-      {/* Main Form Center Box */}
-      <div className="w-full max-w-md mx-auto my-auto py-8">
+    <div className="min-h-screen bg-[#0A101D] flex items-center justify-center p-4 sm:p-6">
+      <div className="w-full max-w-md">
         {/* Brand Header */}
         <div className="text-center mb-6">
           <div className="inline-flex items-center justify-center w-14 h-14 bg-slate-900/90 rounded-xl mb-3.5 border border-slate-800 shadow-xl text-brand-400">
@@ -100,19 +86,13 @@ export function LoginPage() {
 
         {/* Real Enterprise Login Card */}
         <div className="bg-white rounded-xl border border-slate-200 shadow-modal p-6 sm:p-8">
-          <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
-            <div>
-              <h2 className="text-base font-bold text-slate-900 tracking-tight">
-                Enterprise Authentication
-              </h2>
-              <p className="text-xs text-slate-500 font-medium mt-0.5">
-                Sign in with your corporate bank credentials
-              </p>
-            </div>
-            <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-900 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-200 shadow-subtle">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              <span>256-bit SSL</span>
-            </div>
+          <div className="mb-5 pb-3.5 border-b border-slate-100">
+            <h2 className="text-base font-bold text-slate-900 tracking-tight">
+              Enterprise Authentication
+            </h2>
+            <p className="text-xs text-slate-500 font-medium mt-0.5">
+              Authorized bank staff and IT personnel only
+            </p>
           </div>
 
           {error && (
@@ -126,7 +106,7 @@ export function LoginPage() {
             <Input
               label="Corporate Email Address"
               type="email"
-              placeholder="operator@coopbank.et"
+              placeholder="user.adama@coopbank.et"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -199,15 +179,13 @@ export function LoginPage() {
           </div>
         </div>
 
-        {/* Support Helpdesk Callout */}
-        <p className="text-center text-xs text-slate-400 font-medium mt-6">
+        {/* Footer & Support Callout */}
+        <p className="text-center text-xs text-slate-400 font-medium mt-5">
           Need technical assistance? Contact IT Service Desk Ext: <span className="text-slate-300 font-mono font-bold">4400</span>
         </p>
-      </div>
-
-      {/* Footer */}
-      <div className="w-full max-w-5xl mx-auto py-2 text-center text-xs text-slate-500 border-t border-slate-800/80">
-        <p>Cooperative Bank of Oromia · Centralized IT Incident Operations · Version 2.4.0</p>
+        <p className="text-center text-xs text-slate-500 font-medium mt-2">
+          Cooperative Bank of Oromia · Centralized IT Incident Operations · Version 2.4.0
+        </p>
       </div>
 
       {/* Enterprise Password Reset Policy Modal */}
