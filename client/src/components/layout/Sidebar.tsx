@@ -179,7 +179,7 @@ export function Sidebar() {
   return (
     <>
       <button
-        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-[#0b2545] rounded-lg text-white shadow-lg"
+        className="md:hidden fixed top-2.5 left-3 z-50 w-9 h-9 flex items-center justify-center bg-[#0B2545] rounded-md text-white shadow-md border border-slate-700/80 hover:bg-[#134074] transition-colors"
         onClick={() => setMobileOpen(!mobileOpen)}
         aria-label="Toggle navigation"
       >
@@ -188,7 +188,7 @@ export function Sidebar() {
 
       {mobileOpen && (
         <div
-          className="md:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+          className="md:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-xs"
           onClick={() => setMobileOpen(false)}
         />
       )}
@@ -203,7 +203,7 @@ export function Sidebar() {
 
       <aside
         className={cn(
-          'fixed left-0 top-0 h-full w-64 z-50 transform transition-transform duration-200 md:hidden shadow-2xl',
+          'fixed left-0 top-0 h-full w-72 max-w-[85vw] z-50 transform transition-transform duration-200 md:hidden shadow-2xl bg-[#0A101D]',
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >

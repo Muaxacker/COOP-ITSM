@@ -41,7 +41,7 @@ export function AppLayout() {
       <Sidebar />
       <div className="md:ml-64 min-h-screen flex flex-col">
         {/* Top Operational Utility Bar */}
-        <header className="h-14 bg-white border-b border-slate-200/80 px-4 sm:px-6 flex items-center justify-between text-sm text-slate-600 shadow-subtle sticky top-0 z-30">
+        <header className="h-14 bg-white border-b border-slate-200/80 pl-14 pr-3 sm:pr-6 md:px-6 flex items-center justify-between text-sm text-slate-600 shadow-subtle sticky top-0 z-30">
           <div className="flex items-center gap-3">
             <span className="font-bold text-slate-900 tracking-tight">COOP-ITSM</span>
             <span className="text-slate-300 hidden sm:inline">|</span>

@@ -183,7 +183,7 @@ export function BranchIncidentDetailsPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Top Header with Back button and Supervisor actions */}
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <button
           type="button"
           onClick={() => navigate("/incidents")}
@@ -193,7 +193,7 @@ export function BranchIncidentDetailsPage() {
           Back to Incidents
         </button>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {/* Printable Official Banking Work Order */}
           <Button
             variant="outline"
