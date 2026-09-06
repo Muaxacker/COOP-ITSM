@@ -1,5 +1,6 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
+RUN apk add --no-cache openssl libc6-compat
 COPY package*.json ./
 RUN npm ci
 COPY . .
@@ -8,17 +9,19 @@ RUN npm run build
 
 FROM node:20-alpine AS runner
 WORKDIR /app
+RUN apk add --no-cache openssl libc6-compat
 ENV NODE_ENV=production
 
-# Copy production deps only
+# Copy production deps
 COPY package*.json ./
 RUN npm ci --omit=dev
 
-# Copy built output and Prisma client
+# Copy built output, configs, and Prisma client
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY prisma ./prisma
+COPY tsconfig.json ./
 
 EXPOSE 5000
-CMD ["node", "dist/server.js"]
+CMD ["npm", "run", "render:start"]
