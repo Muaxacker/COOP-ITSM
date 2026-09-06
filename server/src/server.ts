@@ -6,8 +6,12 @@ import { checkSlaBreaches } from './services/incident.service';
 import cron from 'node-cron';
 
 async function main() {
+  const rawDbUrl = process.env.DATABASE_URL || config.databaseUrl || '';
+  const maskedDbUrl = rawDbUrl.replace(/:([^:@]+)@/, ':****@');
+  console.log(`📡 Connecting to database: ${maskedDbUrl}`);
+
   await prisma.$connect();
-  console.log('✅ Database connected');
+  console.log('✅ Database connected successfully');
 
   // Check SLA deadlines every 5 minutes
   cron.schedule('*/5 * * * *', async () => {
@@ -21,8 +25,8 @@ async function main() {
     }
   });
 
-  app.listen(config.port, () => {
-    console.log(`🚀 COOP-ITSM API running on http://localhost:${config.port}`);
+  app.listen(config.port, '0.0.0.0', () => {
+    console.log(`🚀 COOP-ITSM API running on port ${config.port} (0.0.0.0)`);
     console.log(`   Environment: ${config.nodeEnv}`);
   });
 }

@@ -55,7 +55,10 @@ app.use('/api/auth/login', loginLimiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// ─── Health Check ───────────────────────────────────────────────────────────
+// ─── Health Check & Root Ping ───────────────────────────────────────────────
+app.get('/', (_req, res) => {
+  res.json({ status: 'ok', service: 'COOP-ITSM API', timestamp: new Date().toISOString() });
+});
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', service: 'COOP-ITSM API', timestamp: new Date().toISOString() });
 });
