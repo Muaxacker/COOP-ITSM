@@ -44,6 +44,7 @@ function getNavItems(role: Role): NavItem[] {
       return [
         { label: 'Workbench', to: '/dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
         { label: 'Assigned Incidents', to: '/incidents', icon: <Wrench className="w-4 h-4" /> },
+        { label: 'Technician Workbench', to: '/dashboard', icon: <Wrench className="w-4 h-4" /> },
       ];
     case 'ADMIN':
       return [
