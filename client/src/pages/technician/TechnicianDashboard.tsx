@@ -39,13 +39,6 @@ export function TechnicianDashboard() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Link
-            to="/incidents"
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-bold rounded-md bg-brand-900 text-white hover:bg-brand-800 transition-colors shadow-subtle"
-          >
-            All Incidents
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-slate-100 text-slate-700 text-xs font-bold border border-slate-200 shadow-xs">
             <Wrench className="w-3.5 h-3.5 text-slate-500" />
             {user?.division?.name || 'Assigned Technical Queue'}
