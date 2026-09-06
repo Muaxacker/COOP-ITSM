@@ -133,7 +133,7 @@ export function DivisionCategoryPage() {
             Configure technical divisions, incident diagnostic categories, and SLA resolution deadlines.
           </p>
         </div>
-        <Button icon={<Plus className="w-4 h-4" />} onClick={openCreate} className="bg-blue-600 hover:bg-blue-700 text-white">
+        <Button icon={<Plus className="w-4 h-4" />} onClick={openCreate} className="bg-brand-900 hover:bg-brand-800 text-white">
           Add Category
         </Button>
       </div>
@@ -160,14 +160,14 @@ export function DivisionCategoryPage() {
               className={cn(
                 'px-3.5 py-2 text-xs font-semibold rounded-lg whitespace-nowrap transition-colors flex items-center gap-1.5',
                 selectedDivisionId === div.id
-                  ? 'bg-blue-600 text-white shadow-sm'
+                  ? 'bg-brand-900 text-white shadow-subtle'
                   : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
               )}
             >
               <span>{div.name}</span>
               <span
                 className={cn(
-                  'px-1.5 py-0.2 rounded-full text-[10px]',
+                  'px-1.5 py-0.2 rounded text-[10px] font-mono',
                   selectedDivisionId === div.id ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-600'
                 )}
               >
@@ -338,7 +338,7 @@ export function DivisionCategoryPage() {
             <Button
               type="submit"
               isLoading={createMutation.isPending || updateMutation.isPending}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-brand-900 hover:bg-brand-800 text-white"
             >
               {editingCategory ? 'Save Changes' : 'Create Category'}
             </Button>

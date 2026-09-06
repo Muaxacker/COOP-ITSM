@@ -11,17 +11,17 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants = {
-  primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500/40 shadow-sm',
-  secondary: 'bg-[#0b2545] text-white hover:bg-[#134074] focus:ring-[#0b2545]/40 shadow-sm',
-  danger: 'bg-rose-600 text-white hover:bg-rose-700 focus:ring-rose-500/40 shadow-sm',
-  ghost: 'bg-transparent text-gray-700 hover:bg-gray-100 focus:ring-gray-200',
-  outline: 'border border-gray-200 bg-white text-gray-800 hover:bg-gray-50 focus:ring-gray-200',
+  primary: 'bg-[#0B2545] text-white hover:bg-[#134074] active:bg-[#07192F] border border-transparent focus:ring-1 focus:ring-slate-900 shadow-subtle',
+  secondary: 'bg-white text-slate-800 hover:bg-slate-50 active:bg-slate-100 border border-slate-300/90 focus:ring-1 focus:ring-slate-900 shadow-subtle',
+  outline: 'bg-transparent text-slate-700 hover:bg-slate-100/70 border border-slate-300 focus:ring-1 focus:ring-slate-900',
+  danger: 'bg-rose-700 text-white hover:bg-rose-800 active:bg-rose-900 border border-transparent focus:ring-1 focus:ring-rose-900 shadow-subtle',
+  ghost: 'bg-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus:ring-1 focus:ring-slate-300',
 };
 
 const sizes = {
-  sm: 'h-8 px-3 text-xs gap-1.5',
-  md: 'h-9 px-4 text-sm gap-2',
-  lg: 'h-11 px-6 text-sm gap-2',
+  sm: 'h-8 px-3 text-xs gap-1.5 rounded-md font-medium',
+  md: 'h-9 px-3.5 text-xs gap-2 rounded-md font-semibold',
+  lg: 'h-10 px-4 text-sm gap-2 rounded-md font-semibold',
 };
 
 export function Button({

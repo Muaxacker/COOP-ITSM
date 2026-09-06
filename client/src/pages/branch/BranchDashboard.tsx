@@ -1,17 +1,17 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
-import { dashboardApi } from '../../services/api';
-import { useAuth } from '../../hooks/useAuth';
-import { StatusBadge, PriorityBadge, SlaBadge } from '../../components/ui/Badge';
-import { PlusCircle, FileText, CheckCircle2, Clock, AlertTriangle, ArrowRight } from 'lucide-react';
-import { formatDateTime } from '../../utils';
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
+import { dashboardApi } from "../../services/api";
+import { useAuth } from "../../hooks/useAuth";
+import { StatusBadge, PriorityBadge } from "../../components/ui/Badge";
+import { PlusCircle, ArrowRight, Building2 } from "lucide-react";
+import { formatDateTime } from "../../utils";
 
 export function BranchDashboard() {
   const { user } = useAuth();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['dashboard', 'branch'],
+    queryKey: ["dashboard", "branch"],
     queryFn: async () => {
       const res = await dashboardApi.getDashboard();
       return res.data.data;
@@ -22,150 +22,143 @@ export function BranchDashboard() {
   const recentIncidents = data?.recentIncidents || [];
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-gradient-to-r from-blue-900 to-[#0b2545] p-6 rounded-2xl text-white shadow-md">
+    <div className="space-y-5">
+      {/* Operational Command Header */}
+      <div className="bg-white rounded-lg border border-slate-200/90 p-5 shadow-subtle flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <span className="text-xs font-semibold px-2.5 py-1 bg-white/10 rounded-full text-blue-200 uppercase tracking-wider">
-            Branch IT Service Portal
-          </span>
-          <h1 className="text-2xl font-bold mt-2">
-            Welcome, {user?.name} 👋
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-mono font-medium tracking-wider uppercase px-2 py-0.5 bg-slate-100 text-slate-700 rounded border border-slate-200">
+              Branch Service Portal
+            </span>
+            {user?.branch && (
+              <span className="text-[11px] font-medium text-slate-600 flex items-center gap-1">
+                <Building2 className="w-3.5 h-3.5 text-slate-400" />
+                {user.branch.name} ({user.branch.code})
+              </span>
+            )}
+          </div>
+          <h1 className="text-lg font-semibold text-slate-900 tracking-tight mt-1.5">
+            Operational Overview
           </h1>
-          <p className="text-sm text-blue-200 mt-0.5">
-            {user?.branch ? `Branch: ${user.branch.name} (${user.branch.code})` : 'Report and track branch technical problems'}
+          <p className="text-xs text-slate-500 mt-0.5">
+            Centralized technical incident dispatching and resolution verification for branch workstations
           </p>
         </div>
         <Link
           to="/incidents/new"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-500 hover:bg-blue-600 font-semibold text-white shadow-lg transition-all transform hover:-translate-y-0.5"
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-md bg-[#0B2545] hover:bg-[#134074] font-semibold text-white text-xs shadow-subtle transition-colors flex-shrink-0"
         >
-          <PlusCircle className="w-5 h-5" />
-          Report IT Problem
+          <PlusCircle className="w-3.5 h-3.5" />
+          Report Technical Issue
         </Link>
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase">Total Reported</span>
-            <FileText className="w-4 h-4 text-blue-600" />
-          </div>
-          <p className="text-2xl font-extrabold text-slate-800 mt-2">{kpis.total}</p>
-          <p className="text-xs text-slate-400 mt-1">All branch tickets</p>
+      {/* KPI Metrics Ribbon */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <div className="bg-white p-3.5 rounded-lg border border-slate-200/90 shadow-subtle">
+          <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Total Reported</span>
+          <p className="text-xl font-semibold text-slate-900 tracking-tight font-mono tabular-nums mt-1">{kpis.total}</p>
+          <p className="text-[10px] text-slate-400 mt-0.5">All branch tickets</p>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-blue-600 uppercase">Open</span>
-            <Clock className="w-4 h-4 text-blue-600" />
-          </div>
-          <p className="text-2xl font-extrabold text-blue-600 mt-2">{kpis.open}</p>
-          <p className="text-xs text-slate-400 mt-1">Under review</p>
+        <div className="bg-white p-3.5 rounded-lg border border-slate-200/90 shadow-subtle">
+          <span className="text-[11px] font-semibold text-slate-600 uppercase tracking-wider">Under Review</span>
+          <p className="text-xl font-semibold text-slate-900 tracking-tight font-mono tabular-nums mt-1">{kpis.open}</p>
+          <p className="text-[10px] text-slate-500 mt-0.5">Awaiting supervisor dispatch</p>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-amber-600 uppercase">Active</span>
-            <AlertTriangle className="w-4 h-4 text-amber-600" />
-          </div>
-          <p className="text-2xl font-extrabold text-amber-600 mt-2">{kpis.active}</p>
-          <p className="text-xs text-slate-400 mt-1">Investigating / Assigned</p>
+        <div className="bg-white p-3.5 rounded-lg border border-slate-200/90 shadow-subtle">
+          <span className="text-[11px] font-semibold text-amber-900 uppercase tracking-wider">Active Investigation</span>
+          <p className="text-xl font-semibold text-amber-950 tracking-tight font-mono tabular-nums mt-1">{kpis.active}</p>
+          <p className="text-[10px] text-slate-500 mt-0.5">Assigned to technician</p>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-teal-200 bg-teal-50/20 shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-teal-700 uppercase">Resolved</span>
-            <CheckCircle2 className="w-4 h-4 text-teal-600" />
-          </div>
-          <p className="text-2xl font-extrabold text-teal-700 mt-2">{kpis.resolved}</p>
-          <p className="text-xs text-teal-600 mt-1 font-medium">Needs your confirmation</p>
+        <div className="bg-white p-3.5 rounded-lg border border-emerald-200/80 bg-emerald-50/20 shadow-subtle">
+          <span className="text-[11px] font-semibold text-emerald-900 uppercase tracking-wider">Pending Verification</span>
+          <p className="text-xl font-semibold text-emerald-950 tracking-tight font-mono tabular-nums mt-1">{kpis.resolved}</p>
+          <p className="text-[10px] text-emerald-800 font-medium mt-0.5">Requires branch sign-off</p>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase">Closed</span>
-            <CheckCircle2 className="w-4 h-4 text-slate-400" />
-          </div>
-          <p className="text-2xl font-extrabold text-slate-700 mt-2">{kpis.closed}</p>
-          <p className="text-xs text-slate-400 mt-1">Completed & verified</p>
+        <div className="bg-white p-3.5 rounded-lg border border-slate-200/90 shadow-subtle">
+          <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Closed & Verified</span>
+          <p className="text-xl font-semibold text-slate-700 tracking-tight font-mono tabular-nums mt-1">{kpis.closed}</p>
+          <p className="text-[10px] text-slate-400 mt-0.5">Successfully resolved</p>
         </div>
       </div>
 
       {/* Recent Incidents Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+      <div className="bg-white rounded-lg border border-slate-200/90 shadow-subtle overflow-hidden">
+        <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
           <div>
-            <h3 className="text-base font-bold text-slate-800">Recent Branch Incidents</h3>
-            <p className="text-xs text-slate-500 mt-0.5">Track live progress of IT requests from your branch</p>
+            <h2 className="text-xs font-semibold text-slate-900 uppercase tracking-wider">Recent Branch Incidents</h2>
+            <p className="text-[11px] text-slate-500 mt-0.5">Live tracking of service requests filed from this branch</p>
           </div>
           <Link
             to="/incidents"
-            className="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1"
+            className="text-xs font-semibold text-slate-700 hover:text-slate-900 flex items-center gap-1"
           >
-            View all <ArrowRight className="w-3.5 h-3.5" />
+            Full Queue <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
         {isLoading ? (
-          <div className="p-8 text-center text-slate-400 text-sm">Loading branch incidents...</div>
+          <div className="p-8 text-center text-slate-400 text-xs">Loading branch incidents...</div>
         ) : recentIncidents.length === 0 ? (
-          <div className="p-10 text-center text-slate-500">
-            <p className="text-sm font-medium">No incidents reported yet</p>
-            <p className="text-xs text-slate-400 mt-1">Click "Report IT Problem" when hardware or software fails.</p>
+          <div className="p-8 text-center text-slate-500 text-xs">
+            <p className="font-medium">No incidents logged for this branch</p>
+            <p className="text-slate-400 text-[11px] mt-0.5">Use \"Report Technical Issue\" above to submit a ticket.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 text-slate-600 text-xs uppercase font-semibold border-b border-slate-200">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-slate-50/80 text-slate-600 text-[11px] uppercase font-semibold border-b border-slate-200/80">
                 <tr>
-                  <th className="px-5 py-3">Incident #</th>
-                  <th className="px-5 py-3">Title & Problem</th>
-                  <th className="px-5 py-3">Category</th>
-                  <th className="px-5 py-3">Priority</th>
-                  <th className="px-5 py-3">Status</th>
-                  <th className="px-5 py-3">Technician</th>
-                  <th className="px-5 py-3 text-right">Action</th>
+                  <th className="px-4 py-2.5">Ticket #</th>
+                  <th className="px-4 py-2.5">Summary & Problem</th>
+                  <th className="px-4 py-2.5">Division / Category</th>
+                  <th className="px-4 py-2.5">Priority</th>
+                  <th className="px-4 py-2.5">Status</th>
+                  <th className="px-4 py-2.5">Assigned Specialist</th>
+                  <th className="px-4 py-2.5 text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {recentIncidents.map((inc: any) => (
-                  <tr key={inc.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="px-5 py-3.5 font-bold text-xs text-blue-600">
+                  <tr key={inc.id} className="hover:bg-slate-50/70 transition-colors">
+                    <td className="px-4 py-2.5 font-mono text-xs font-semibold text-slate-900 whitespace-nowrap">
                       {inc.incidentNumber}
                     </td>
-                    <td className="px-5 py-3.5">
-                      <p className="font-semibold text-slate-800 line-clamp-1">{inc.title}</p>
-                      <p className="text-xs text-slate-400">{formatDateTime(inc.createdAt)}</p>
+                    <td className="px-4 py-2.5 max-w-xs">
+                      <p className="font-medium text-slate-900 truncate">{inc.title}</p>
+                      <p className="text-[11px] text-slate-400 font-mono mt-0.5">{formatDateTime(inc.createdAt)}</p>
                     </td>
-                    <td className="px-5 py-3.5 text-xs text-slate-600">
-                      <span className="font-medium text-slate-700">{inc.category?.name}</span>
+                    <td className="px-4 py-2.5 whitespace-nowrap">
+                      <span className="font-medium text-slate-800">{inc.category?.name}</span>
                       {inc.category?.division && (
-                        <span className="text-[10px] text-slate-400 block font-normal">
+                        <span className="text-[10px] text-slate-500 block font-normal">
                           {inc.category.division.name}
                         </span>
                       )}
                     </td>
-                    <td className="px-5 py-3.5">
+                    <td className="px-4 py-2.5 whitespace-nowrap">
                       <PriorityBadge priority={inc.priority} />
                     </td>
-                    <td className="px-5 py-3.5">
+                    <td className="px-4 py-2.5 whitespace-nowrap">
                       <StatusBadge status={inc.status} />
                     </td>
-                    <td className="px-5 py-3.5 text-xs text-slate-600">
+                    <td className="px-4 py-2.5 text-slate-700 whitespace-nowrap">
                       {inc.assignedTechnician ? (
-                        <span className="font-medium text-slate-700">{inc.assignedTechnician.name}</span>
+                        <span className="font-medium text-slate-900">{inc.assignedTechnician.name}</span>
                       ) : (
                         <span className="text-slate-400 italic">Unassigned</span>
                       )}
                     </td>
-                    <td className="px-5 py-3.5 text-right">
+                    <td className="px-4 py-2.5 text-right whitespace-nowrap">
                       <Link
                         to={`/incidents/${inc.id}`}
-                        className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-700 rounded-lg transition-colors"
+                        className="inline-flex items-center px-2 py-1 text-xs font-medium text-slate-700 hover:text-slate-950 bg-slate-100 hover:bg-slate-200/80 rounded border border-slate-200 transition-colors"
                       >
-                        View
+                        Inspect
                       </Link>
                     </td>
                   </tr>
@@ -178,4 +171,3 @@ export function BranchDashboard() {
     </div>
   );
 }
-

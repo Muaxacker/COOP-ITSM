@@ -9,7 +9,7 @@ interface BadgeProps {
 
 export function Badge({ className, children }: BadgeProps) {
   return (
-    <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium', className)}>
+    <span className={cn('inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border tracking-tight', className)}>
       {children}
     </span>
   );
@@ -17,7 +17,7 @@ export function Badge({ className, children }: BadgeProps) {
 
 export function StatusBadge({ status }: { status: IncidentStatus }) {
   return (
-    <Badge className={STATUS_COLORS[status] || 'bg-gray-100 text-gray-700'}>
+    <Badge className={STATUS_COLORS[status] || 'bg-slate-100 text-slate-700 border-slate-200'}>
       {STATUS_LABELS[status] || status}
     </Badge>
   );
@@ -25,16 +25,16 @@ export function StatusBadge({ status }: { status: IncidentStatus }) {
 
 export function PriorityBadge({ priority }: { priority: Priority }) {
   return (
-    <Badge className={PRIORITY_COLORS[priority] || 'bg-gray-100 text-gray-700'}>
+    <Badge className={PRIORITY_COLORS[priority] || 'bg-slate-100 text-slate-700 border-slate-200'}>
       {PRIORITY_LABELS[priority] || priority}
     </Badge>
   );
 }
 
 export function DivisionBadge({ code, name }: { code?: DivisionCode; name?: string }) {
-  const color = code ? DIVISION_COLORS[code] : 'bg-blue-50 text-blue-700 border-blue-200';
+  const color = code ? DIVISION_COLORS[code] : 'bg-slate-100 text-slate-800 border-slate-200';
   return (
-    <span className={cn('inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border', color)}>
+    <span className={cn('inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border', color)}>
       {name || code}
     </span>
   );
@@ -48,8 +48,8 @@ export function SlaBadge({ deadline, breached }: { deadline: string | Date; brea
 
   if (isOverdue) {
     return (
-      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-200">
-        <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
+      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-medium bg-rose-50 text-rose-900 border border-rose-200/80">
+        <span className="w-1.5 h-1.5 rounded-full bg-rose-600" />
         SLA Breached
       </span>
     );
@@ -57,16 +57,16 @@ export function SlaBadge({ deadline, breached }: { deadline: string | Date; brea
 
   if (hoursLeft <= 1) {
     return (
-      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">
-        <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-medium bg-amber-50 text-amber-900 border border-amber-200/80">
+        <span className="w-1.5 h-1.5 rounded-full bg-amber-600" />
         SLA Approaching
       </span>
     );
   }
 
   return (
-    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-700 border border-slate-200/80">
+      <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
       Within SLA
     </span>
   );

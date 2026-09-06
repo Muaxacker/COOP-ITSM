@@ -75,13 +75,13 @@ export const STATUS_LABELS: Record<IncidentStatus, string> = {
 };
 
 export const STATUS_COLORS: Record<IncidentStatus, string> = {
-  OPEN: 'bg-blue-100 text-blue-800 border border-blue-200',
-  ASSIGNED: 'bg-indigo-100 text-indigo-800 border border-indigo-200',
-  IN_PROGRESS: 'bg-amber-100 text-amber-800 border border-amber-200',
-  WAITING_FOR_INFO: 'bg-orange-100 text-orange-800 border border-orange-200',
-  RESOLVED: 'bg-teal-100 text-teal-800 border border-teal-200',
-  CLOSED: 'bg-slate-100 text-slate-700 border border-slate-200',
-  REOPENED: 'bg-rose-100 text-rose-800 border border-rose-200',
+  OPEN: 'bg-slate-100 text-slate-800 border-slate-300/80',
+  ASSIGNED: 'bg-blue-50 text-blue-900 border-blue-200/80',
+  IN_PROGRESS: 'bg-amber-50 text-amber-950 border-amber-200/80',
+  WAITING_FOR_INFO: 'bg-amber-50 text-amber-900 border-amber-300/80',
+  RESOLVED: 'bg-emerald-50 text-emerald-950 border-emerald-200/80',
+  CLOSED: 'bg-slate-100 text-slate-600 border-slate-200/80',
+  REOPENED: 'bg-rose-50 text-rose-950 border-rose-200/80',
 };
 
 export const PRIORITY_LABELS: Record<Priority, string> = {
@@ -92,15 +92,15 @@ export const PRIORITY_LABELS: Record<Priority, string> = {
 };
 
 export const PRIORITY_COLORS: Record<Priority, string> = {
-  CRITICAL: 'bg-red-100 text-red-800 border border-red-300 font-semibold',
-  HIGH: 'bg-orange-100 text-orange-800 border border-orange-200 font-medium',
-  MEDIUM: 'bg-amber-100 text-amber-800 border border-amber-200',
-  LOW: 'bg-emerald-100 text-emerald-800 border border-emerald-200',
+  CRITICAL: 'bg-rose-50 text-rose-950 border-rose-200/80 font-medium',
+  HIGH: 'bg-amber-50 text-amber-950 border-amber-200/80 font-medium',
+  MEDIUM: 'bg-blue-50 text-blue-950 border-blue-200/80 font-medium',
+  LOW: 'bg-slate-100 text-slate-700 border-slate-200/80 font-medium',
 };
 
 export const DIVISION_COLORS: Record<DivisionCode, string> = {
-  ATM: 'bg-cyan-100 text-cyan-800 border-cyan-200',
-  APPLICATION: 'bg-violet-100 text-violet-800 border-violet-200',
-  NETWORKING: 'bg-blue-100 text-blue-800 border-blue-200',
-  MAINTENANCE: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+  ATM: 'bg-slate-100 text-slate-800 border-slate-300/70',
+  APPLICATION: 'bg-slate-100 text-slate-800 border-slate-300/70',
+  NETWORKING: 'bg-slate-100 text-slate-800 border-slate-300/70',
+  MAINTENANCE: 'bg-slate-100 text-slate-800 border-slate-300/70',
 };

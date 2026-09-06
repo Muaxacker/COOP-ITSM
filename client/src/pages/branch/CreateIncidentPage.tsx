@@ -7,7 +7,17 @@ import { Button } from '../../components/ui/Button';
 import { Input, Textarea } from '../../components/ui/Input';
 import { DivisionCode } from '../../types';
 import toast from 'react-hot-toast';
-import { PlusCircle, ArrowLeft, Building2, Layers, AlertCircle, FileText } from 'lucide-react';
+import {
+  PlusCircle,
+  ArrowLeft,
+  Building2,
+  AlertCircle,
+  Landmark,
+  MonitorCheck,
+  Network,
+  Wrench,
+  HelpCircle,
+} from 'lucide-react';
 
 export function CreateIncidentPage() {
   const { user } = useAuth();
@@ -82,54 +92,73 @@ export function CreateIncidentPage() {
     }
   }
 
-  const divisionMeta: Record<DivisionCode, { title: string; subtitle: string; icon: string }> = {
-    ATM: { title: 'ATM Division', subtitle: 'ATM machines, cash dispensers, card readers', icon: '🏧' },
-    APPLICATION: { title: 'Application Division', subtitle: 'Core banking, software, user passwords, malware', icon: '💻' },
-    NETWORKING: { title: 'Networking Division', subtitle: 'Internet, switches, routers, cabling, connectivity', icon: '🌐' },
-    MAINTENANCE: { title: 'Maintenance Division', subtitle: 'Hardware failure, RAM, hard disks, printers, power', icon: '🔧' },
+  const divisionMeta: Record<
+    DivisionCode,
+    { title: string; subtitle: string; icon: React.ReactNode }
+  > = {
+    ATM: {
+      title: 'ATM Operations',
+      subtitle: 'ATM hardware, card reader, cash dispenser & receipt printers',
+      icon: <Landmark className="w-4 h-4" />,
+    },
+    APPLICATION: {
+      title: 'Core Applications',
+      subtitle: 'Core banking software, branch teller tools & user access',
+      icon: <MonitorCheck className="w-4 h-4" />,
+    },
+    NETWORKING: {
+      title: 'Network Infrastructure',
+      subtitle: 'WAN router, LAN switch, fiber lines, cabling & branch WiFi',
+      icon: <Network className="w-4 h-4" />,
+    },
+    MAINTENANCE: {
+      title: 'Systems & Hardware',
+      subtitle: 'Workstation PCs, laser printers, scanners, UPS & power units',
+      icon: <Wrench className="w-4 h-4" />,
+    },
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="max-w-3xl mx-auto space-y-5">
       {/* Back button */}
       <button
         type="button"
         onClick={() => navigate(-1)}
         className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
       >
-        <ArrowLeft className="w-4 h-4" />
-        Back
+        <ArrowLeft className="w-3.5 h-3.5" />
+        Back to Dashboard
       </button>
 
       {/* Header */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+      <div className="bg-white p-5 rounded-lg border border-slate-200/80 shadow-subtle">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center font-bold">
-            <PlusCircle className="w-5 h-5" />
+          <div className="w-9 h-9 rounded border border-slate-200 bg-slate-50 text-slate-700 flex items-center justify-center font-bold">
+            <PlusCircle className="w-4 h-4" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-slate-900">Report IT Incident</h1>
+            <h1 className="text-lg font-bold text-slate-900 tracking-tight">Report Technical Incident</h1>
             <p className="text-xs text-slate-500 mt-0.5">
-              Submit a technical service request or incident from your branch
+              Dispatch an operational service ticket to regional Tier-2 IT support engineering.
             </p>
           </div>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
+      <form onSubmit={handleSubmit} className="bg-white rounded-lg border border-slate-200/80 shadow-subtle p-5 space-y-5">
         {/* Branch Selection */}
         <div>
-          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+          <label className="block text-[11px] font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
             1. Originating Bank Branch
           </label>
           <div className="relative">
             <select
               value={branchId}
               onChange={(e) => setBranchId(e.target.value)}
-              className="w-full h-11 px-3.5 rounded-lg border border-slate-300 bg-white text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+              className="w-full h-10 px-3 rounded-md border border-slate-300 bg-white text-slate-800 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900 font-medium"
               required
             >
-              <option value="">-- Select Bank Branch --</option>
+              <option value="">-- Select Originating Branch --</option>
               {branches.map((b) => (
                 <option key={b.id} value={b.id}>
                   {b.name} ({b.code}) — {b.location}
@@ -141,8 +170,8 @@ export function CreateIncidentPage() {
 
         {/* Division Selection (The 4 core IT areas) */}
         <div>
-          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-            2. Responsible IT Division
+          <label className="block text-[11px] font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+            2. Responsible IT Technical Division
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             {(['NETWORKING', 'APPLICATION', 'ATM', 'MAINTENANCE'] as DivisionCode[]).map((code) => {
@@ -156,22 +185,28 @@ export function CreateIncidentPage() {
                     setSelectedDivision(code);
                     setCategoryId(''); // reset category on division switch
                   }}
-                  className={`p-3.5 rounded-xl border text-left transition-all ${
+                  className={`p-3.5 rounded-md border text-left transition-all flex items-start gap-3 ${
                     isSelected
-                      ? 'border-blue-600 bg-blue-50/60 ring-2 ring-blue-500/20 shadow-sm'
-                      : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50/50'
+                      ? 'border-slate-900 bg-slate-50/80 ring-1 ring-slate-900 shadow-subtle'
+                      : 'border-slate-200/80 bg-white hover:border-slate-300 hover:bg-slate-50/40'
                   }`}
                 >
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl">{meta.icon}</span>
-                    <div>
-                      <p className={`text-xs font-bold ${isSelected ? 'text-blue-900' : 'text-slate-800'}`}>
-                        {meta.title}
-                      </p>
-                      <p className="text-[11px] text-slate-500 mt-0.5 leading-tight line-clamp-1">
-                        {meta.subtitle}
-                      </p>
-                    </div>
+                  <div
+                    className={`p-2 rounded border mt-0.5 ${
+                      isSelected
+                        ? 'bg-brand-900 text-white border-brand-900'
+                        : 'bg-slate-50 text-slate-600 border-slate-200'
+                    }`}
+                  >
+                    {meta.icon}
+                  </div>
+                  <div>
+                    <p className={`text-xs font-semibold ${isSelected ? 'text-slate-900' : 'text-slate-800'}`}>
+                      {meta.title}
+                    </p>
+                    <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+                      {meta.subtitle}
+                    </p>
                   </div>
                 </button>
               );
@@ -181,13 +216,13 @@ export function CreateIncidentPage() {
 
         {/* Category Selection */}
         <div>
-          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-            3. Specific Problem Category
+          <label className="block text-[11px] font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+            3. Specific Issue Category
           </label>
           <select
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
-            className="w-full h-11 px-3.5 rounded-lg border border-slate-300 bg-white text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+            className="w-full h-10 px-3 rounded-md border border-slate-300 bg-white text-slate-800 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900 font-medium"
             required
           >
             <option value="">-- Select Problem Category --</option>
@@ -198,8 +233,8 @@ export function CreateIncidentPage() {
             ))}
           </select>
           {categoryId && (
-            <p className="text-xs text-slate-500 mt-1.5 flex items-center gap-1">
-              <AlertCircle className="w-3.5 h-3.5 text-blue-600" />
+            <p className="text-xs text-slate-500 mt-1.5 flex items-center gap-1.5">
+              <AlertCircle className="w-3.5 h-3.5 text-slate-600" />
               {categories.find((c) => c.id === categoryId)?.description}
             </p>
           )}
@@ -207,53 +242,57 @@ export function CreateIncidentPage() {
 
         {/* Title */}
         <div>
-          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-            4. Problem Summary / Title
+          <label className="block text-[11px] font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+            4. Incident Title / Summary
           </label>
           <Input
-            placeholder="e.g. Workstation 3 cannot connect to switch or server"
+            placeholder="e.g. Workstation 3 cannot reach core transaction database"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            className="text-xs h-10"
             required
           />
         </div>
 
         {/* Description */}
         <div>
-          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-            5. Detailed Description & Symptoms
+          <label className="block text-[11px] font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+            5. Technical Description & Observations
           </label>
           <Textarea
-            placeholder="Describe what happened, error messages displayed, affected workstations or ATMs, and any immediate observations..."
-            rows={5}
+            placeholder="Document observable symptoms, relevant error codes, affected teller counters or ATM IDs, and preliminary restart attempts..."
+            rows={4}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            className="text-xs"
             required
           />
-          <p className="text-[11px] text-slate-400 mt-1">
-            Include specific error codes, physical cable conditions, or affected user accounts to accelerate troubleshooting.
+          <p className="text-[11px] text-slate-400 mt-1.5 flex items-center gap-1">
+            <HelpCircle className="w-3 h-3" />
+            Providing specific error codes and equipment serial numbers accelerates SLA resolution time.
           </p>
         </div>
 
         {/* Actions */}
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+        <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100">
           <Button
             type="button"
             variant="secondary"
+            size="sm"
             onClick={() => navigate('/dashboard')}
           >
             Cancel
           </Button>
           <Button
             type="submit"
+            size="sm"
             loading={loading}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 shadow-md"
+            className="bg-brand-900 hover:bg-brand-800 text-white font-semibold px-5 shadow-subtle"
           >
-            Submit Incident
+            Dispatch Incident
           </Button>
         </div>
       </form>
     </div>
   );
 }
-

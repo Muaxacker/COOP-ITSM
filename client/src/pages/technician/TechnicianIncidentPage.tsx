@@ -163,7 +163,7 @@ export function TechnicianIncidentPage() {
             <Button
               onClick={() => startInvestMutation.mutate()}
               loading={startInvestMutation.isPending}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-sm"
+              className="bg-brand-900 hover:bg-brand-800 text-white shadow-subtle font-semibold text-xs shadow-sm"
             >
               <Play className="w-3.5 h-3.5 mr-1" />
               Start Investigation
@@ -184,7 +184,7 @@ export function TechnicianIncidentPage() {
           {['IN_PROGRESS', 'WAITING_FOR_INFO'].includes(incident.status) && (
             <Button
               onClick={() => setResolveModalOpen(true)}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-sm"
+              className="bg-emerald-800 hover:bg-emerald-900 text-white shadow-subtle font-semibold text-xs shadow-sm"
             >
               <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
               Mark as Resolved
@@ -194,7 +194,7 @@ export function TechnicianIncidentPage() {
       </div>
 
       {/* Incident Details Card */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+      <div className="bg-white rounded-lg border border-slate-200/80 p-5 shadow-subtle space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-100">
           <div>
             <div className="flex items-center gap-2">
@@ -257,7 +257,7 @@ export function TechnicianIncidentPage() {
         </div>
 
         {/* Problem Description */}
-        <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 text-xs">
+        <div className="bg-slate-50/60 rounded-md p-3.5 border border-slate-200/70 text-xs">
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
             Problem Description Reported by Branch
           </span>
@@ -266,7 +266,7 @@ export function TechnicianIncidentPage() {
 
         {/* Resolution details if available */}
         {(incident.rootCause || incident.resolution) && (
-          <div className="bg-emerald-50/70 rounded-xl p-4 border border-emerald-200 text-xs space-y-2">
+          <div className="bg-emerald-50/40 rounded-md p-3.5 border border-emerald-200/80 text-xs space-y-2">
             <span className="text-[11px] font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
               Documented Resolution
@@ -288,16 +288,16 @@ export function TechnicianIncidentPage() {
       </div>
 
       {/* Structured Troubleshooting Log Entry & History */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-6">
+      <div className="bg-white rounded-lg border border-slate-200/80 p-5 shadow-subtle space-y-6">
         {/* Step-by-Step Log Form */}
         {['ASSIGNED', 'IN_PROGRESS', 'WAITING_FOR_INFO'].includes(incident.status) && (
           <form
             onSubmit={handleAddTroubleshooting}
-            className="p-5 bg-gradient-to-br from-blue-50/60 to-slate-50 rounded-xl border border-blue-100 space-y-4"
+            className="p-5 bg-slate-50/70 rounded-md border border-slate-200/80 space-y-4"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 bg-blue-600 text-white rounded-lg">
+                <div className="p-1.5 bg-brand-900 text-white rounded">
                   <Wrench className="w-4 h-4" />
                 </div>
                 <div>
@@ -354,7 +354,7 @@ export function TechnicianIncidentPage() {
               <Button
                 type="submit"
                 loading={logSubmitting}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-sm"
+                className="bg-brand-900 hover:bg-brand-800 text-white shadow-subtle font-semibold text-xs shadow-sm"
               >
                 <Plus className="w-3.5 h-3.5 mr-1" />
                 Add Troubleshooting Step
@@ -368,11 +368,11 @@ export function TechnicianIncidentPage() {
       </div>
 
       {/* Timeline & Notes */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+      <div className="bg-white rounded-lg border border-slate-200/80 p-5 shadow-subtle space-y-4">
         <h3 className="text-sm font-bold text-slate-800">Complete Incident Audit History</h3>
         <div className="space-y-2.5">
           {incident.updates?.map((u) => (
-            <div key={u.id} className="p-3 bg-slate-50 rounded-lg border border-slate-100 text-xs">
+            <div key={u.id} className="p-3 bg-slate-50/50 rounded-md border border-slate-200/70 text-xs">
               <div className="flex items-center justify-between gap-2 mb-1">
                 <span className="font-semibold text-slate-800">{u.user?.name || 'System'}</span>
                 <span className="text-[11px] text-slate-400">
@@ -388,7 +388,7 @@ export function TechnicianIncidentPage() {
       {/* Request Info Modal */}
       {infoModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+          <div className="bg-white rounded-lg max-w-md w-full p-5 space-y-4 shadow-xl border border-slate-200/90">
             <h3 className="text-base font-bold text-slate-900">Request Information from Branch</h3>
             <p className="text-xs text-slate-500">
               The status will transition to <span className="font-bold text-orange-600">Waiting for Info</span> and the branch user will be notified.
@@ -412,7 +412,7 @@ export function TechnicianIncidentPage() {
                   requestInfoMutation.mutate(questionText.trim());
                 }}
                 loading={requestInfoMutation.isPending}
-                className="bg-blue-600 text-white font-semibold"
+                className="bg-brand-900 hover:bg-brand-800 text-white font-semibold shadow-subtle"
               >
                 Send Request
               </Button>
@@ -424,7 +424,7 @@ export function TechnicianIncidentPage() {
       {/* Resolve Incident Modal */}
       {resolveModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+          <div className="bg-white rounded-lg max-w-lg w-full p-5 space-y-4 shadow-xl border border-slate-200/90">
             <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
               <div className="p-1.5 bg-emerald-100 text-emerald-800 rounded-lg">
                 <CheckCircle2 className="w-5 h-5 text-emerald-600" />
@@ -494,7 +494,7 @@ export function TechnicianIncidentPage() {
                   });
                 }}
                 loading={resolveMutation.isPending}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
+                className="bg-emerald-800 hover:bg-emerald-900 text-white shadow-subtle font-semibold"
               >
                 Submit Resolution
               </Button>

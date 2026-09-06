@@ -110,15 +110,22 @@ export function AllIncidentsPage() {
   return (
     <div className="space-y-6">
       {/* Page Title */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">All Branch Incidents</h1>
-        <p className="text-xs text-slate-500 mt-1">
-          Review requests, categorize, prioritize, and assign technical personnel
-        </p>
+      <div className="bg-white border border-slate-200/80 rounded-lg p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-subtle">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Incident Directory</span>
+            <span className="text-slate-300">•</span>
+            <span className="text-[11px] font-medium text-slate-500">Tier-2 Operational Oversight</span>
+          </div>
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight mt-1">All Branch Incidents</h1>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Comprehensive ticket log across all branches, divisions, SLA milestones, and technician assignments.
+          </p>
+        </div>
       </div>
 
       {/* Filters Bar */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
+      <div className="bg-white p-4 rounded-lg border border-slate-200/80 shadow-subtle space-y-3">
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
@@ -130,7 +137,7 @@ export function AllIncidentsPage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="w-full h-10 pl-9 pr-3 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50/50"
+              className="w-full h-10 pl-9 pr-3 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-slate-900 bg-slate-50/50"
             />
           </div>
 
@@ -141,7 +148,7 @@ export function AllIncidentsPage() {
                 setDivisionId(e.target.value);
                 setPage(1);
               }}
-              className="h-10 px-3 text-xs font-medium rounded-lg border border-slate-200 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="h-10 px-3 text-xs font-medium rounded-lg border border-slate-200 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-900"
             >
               <option value="">All Divisions</option>
               {divisions?.map((d) => (
@@ -157,7 +164,7 @@ export function AllIncidentsPage() {
                 setBranchId(e.target.value);
                 setPage(1);
               }}
-              className="h-10 px-3 text-xs font-medium rounded-lg border border-slate-200 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="h-10 px-3 text-xs font-medium rounded-lg border border-slate-200 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-900"
             >
               <option value="">All Branches</option>
               {branches?.map((b) => (
@@ -173,7 +180,7 @@ export function AllIncidentsPage() {
                 setStatus(e.target.value);
                 setPage(1);
               }}
-              className="h-10 px-3 text-xs font-medium rounded-lg border border-slate-200 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="h-10 px-3 text-xs font-medium rounded-lg border border-slate-200 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-900"
             >
               <option value="">All Statuses</option>
               <option value="OPEN">Open (Review Required)</option>
@@ -191,7 +198,7 @@ export function AllIncidentsPage() {
                 setPriority(e.target.value);
                 setPage(1);
               }}
-              className="h-10 px-3 text-xs font-medium rounded-lg border border-slate-200 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="h-10 px-3 text-xs font-medium rounded-lg border border-slate-200 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-900"
             >
               <option value="">All Priorities</option>
               <option value="CRITICAL">Critical</option>
@@ -204,7 +211,7 @@ export function AllIncidentsPage() {
       </div>
 
       {/* Incidents Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-lg border border-slate-200/80 shadow-subtle overflow-hidden">
         {isLoading ? (
           <div className="p-10 text-center text-slate-400 text-sm">Loading all incidents...</div>
         ) : incidents.length === 0 ? (
@@ -217,27 +224,27 @@ export function AllIncidentsPage() {
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-50 text-slate-600 text-xs uppercase font-semibold border-b border-slate-200">
                 <tr>
-                  <th className="px-5 py-3">Incident #</th>
-                  <th className="px-5 py-3">Branch</th>
-                  <th className="px-5 py-3">Division & Category</th>
-                  <th className="px-5 py-3">Problem Title</th>
-                  <th className="px-5 py-3">Priority</th>
-                  <th className="px-5 py-3">Status</th>
-                  <th className="px-5 py-3">Technician</th>
-                  <th className="px-5 py-3">SLA</th>
-                  <th className="px-5 py-3 text-right">Actions</th>
+                  <th className="px-4 py-2.5">Incident #</th>
+                  <th className="px-4 py-2.5">Branch</th>
+                  <th className="px-4 py-2.5">Division & Category</th>
+                  <th className="px-4 py-2.5">Problem Title</th>
+                  <th className="px-4 py-2.5">Priority</th>
+                  <th className="px-4 py-2.5">Status</th>
+                  <th className="px-4 py-2.5">Technician</th>
+                  <th className="px-4 py-2.5">SLA</th>
+                  <th className="px-4 py-2.5 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {incidents.map((inc) => (
                   <tr key={inc.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="px-5 py-4 font-bold text-xs text-blue-600">
+                    <td className="px-4 py-3 font-mono font-semibold text-xs text-slate-900">
                       {inc.incidentNumber}
                     </td>
-                    <td className="px-5 py-4 text-xs font-semibold text-slate-800">
+                    <td className="px-4 py-3 text-xs font-semibold text-slate-800">
                       {inc.branch?.name}
                     </td>
-                    <td className="px-5 py-4 text-xs">
+                    <td className="px-4 py-3 text-xs">
                       <DivisionBadge
                         code={inc.category.division?.code}
                         name={inc.category.division?.name}
@@ -246,17 +253,17 @@ export function AllIncidentsPage() {
                         {inc.category.name}
                       </span>
                     </td>
-                    <td className="px-5 py-4 max-w-xs">
+                    <td className="px-4 py-3 max-w-xs">
                       <p className="font-semibold text-slate-800 line-clamp-1">{inc.title}</p>
                       <p className="text-[11px] text-slate-400">{formatDateTime(inc.createdAt)}</p>
                     </td>
-                    <td className="px-5 py-4">
+                    <td className="px-4 py-3">
                       <PriorityBadge priority={inc.priority} />
                     </td>
-                    <td className="px-5 py-4">
+                    <td className="px-4 py-3">
                       <StatusBadge status={inc.status} />
                     </td>
-                    <td className="px-5 py-4 text-xs">
+                    <td className="px-4 py-3 text-xs">
                       {inc.assignedTechnician ? (
                         <span className="font-medium text-slate-800">{inc.assignedTechnician.name}</span>
                       ) : (
@@ -271,10 +278,10 @@ export function AllIncidentsPage() {
                         </button>
                       )}
                     </td>
-                    <td className="px-5 py-4">
+                    <td className="px-4 py-3">
                       <SlaBadge deadline={inc.slaDeadline} breached={inc.slaBreached} />
                     </td>
-                    <td className="px-5 py-4 text-right">
+                    <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => {
@@ -340,7 +347,7 @@ export function AllIncidentsPage() {
       {/* Assign Technician Modal */}
       {assignModalIncident && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+          <div className="bg-white rounded-lg max-w-md w-full p-5 space-y-4 shadow-xl border border-slate-200/90">
             <div className="flex items-center gap-2 pb-2 border-b border-slate-100">
               <UserCheck className="w-5 h-5 text-blue-600" />
               <div>
@@ -360,7 +367,7 @@ export function AllIncidentsPage() {
               <select
                 value={selectedTechId}
                 onChange={(e) => setSelectedTechId(e.target.value)}
-                className="w-full h-11 px-3 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full h-11 px-3 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-1 focus:ring-slate-900"
                 required
               >
                 <option value="">-- Choose Technician --</option>
@@ -381,7 +388,7 @@ export function AllIncidentsPage() {
                 placeholder="e.g. Please check the switch cable connection first."
                 value={assignNotes}
                 onChange={(e) => setAssignNotes(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full h-10 px-3 rounded-lg border border-slate-300 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900"
               />
             </div>
 
@@ -398,7 +405,7 @@ export function AllIncidentsPage() {
                   assignMutation.mutate();
                 }}
                 loading={assignMutation.isPending}
-                className="bg-blue-600 text-white font-semibold"
+                className="bg-brand-900 hover:bg-brand-800 text-white font-semibold text-xs shadow-subtle"
               >
                 Confirm Assignment
               </Button>
@@ -410,7 +417,7 @@ export function AllIncidentsPage() {
       {/* Review / Change Priority Modal */}
       {reviewModalIncident && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+          <div className="bg-white rounded-lg max-w-md w-full p-5 space-y-4 shadow-xl border border-slate-200/90">
             <div className="flex items-center gap-2 pb-2 border-b border-slate-100">
               <Edit3 className="w-5 h-5 text-blue-600" />
               <div>
@@ -430,12 +437,12 @@ export function AllIncidentsPage() {
               <select
                 value={newPriority}
                 onChange={(e) => setNewPriority(e.target.value as Priority)}
-                className="w-full h-11 px-3 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full h-11 px-3 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-1 focus:ring-slate-900"
               >
-                <option value="CRITICAL">🔴 Critical (1 Hour SLA - Major service disruption)</option>
-                <option value="HIGH">🟠 High (4 Hours SLA - Important service affected)</option>
-                <option value="MEDIUM">🟡 Medium (1 Business Day - Limited impact)</option>
-                <option value="LOW">🟢 Low (3 Business Days - Non-urgent request)</option>
+                <option value="CRITICAL">Critical (1 Hour SLA — Major service disruption)</option>
+                <option value="HIGH">High (4 Hours SLA — Important service affected)</option>
+                <option value="MEDIUM">Medium (1 Business Day — Limited impact)</option>
+                <option value="LOW">Low (3 Business Days — Non-urgent request)</option>
               </select>
             </div>
 
@@ -448,7 +455,7 @@ export function AllIncidentsPage() {
                 placeholder="e.g. Upgraded to Critical due to entire branch ATM unavailability."
                 value={reviewNotes}
                 onChange={(e) => setReviewNotes(e.target.value)}
-                className="w-full h-10 px-3 rounded-lg border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full h-10 px-3 rounded-lg border border-slate-300 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900"
               />
             </div>
 
@@ -459,7 +466,7 @@ export function AllIncidentsPage() {
               <Button
                 onClick={() => reviewMutation.mutate()}
                 loading={reviewMutation.isPending}
-                className="bg-blue-600 text-white font-semibold"
+                className="bg-brand-900 hover:bg-brand-800 text-white font-semibold text-xs shadow-subtle"
               >
                 Save Review
               </Button>

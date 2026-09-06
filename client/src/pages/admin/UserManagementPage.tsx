@@ -175,7 +175,7 @@ export function UserManagementPage() {
             Manage branch personnel, IT technicians, supervisors, and administrative credentials.
           </p>
         </div>
-        <Button icon={<Plus className="w-4 h-4" />} onClick={openCreate} className="bg-blue-600 hover:bg-blue-700 text-white">
+        <Button icon={<Plus className="w-4 h-4" />} onClick={openCreate} className="bg-brand-900 hover:bg-brand-800 text-white">
           Add New User
         </Button>
       </div>
@@ -212,7 +212,7 @@ export function UserManagementPage() {
       ) : users.length === 0 ? (
         <EmptyState title="No users found" description="Try adjusting your search or role filters." />
       ) : (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-lg border border-slate-200/80 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead className="bg-gray-50/75 border-b border-gray-100 text-gray-500 text-xs uppercase font-semibold">
@@ -235,7 +235,7 @@ export function UserManagementPage() {
                     <td className="px-5 py-3.5">
                       <span
                         className={cn(
-                          'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border',
+                          'inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border',
                           ROLE_COLORS[user.role]
                         )}
                       >
@@ -438,7 +438,7 @@ export function UserManagementPage() {
             <Button
               type="submit"
               isLoading={createMutation.isPending || updateMutation.isPending}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-brand-900 hover:bg-brand-800 text-white"
             >
               {editingUser ? 'Save Changes' : 'Create User'}
             </Button>

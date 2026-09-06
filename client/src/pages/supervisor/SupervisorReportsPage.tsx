@@ -29,32 +29,39 @@ export function SupervisorReportsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">ITSM Operational Analytics & Reports</h1>
-        <p className="text-xs text-slate-500 mt-1">
-          Branch incident patterns, technical division performance, and technician resolution metrics
-        </p>
+      <div className="bg-white border border-slate-200/80 rounded-lg p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-subtle">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Analytics & Governance</span>
+            <span className="text-slate-300">•</span>
+            <span className="text-[11px] font-medium text-slate-500">Tier-2 Performance Telemetry</span>
+          </div>
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight mt-1">Operational Analytics & Reports</h1>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Regional branch incident volume, division workload distribution, and technician turnaround telemetry.
+          </p>
+        </div>
       </div>
 
       {/* Summary Highlights */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <div className="bg-white p-4 rounded-lg border border-slate-200/80 shadow-subtle">
           <span className="text-xs font-semibold text-slate-500 uppercase">Total Incidents Recorded</span>
-          <p className="text-3xl font-extrabold text-blue-900 mt-2">{totalIncidents}</p>
+          <p className="text-2xl font-bold font-mono text-slate-900 mt-2">{totalIncidents}</p>
           <p className="text-xs text-slate-400 mt-1">Across 8 bank branches</p>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <div className="bg-white p-4 rounded-lg border border-slate-200/80 shadow-subtle">
           <span className="text-xs font-semibold text-slate-500 uppercase">Average Resolution Time</span>
-          <p className="text-3xl font-extrabold text-emerald-700 mt-2">
+          <p className="text-2xl font-bold font-mono text-slate-900 mt-2">
             {avgResolutionHours > 0 ? `${avgResolutionHours}h` : 'N/A'}
           </p>
           <p className="text-xs text-emerald-600 mt-1">From assignment to fix verification</p>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <div className="bg-white p-4 rounded-lg border border-slate-200/80 shadow-subtle">
           <span className="text-xs font-semibold text-slate-500 uppercase">Active Technical Specialists</span>
-          <p className="text-3xl font-extrabold text-indigo-700 mt-2">{technicianPerformance.length}</p>
+          <p className="text-2xl font-bold font-mono text-slate-900 mt-2">{technicianPerformance.length}</p>
           <p className="text-xs text-indigo-600 mt-1">ATM, App, Network, Maintenance</p>
         </div>
       </div>
@@ -62,7 +69,7 @@ export function SupervisorReportsPage() {
       {/* Division Breakdown & Priority Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Division Breakdown */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+        <div className="bg-white p-6 rounded-lg border border-slate-200/80 shadow-subtle space-y-4">
           <div className="flex items-center gap-2">
             <Layers className="w-5 h-5 text-blue-600" />
             <h3 className="text-base font-bold text-slate-900">Incidents by Technical IT Division</h3>
@@ -78,9 +85,9 @@ export function SupervisorReportsPage() {
                       {div.totalIncidents} ({percent}%)
                     </span>
                   </div>
-                  <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-slate-100 rounded overflow-hidden">
                     <div
-                      className="h-full bg-blue-600 rounded-full transition-all"
+                      className="h-full bg-slate-700 rounded transition-all"
                       style={{ width: `${percent}%` }}
                     />
                   </div>
@@ -91,33 +98,33 @@ export function SupervisorReportsPage() {
         </div>
 
         {/* Priority Breakdown */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+        <div className="bg-white p-6 rounded-lg border border-slate-200/80 shadow-subtle space-y-4">
           <div className="flex items-center gap-2">
             <BarChart3 className="w-5 h-5 text-blue-600" />
             <h3 className="text-base font-bold text-slate-900">Incidents by Urgency & Priority</h3>
           </div>
           <div className="grid grid-cols-2 gap-3 pt-2">
-            <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl">
+            <div className="p-3 bg-rose-50/40 border border-rose-200/70 rounded-md">
               <span className="text-xs font-bold text-red-700 block">CRITICAL</span>
-              <p className="text-2xl font-extrabold text-red-900 mt-1">{byPriority.CRITICAL}</p>
+              <p className="text-xl font-bold font-mono text-red-900 mt-1">{byPriority.CRITICAL}</p>
               <span className="text-[10px] text-red-600">Major bank disruption (1h SLA)</span>
             </div>
 
-            <div className="p-3.5 bg-orange-50 border border-orange-200 rounded-xl">
+            <div className="p-3 bg-amber-50/40 border border-amber-200/70 rounded-md">
               <span className="text-xs font-bold text-orange-700 block">HIGH</span>
-              <p className="text-2xl font-extrabold text-orange-900 mt-1">{byPriority.HIGH}</p>
+              <p className="text-xl font-bold font-mono text-orange-900 mt-1">{byPriority.HIGH}</p>
               <span className="text-[10px] text-orange-600">Important service affected (4h SLA)</span>
             </div>
 
-            <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-xl">
+            <div className="p-3 bg-amber-50/20 border border-amber-200/60 rounded-md">
               <span className="text-xs font-bold text-amber-700 block">MEDIUM</span>
-              <p className="text-2xl font-extrabold text-amber-900 mt-1">{byPriority.MEDIUM}</p>
+              <p className="text-xl font-bold font-mono text-amber-900 mt-1">{byPriority.MEDIUM}</p>
               <span className="text-[10px] text-amber-600">Limited impact (24h SLA)</span>
             </div>
 
-            <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl">
+            <div className="p-3 bg-emerald-50/30 border border-emerald-200/60 rounded-md">
               <span className="text-xs font-bold text-emerald-700 block">LOW</span>
-              <p className="text-2xl font-extrabold text-emerald-900 mt-1">{byPriority.LOW}</p>
+              <p className="text-xl font-bold font-mono text-emerald-900 mt-1">{byPriority.LOW}</p>
               <span className="text-[10px] text-emerald-600">Minor request (72h SLA)</span>
             </div>
           </div>
@@ -127,7 +134,7 @@ export function SupervisorReportsPage() {
       {/* Incidents by Branch & Most Common Problem Categories */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Incidents by Branch */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+        <div className="bg-white p-6 rounded-lg border border-slate-200/80 shadow-subtle space-y-4">
           <div className="flex items-center gap-2">
             <Building2 className="w-5 h-5 text-blue-600" />
             <h3 className="text-base font-bold text-slate-900">Branch Incident Distribution</h3>
@@ -148,7 +155,7 @@ export function SupervisorReportsPage() {
         </div>
 
         {/* Top Problem Categories */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+        <div className="bg-white p-6 rounded-lg border border-slate-200/80 shadow-subtle space-y-4">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-5 h-5 text-blue-600" />
             <h3 className="text-base font-bold text-slate-900">Most Common IT Incident Categories</h3>
@@ -175,7 +182,7 @@ export function SupervisorReportsPage() {
       </div>
 
       {/* Technician Workload & Performance Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-lg border border-slate-200/80 shadow-subtle overflow-hidden">
         <div className="p-5 border-b border-slate-100 flex items-center gap-2">
           <Wrench className="w-5 h-5 text-blue-600" />
           <div>
@@ -190,46 +197,46 @@ export function SupervisorReportsPage() {
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-50 text-slate-600 text-xs uppercase font-semibold border-b border-slate-200">
               <tr>
-                <th className="px-5 py-3">Technician</th>
-                <th className="px-5 py-3">Division</th>
-                <th className="px-5 py-3 text-center">Total Assigned</th>
-                <th className="px-5 py-3 text-center">Active Load</th>
-                <th className="px-5 py-3 text-center">Resolved</th>
-                <th className="px-5 py-3 text-center">SLA Breached</th>
-                <th className="px-5 py-3 text-right">Avg Resolution</th>
+                <th className="px-4 py-2.5">Technician</th>
+                <th className="px-4 py-2.5">Division</th>
+                <th className="px-4 py-2.5 text-center">Total Assigned</th>
+                <th className="px-4 py-2.5 text-center">Active Load</th>
+                <th className="px-4 py-2.5 text-center">Resolved</th>
+                <th className="px-4 py-2.5 text-center">SLA Breached</th>
+                <th className="px-4 py-2.5 text-right">Avg Resolution</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {technicianPerformance.map((tech: any) => (
                 <tr key={tech.technicianId} className="hover:bg-slate-50/80 transition-colors">
-                  <td className="px-5 py-3.5">
+                  <td className="px-4 py-2.5.5">
                     <span className="font-bold text-xs text-slate-800 block">{tech.name}</span>
                     <span className="text-[11px] text-slate-400">{tech.email}</span>
                   </td>
-                  <td className="px-5 py-3.5 text-xs font-medium text-slate-600">
+                  <td className="px-4 py-2.5.5 text-xs font-medium text-slate-600">
                     {tech.division}
                   </td>
-                  <td className="px-5 py-3.5 text-center font-bold text-xs text-slate-800">
+                  <td className="px-4 py-2.5.5 text-center font-bold text-xs text-slate-800">
                     {tech.totalAssigned}
                   </td>
-                  <td className="px-5 py-3.5 text-center">
-                    <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200">
+                  <td className="px-4 py-2.5.5 text-center">
+                    <span className="px-2 py-0.5 rounded px-2 py-0.5 text-[11px] font-mono font-medium bg-amber-50 text-amber-800 border border-amber-200">
                       {tech.active}
                     </span>
                   </td>
-                  <td className="px-5 py-3.5 text-center">
-                    <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                  <td className="px-4 py-2.5.5 text-center">
+                    <span className="px-2 py-0.5 rounded px-2 py-0.5 text-[11px] font-mono font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
                       {tech.resolved}
                     </span>
                   </td>
-                  <td className="px-5 py-3.5 text-center font-bold text-xs">
+                  <td className="px-4 py-2.5.5 text-center font-bold text-xs">
                     {tech.breached > 0 ? (
                       <span className="text-red-600">{tech.breached}</span>
                     ) : (
                       <span className="text-slate-400">0</span>
                     )}
                   </td>
-                  <td className="px-5 py-3.5 text-right font-semibold text-xs text-blue-700">
+                  <td className="px-4 py-2.5.5 text-right font-semibold text-xs text-blue-700">
                     {tech.avgResolutionHours > 0 ? `${tech.avgResolutionHours} hours` : '—'}
                   </td>
                 </tr>

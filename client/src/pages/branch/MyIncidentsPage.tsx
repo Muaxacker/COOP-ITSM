@@ -33,24 +33,29 @@ export function MyIncidentsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="bg-white border border-slate-200/80 rounded-lg p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-subtle">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Branch Incidents & Requests</h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Track, review, and confirm resolution of IT problems submitted from your branch
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Branch Dispatch</span>
+            <span className="text-slate-300">•</span>
+            <span className="text-[11px] font-medium text-slate-500">Service Request Directory</span>
+          </div>
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight mt-1">Branch Incidents & Requests</h1>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Track active tickets, review troubleshooting updates, and verify resolution closures.
           </p>
         </div>
         <Link
           to="/incidents/new"
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 font-semibold text-white text-sm shadow-sm transition-colors self-start"
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-md bg-brand-900 hover:bg-brand-800 font-semibold text-white text-xs shadow-subtle transition-colors self-start sm:self-auto"
         >
-          <PlusCircle className="w-4 h-4" />
+          <PlusCircle className="w-3.5 h-3.5" />
           Report New Incident
         </Link>
       </div>
 
       {/* Filters Bar */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-3">
+      <div className="bg-white p-4 rounded-lg border border-slate-200/80 shadow-subtle flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
           <input
@@ -61,7 +66,7 @@ export function MyIncidentsPage() {
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="w-full h-10 pl-9 pr-3 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50/50"
+            className="w-full h-10 pl-9 pr-3 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-slate-900 bg-slate-50/50"
           />
         </div>
 
@@ -72,7 +77,7 @@ export function MyIncidentsPage() {
               setStatus(e.target.value);
               setPage(1);
             }}
-            className="h-10 px-3 text-xs font-medium rounded-lg border border-slate-200 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="h-10 px-3 text-xs font-medium rounded-lg border border-slate-200 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-900"
           >
             <option value="">All Statuses</option>
             <option value="OPEN">Open (Under Review)</option>
@@ -90,7 +95,7 @@ export function MyIncidentsPage() {
               setPriority(e.target.value);
               setPage(1);
             }}
-            className="h-10 px-3 text-xs font-medium rounded-lg border border-slate-200 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="h-10 px-3 text-xs font-medium rounded-lg border border-slate-200 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-900"
           >
             <option value="">All Priorities</option>
             <option value="CRITICAL">Critical</option>
@@ -102,7 +107,7 @@ export function MyIncidentsPage() {
       </div>
 
       {/* Incidents Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-lg border border-slate-200/80 shadow-subtle overflow-hidden">
         {isLoading ? (
           <div className="p-10 text-center text-slate-400 text-sm">Loading branch incidents...</div>
         ) : incidents.length === 0 ? (
@@ -116,52 +121,52 @@ export function MyIncidentsPage() {
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-50 text-slate-600 text-xs uppercase font-semibold border-b border-slate-200">
                 <tr>
-                  <th className="px-5 py-3">Incident #</th>
-                  <th className="px-5 py-3">Title & Reported Date</th>
-                  <th className="px-5 py-3">Division & Category</th>
-                  <th className="px-5 py-3">Priority</th>
-                  <th className="px-5 py-3">Status</th>
-                  <th className="px-5 py-3">Assigned Technician</th>
-                  <th className="px-5 py-3">SLA Status</th>
-                  <th className="px-5 py-3 text-right">Action</th>
+                  <th className="px-4 py-2.5">Incident #</th>
+                  <th className="px-4 py-2.5">Title & Reported Date</th>
+                  <th className="px-4 py-2.5">Division & Category</th>
+                  <th className="px-4 py-2.5">Priority</th>
+                  <th className="px-4 py-2.5">Status</th>
+                  <th className="px-4 py-2.5">Assigned Technician</th>
+                  <th className="px-4 py-2.5">SLA Status</th>
+                  <th className="px-4 py-2.5 text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {incidents.map((inc) => (
                   <tr key={inc.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="px-5 py-4 font-bold text-xs text-blue-600">
+                    <td className="px-4 py-3 font-mono font-semibold text-xs text-slate-900">
                       {inc.incidentNumber}
                     </td>
-                    <td className="px-5 py-4">
+                    <td className="px-4 py-3">
                       <p className="font-semibold text-slate-800 line-clamp-1">{inc.title}</p>
                       <p className="text-xs text-slate-400 mt-0.5">{formatDateTime(inc.createdAt)}</p>
                     </td>
-                    <td className="px-5 py-4 text-xs">
+                    <td className="px-4 py-3 text-xs">
                       <span className="font-semibold text-slate-700 block">{inc.category.name}</span>
                       {inc.category.division && (
                         <span className="text-[11px] text-slate-500">{inc.category.division.name}</span>
                       )}
                     </td>
-                    <td className="px-5 py-4">
+                    <td className="px-4 py-3">
                       <PriorityBadge priority={inc.priority} />
                     </td>
-                    <td className="px-5 py-4">
+                    <td className="px-4 py-3">
                       <StatusBadge status={inc.status} />
                     </td>
-                    <td className="px-5 py-4 text-xs">
+                    <td className="px-4 py-3 text-xs">
                       {inc.assignedTechnician ? (
                         <span className="font-medium text-slate-800">{inc.assignedTechnician.name}</span>
                       ) : (
                         <span className="text-slate-400 italic">Unassigned</span>
                       )}
                     </td>
-                    <td className="px-5 py-4">
+                    <td className="px-4 py-3">
                       <SlaBadge deadline={inc.slaDeadline} breached={inc.slaBreached} />
                     </td>
-                    <td className="px-5 py-4 text-right">
+                    <td className="px-4 py-3 text-right">
                       <Link
                         to={`/incidents/${inc.id}`}
-                        className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg transition-colors"
+                        className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 text-slate-700 bg-white border border-slate-200 rounded hover:bg-slate-50 transition-colors"
                       >
                         Details <ArrowRight className="w-3 h-3" />
                       </Link>

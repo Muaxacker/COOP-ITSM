@@ -205,7 +205,7 @@ export function BranchIncidentDetailsPage() {
               size="sm"
               icon={<UserCheck className="w-4 h-4" />}
               onClick={() => setAssignModalOpen(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+              className="bg-brand-900 hover:bg-brand-800 text-white shadow-subtle font-semibold"
             >
               {incident.assignedTechnician ? "Reassign Technician" : "Assign Technician"}
             </Button>
@@ -215,15 +215,15 @@ export function BranchIncidentDetailsPage() {
 
       {/* Verification Banner (If RESOLVED) */}
       {incident.status === "RESOLVED" && (
-        <div className="bg-gradient-to-r from-teal-500 to-emerald-600 rounded-2xl p-5 text-white shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="bg-emerald-50/70 border border-emerald-200/90 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-subtle">
           <div className="flex items-start gap-3">
-            <div className="p-2 bg-white/20 rounded-xl">
-              <CheckCircle2 className="w-6 h-6 text-white" />
+            <div className="p-2 bg-emerald-100/80 rounded border border-emerald-200 text-emerald-800">
+              <CheckCircle2 className="w-5 h-5 text-emerald-700" />
             </div>
             <div>
-              <h3 className="font-bold text-base">Technician Marked Issue as Resolved</h3>
-              <p className="text-xs text-teal-100 mt-0.5 max-w-xl">
-                Please verify if the problem has been solved on your branch hardware or banking application.
+              <h3 className="font-semibold text-sm text-emerald-950">Technician Marked Issue as Resolved</h3>
+              <p className="text-xs text-emerald-800 mt-0.5 max-w-xl">
+                Please verify if the operational problem has been solved on your branch hardware or banking application.
               </p>
             </div>
           </div>
@@ -232,7 +232,7 @@ export function BranchIncidentDetailsPage() {
               setIsResolvedChoice(true);
               setVerifyModalOpen(true);
             }}
-            className="bg-white text-teal-800 hover:bg-teal-50 font-bold px-5 py-2.5 shadow-md flex-shrink-0"
+            className="bg-emerald-800 hover:bg-emerald-900 text-white font-semibold text-xs px-4 py-2 shadow-subtle flex-shrink-0"
           >
             Verify Resolution
           </Button>
@@ -240,7 +240,7 @@ export function BranchIncidentDetailsPage() {
       )}
 
       {/* Incident Header Card */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+      <div className="bg-white rounded-lg border border-slate-200/80 p-5 shadow-subtle space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-100">
           <div>
             <div className="flex items-center gap-2">
@@ -312,7 +312,7 @@ export function BranchIncidentDetailsPage() {
         </div>
 
         {/* Problem Description Box */}
-        <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 text-xs">
+        <div className="bg-slate-50/60 rounded-md p-3.5 border border-slate-200/70 text-xs">
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
             Problem Description
           </span>
@@ -321,7 +321,7 @@ export function BranchIncidentDetailsPage() {
 
         {/* Resolution Box (if recorded) */}
         {(incident.rootCause || incident.resolution) && (
-          <div className="bg-emerald-50/60 rounded-xl p-4 border border-emerald-200 text-xs space-y-2">
+          <div className="bg-emerald-50/40 rounded-md p-3.5 border border-emerald-200/80 text-xs space-y-2">
             <span className="text-[11px] font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
               Recorded Resolution & Root Cause
@@ -347,7 +347,7 @@ export function BranchIncidentDetailsPage() {
 
       {/* More Info Request Banner */}
       {incident.status === "WAITING_FOR_INFO" && (
-        <div className="bg-amber-50 rounded-2xl p-5 border border-amber-200 shadow-sm space-y-3">
+        <div className="bg-amber-50/60 rounded-lg p-4 border border-amber-200/80 shadow-subtle space-y-3">
           <div className="flex items-start gap-3">
             <HelpCircle className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
             <div>
@@ -385,7 +385,7 @@ export function BranchIncidentDetailsPage() {
       )}
 
       {/* Timeline & Conversation History */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+      <div className="bg-white rounded-lg border border-slate-200/80 p-5 shadow-subtle space-y-4">
         <h3 className="text-sm font-bold text-slate-800">Incident Timeline & Audit History</h3>
 
         <div className="space-y-3">
@@ -395,7 +395,7 @@ export function BranchIncidentDetailsPage() {
             (incident.updates || []).map((update) => (
               <div
                 key={update.id}
-                className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/50 flex items-start gap-3"
+                className="p-3 rounded-md border border-slate-200/70 bg-slate-50/40 flex items-start gap-3"
               >
                 <div className="w-7 h-7 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs flex-shrink-0">
                   {update.user?.name?.charAt(0) || "U"}
@@ -446,7 +446,7 @@ export function BranchIncidentDetailsPage() {
       {/* Assign Technician Modal (For Supervisor / Admin) */}
       {assignModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+          <div className="bg-white rounded-lg max-w-md w-full p-5 space-y-4 shadow-xl border border-slate-200/90">
             <div className="flex items-center gap-2 pb-2 border-b border-slate-100">
               <UserCheck className="w-5 h-5 text-blue-600" />
               <div>
@@ -504,7 +504,7 @@ export function BranchIncidentDetailsPage() {
                   assignMutation.mutate();
                 }}
                 loading={assignMutation.isPending}
-                className="bg-blue-600 text-white font-semibold"
+                className="bg-brand-900 hover:bg-brand-800 text-white font-semibold shadow-subtle"
               >
                 Confirm Assignment
               </Button>
@@ -516,7 +516,7 @@ export function BranchIncidentDetailsPage() {
       {/* Review Priority Modal (For Supervisor / Admin) */}
       {reviewModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+          <div className="bg-white rounded-lg max-w-md w-full p-5 space-y-4 shadow-xl border border-slate-200/90">
             <div className="flex items-center gap-2 pb-2 border-b border-slate-100">
               <Edit3 className="w-5 h-5 text-blue-600" />
               <div>
@@ -538,10 +538,10 @@ export function BranchIncidentDetailsPage() {
                 onChange={(e) => setNewPriority(e.target.value as Priority)}
                 className="w-full h-11 px-3 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="CRITICAL">🔴 Critical (1 Hour SLA - Major service disruption)</option>
-                <option value="HIGH">🟠 High (4 Hours SLA - Important service affected)</option>
-                <option value="MEDIUM">🟡 Medium (1 Business Day - Limited impact)</option>
-                <option value="LOW">🟢 Low (3 Business Days - Non-urgent request)</option>
+                <option value="CRITICAL">Critical (1 Hour SLA — Major service disruption)</option>
+                <option value="HIGH">High (4 Hours SLA — Important service affected)</option>
+                <option value="MEDIUM">Medium (1 Business Day — Limited impact)</option>
+                <option value="LOW">Low (3 Business Days — Non-urgent request)</option>
               </select>
             </div>
 
@@ -565,7 +565,7 @@ export function BranchIncidentDetailsPage() {
               <Button
                 onClick={() => reviewMutation.mutate()}
                 loading={reviewMutation.isPending}
-                className="bg-blue-600 text-white font-semibold"
+                className="bg-brand-900 hover:bg-brand-800 text-white font-semibold shadow-subtle"
               >
                 Save Priority
               </Button>
@@ -577,7 +577,7 @@ export function BranchIncidentDetailsPage() {
       {/* Resolution Verification Modal (For Branch User) */}
       {verifyModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+          <div className="bg-white rounded-lg max-w-md w-full p-5 space-y-4 shadow-xl border border-slate-200/90">
             <div>
               <h3 className="text-base font-bold text-slate-900">Verify Resolution</h3>
               <p className="text-xs text-slate-500 mt-0.5">
@@ -589,7 +589,7 @@ export function BranchIncidentDetailsPage() {
               <button
                 type="button"
                 onClick={() => setIsResolvedChoice(true)}
-                className={`p-3 rounded-xl border text-center transition-all ${
+                className={`p-3 rounded-md border text-center transition-all ${
                   isResolvedChoice === true
                     ? "border-emerald-500 bg-emerald-50 text-emerald-800 font-bold ring-2 ring-emerald-400/30"
                     : "border-slate-200 text-slate-700 hover:bg-slate-50"
@@ -602,7 +602,7 @@ export function BranchIncidentDetailsPage() {
               <button
                 type="button"
                 onClick={() => setIsResolvedChoice(false)}
-                className={`p-3 rounded-xl border text-center transition-all ${
+                className={`p-3 rounded-md border text-center transition-all ${
                   isResolvedChoice === false
                     ? "border-rose-500 bg-rose-50 text-rose-800 font-bold ring-2 ring-rose-400/30"
                     : "border-slate-200 text-slate-700 hover:bg-slate-50"

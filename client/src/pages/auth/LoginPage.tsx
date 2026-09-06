@@ -37,53 +37,51 @@ export function LoginPage() {
   }
 
   const demoAccounts = [
-    { role: 'Branch User', name: 'Hawassa Branch Teller', email: 'teller.hawassa@coopbank.et', badge: 'bg-emerald-100 text-emerald-800' },
-    { role: 'IT Supervisor', name: 'IT Support Supervisor', email: 'supervisor@coopbank.et', badge: 'bg-purple-100 text-purple-800' },
-    { role: 'Technician', name: 'Networking Specialist', email: 'tech.network@coopbank.et', badge: 'bg-blue-100 text-blue-800' },
-    { role: 'Technician', name: 'ATM Field Engineer', email: 'tech.atm@coopbank.et', badge: 'bg-cyan-100 text-cyan-800' },
-    { role: 'Technician', name: 'Application Analyst', email: 'tech.app@coopbank.et', badge: 'bg-indigo-100 text-indigo-800' },
-    { role: 'Administrator', name: 'System Administrator', email: 'admin@coopbank.et', badge: 'bg-slate-100 text-slate-800' },
+    { role: 'Branch User', name: 'Hawassa Branch Staff', email: 'teller.hawassa@coopbank.et', division: 'Hawassa (BR001)' },
+    { role: 'IT Supervisor', name: 'IT Support Supervisor', email: 'supervisor@coopbank.et', division: 'Central Operations' },
+    { role: 'Technician', name: 'Network Specialist', email: 'tech.network@coopbank.et', division: 'Networking Division' },
+    { role: 'Technician', name: 'ATM Field Engineer', email: 'tech.atm@coopbank.et', division: 'ATM Support Division' },
+    { role: 'Technician', name: 'Application Analyst', email: 'tech.app@coopbank.et', division: 'Application Division' },
+    { role: 'Administrator', name: 'System Administrator', email: 'admin@coopbank.et', division: 'HQ IT Directorate' },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-[#0b2545] to-slate-900 flex items-center justify-center p-4">
-      <div className="w-full max-w-xl">
-        {/* Logo & Header */}
+    <div className="min-h-screen bg-[#0A101D] flex items-center justify-center p-4">
+      <div className="w-full max-w-lg">
+        {/* Brand Header */}
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-3 shadow-lg shadow-blue-500/30 border border-blue-400/30">
-            <Server className="w-8 h-8 text-white" />
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-slate-800/90 rounded-md mb-3 border border-slate-700 shadow-subtle text-slate-100">
+            <Server className="w-6 h-6 text-slate-200" />
           </div>
-          <div className="flex items-center justify-center gap-2">
-            <h1 className="text-3xl font-extrabold text-white tracking-tight">COOP-ITSM</h1>
-          </div>
-          <p className="text-base text-blue-200/90 font-medium mt-1">Cooperative Bank of Oromia</p>
-          <p className="text-xs text-blue-300/60 mt-0.5">
-            IT Service Request & Incident Management System
+          <h1 className="text-xl font-semibold text-white tracking-tight">COOP-ITSM</h1>
+          <p className="text-xs text-slate-300 font-medium mt-0.5">Cooperative Bank of Oromia</p>
+          <p className="text-[11px] text-slate-500 mt-0.5">
+            IT Service Request & Incident Management Portal
           </p>
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl p-6 sm:p-8">
+        <div className="bg-white rounded-lg border border-slate-200/90 shadow-modal p-6 sm:p-7">
           <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-100">
             <div>
-              <h2 className="text-lg font-bold text-slate-900">Sign In to Service Portal</h2>
-              <p className="text-xs text-slate-500 mt-0.5">Centralized IT Support for Bank Branches</p>
+              <h2 className="text-sm font-semibold text-slate-900 tracking-tight">Enterprise Authentication</h2>
+              <p className="text-[11px] text-slate-500 mt-0.5">Authorized bank staff and IT personnel only</p>
             </div>
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              Bank Intranet
+            <div className="flex items-center gap-1.5 text-[11px] font-medium text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200/70">
+              <ShieldCheck className="w-3 h-3 text-emerald-700" />
+              Secure Network
             </div>
           </div>
 
           {error && (
-            <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-xs font-medium text-red-700">
+            <div className="mb-4 px-3 py-2 bg-rose-50 border border-rose-200 rounded text-xs font-medium text-rose-800">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3.5">
             <Input
-              label="Bank Email Address"
+              label="Corporate Email Address"
               type="email"
               placeholder="user@coopbank.et"
               value={email}
@@ -92,7 +90,7 @@ export function LoginPage() {
               autoComplete="email"
             />
             <Input
-              label="Password"
+              label="Account Password"
               type={showPassword ? 'text' : 'password'}
               placeholder="••••••••••••"
               value={password}
@@ -106,49 +104,51 @@ export function LoginPage() {
                   aria-label="Toggle password"
                   className="text-slate-400 hover:text-slate-600"
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                 </button>
               }
             />
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white shadow-md" size="lg" loading={loading}>
-              Sign In to ITSM
-            </Button>
+            <div className="pt-1">
+              <Button type="submit" className="w-full" size="md" loading={loading}>
+                Sign In to Workstation
+              </Button>
+            </div>
           </form>
 
           {/* Demo Credentials Switcher */}
-          <div className="mt-6 pt-5 border-t border-slate-100">
-            <div className="flex items-center justify-between mb-3">
-              <p className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                Quick Demo Role Switcher
+          <div className="mt-5 pt-4 border-t border-slate-100">
+            <div className="flex items-center justify-between mb-2.5">
+              <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                Authorized Demo Role Selector
               </p>
-              <span className="text-[11px] text-slate-400">Click to fill credentials</span>
+              <span className="text-[10px] text-slate-400 font-mono">Click to prefill</span>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
               {demoAccounts.map((item) => (
                 <button
                   key={item.email}
                   type="button"
                   onClick={() => fillDemo(item.email)}
-                  className="text-left p-2.5 rounded-lg border border-slate-200 hover:border-blue-400 hover:bg-blue-50/50 transition-all flex items-center justify-between group"
+                  className="text-left p-2 rounded border border-slate-200 hover:border-slate-400 hover:bg-slate-50/80 transition-colors flex items-center justify-between group"
                 >
                   <div className="min-w-0 pr-1">
                     <div className="flex items-center gap-1.5">
-                      <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded ${item.badge}`}>
+                      <span className="text-[10px] font-mono font-medium px-1 py-0.2 rounded bg-slate-100 text-slate-700 border border-slate-200">
                         {item.role}
                       </span>
                     </div>
-                    <p className="text-xs font-semibold text-slate-800 mt-1 truncate">{item.name}</p>
-                    <p className="text-[11px] text-slate-400 truncate">{item.email}</p>
+                    <p className="text-xs font-medium text-slate-800 mt-1 truncate">{item.name}</p>
+                    <p className="text-[10px] text-slate-400 truncate">{item.division}</p>
                   </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-blue-600 flex-shrink-0" />
+                  <ArrowRight className="w-3 h-3 text-slate-300 group-hover:text-slate-700 flex-shrink-0" />
                 </button>
               ))}
             </div>
           </div>
         </div>
 
-        <p className="text-center text-xs text-blue-200/50 mt-4">
-          Cooperative Bank of Oromia • Academic Internship Project Prototype
+        <p className="text-center text-[11px] text-slate-500 mt-4">
+          Cooperative Bank of Oromia · Centralized IT Incident Operations
         </p>
       </div>
     </div>

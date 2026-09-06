@@ -20,64 +20,66 @@ export function TroubleshootingLogViewer({ logs }: Props) {
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+      <div className="flex items-center justify-between pb-2 border-b border-slate-200/80">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-blue-50 text-blue-700 rounded-md">
-            <Wrench className="w-4 h-4" />
+          <div className="p-1 rounded bg-slate-100 text-slate-700 border border-slate-200">
+            <Wrench className="w-3.5 h-3.5" />
           </div>
-          <h4 className="text-sm font-bold text-slate-800">Technician Troubleshooting Log</h4>
+          <h4 className="text-xs font-semibold text-slate-900 tracking-tight uppercase tracking-wider">
+            Diagnostic & Troubleshooting Audit Trail
+          </h4>
         </div>
-        <span className="text-xs text-slate-500 font-medium">
-          {logs.length} step{logs.length === 1 ? '' : 's'} documented
+        <span className="font-mono text-[11px] text-slate-500 font-medium">
+          {logs.length} record{logs.length === 1 ? '' : 's'}
         </span>
       </div>
 
-      <div className="relative pl-6 space-y-4 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-blue-100">
+      <div className="relative pl-6 space-y-3 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-px before:bg-slate-200">
         {logs.map((log, index) => (
-          <div key={log.id} className="relative group">
-            {/* Timeline bullet */}
-            <div className="absolute -left-6 top-1 w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold shadow-sm ring-4 ring-white">
+          <div key={log.id} className="relative">
+            {/* Step marker */}
+            <div className="absolute -left-6 top-1 w-5 h-5 rounded bg-slate-800 text-slate-200 flex items-center justify-center text-[10px] font-mono font-medium shadow-subtle">
               {index + 1}
             </div>
 
-            <div className="bg-white rounded-lg border border-slate-200 p-3.5 shadow-sm hover:border-blue-300 transition-colors">
-              <div className="flex flex-wrap items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-100">
+            <div className="bg-white rounded-md border border-slate-200/90 p-3 shadow-subtle">
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-2 pb-1.5 border-b border-slate-100">
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold text-xs text-blue-800 bg-blue-50 px-2 py-0.5 rounded">
+                  <span className="font-mono font-medium text-[11px] text-slate-700 bg-slate-100 px-1.5 py-0.2 rounded border border-slate-200">
                     {formatTime(log.createdAt)}
                   </span>
-                  <span className="text-xs text-slate-500 font-medium">
-                    by {log.technician?.name || 'Technician'}
+                  <span className="text-xs text-slate-600 font-medium">
+                    {log.technician?.name || 'Assigned Technician'}
                   </span>
                 </div>
-                <span className="text-[11px] text-slate-400">
+                <span className="text-[11px] text-slate-400 font-mono">
                   {formatDateTime(log.createdAt)}
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 text-xs">
                 {/* Action */}
-                <div className="bg-slate-50 rounded p-2.5">
-                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                <div className="bg-slate-50/80 rounded p-2 border border-slate-100">
+                  <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block mb-1">
                     Action Taken
                   </span>
                   <p className="text-slate-800 font-medium">{log.action}</p>
                 </div>
 
                 {/* Observation */}
-                <div className="bg-amber-50/50 rounded p-2.5 border border-amber-100/50">
-                  <span className="text-[11px] font-bold text-amber-700 uppercase tracking-wider block mb-1 flex items-center gap-1">
-                    <Search className="w-3 h-3" /> Observation
+                <div className="bg-slate-50/80 rounded p-2 border border-slate-100">
+                  <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block mb-1 flex items-center gap-1">
+                    <Search className="w-3 h-3 text-slate-400" /> Observation
                   </span>
-                  <p className="text-slate-800">{log.observation}</p>
+                  <p className="text-slate-700">{log.observation}</p>
                 </div>
 
                 {/* Result */}
-                <div className="bg-emerald-50/50 rounded p-2.5 border border-emerald-100/50">
-                  <span className="text-[11px] font-bold text-emerald-700 uppercase tracking-wider block mb-1 flex items-center gap-1">
-                    <CheckCircle2 className="w-3 h-3" /> Result / Finding
+                <div className="bg-slate-50/80 rounded p-2 border border-slate-100">
+                  <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block mb-1 flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3 text-emerald-600" /> Finding / Result
                   </span>
-                  <p className="text-slate-800 font-medium">{log.result}</p>
+                  <p className="text-slate-900 font-medium">{log.result}</p>
                 </div>
               </div>
             </div>
