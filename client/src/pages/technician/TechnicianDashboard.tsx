@@ -27,21 +27,21 @@ export function TechnicianDashboard() {
       <div className="bg-white border border-slate-200/80 rounded-lg p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-subtle">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Field Operations</span>
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Field Operations</span>
             <span className="text-slate-300">•</span>
-            <span className="text-[11px] font-medium text-slate-600">
+            <span className="text-xs font-semibold text-slate-700">
               {user?.division ? `${user.division.name} Workbench` : 'IT Technician Workbench'}
             </span>
           </div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight mt-1">Technician Incident Console</h1>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight mt-1.5">Technician Incident Console</h1>
+          <p className="text-sm font-medium text-slate-600 mt-0.5">
             Diagnostic logs, active hardware/software remediations, and SLA tracking for {user?.name}.
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Link
             to="/incidents"
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-md bg-brand-900 text-white hover:bg-brand-800 transition-colors shadow-subtle"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-bold rounded-md bg-brand-900 text-white hover:bg-brand-800 transition-colors shadow-subtle"
           >
             All Incidents
             <ArrowRight className="w-3.5 h-3.5" />
@@ -51,7 +51,7 @@ export function TechnicianDashboard() {
 
       {/* SLA Alert Banner if any breached or approaching */}
       {(kpis.breachedSla > 0 || kpis.approachingSla > 0) && (
-        <div className="p-3.5 bg-amber-50/70 border border-amber-200/90 rounded-lg flex items-center justify-between text-xs text-amber-900 shadow-subtle">
+        <div className="p-3.5 bg-amber-50/70 border border-amber-200/90 rounded-lg flex items-center justify-between text-sm text-amber-950 shadow-subtle">
           <div className="flex items-center gap-2.5">
             <ShieldAlert className="w-4 h-4 text-amber-700 flex-shrink-0" />
             <div>
@@ -75,47 +75,47 @@ export function TechnicianDashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3.5">
         <div className="bg-white p-4 rounded-lg border border-slate-200/80 shadow-subtle">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Assigned Tasks</span>
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Assigned Tasks</span>
             <Wrench className="w-4 h-4 text-slate-400" />
           </div>
-          <p className="text-2xl font-bold font-mono text-slate-900 mt-2">{kpis.assignedTotal}</p>
-          <p className="text-[11px] text-slate-400 mt-1">Assigned to your queue</p>
+          <p className="text-3xl font-extrabold font-mono text-slate-900 mt-2">{kpis.assignedTotal}</p>
+          <p className="text-xs text-slate-500 font-medium mt-1">Assigned to your queue</p>
         </div>
 
         <div className="bg-white p-4 rounded-lg border border-slate-200/80 shadow-subtle">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold text-slate-700 uppercase tracking-wider">Active In-Progress</span>
+            <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">Active In-Progress</span>
             <Clock className="w-4 h-4 text-slate-500" />
           </div>
-          <p className="text-2xl font-bold font-mono text-slate-900 mt-2">{kpis.active}</p>
-          <p className="text-[11px] text-amber-700 mt-1 font-medium">Under active diagnosis</p>
+          <p className="text-3xl font-extrabold font-mono text-slate-900 mt-2">{kpis.active}</p>
+          <p className="text-xs text-amber-800 font-bold mt-1">Under active diagnosis</p>
         </div>
 
         <div className="bg-white p-4 rounded-lg border border-slate-200/80 shadow-subtle">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold text-slate-700 uppercase tracking-wider">Resolved</span>
+            <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">Resolved</span>
             <CheckCircle2 className="w-4 h-4 text-slate-500" />
           </div>
-          <p className="text-2xl font-bold font-mono text-slate-900 mt-2">{kpis.resolved}</p>
-          <p className="text-[11px] text-slate-500 mt-1">Completed resolutions</p>
+          <p className="text-3xl font-extrabold font-mono text-slate-900 mt-2">{kpis.resolved}</p>
+          <p className="text-xs text-slate-600 font-medium mt-1">Completed resolutions</p>
         </div>
 
         <div className="bg-white p-4 rounded-lg border border-amber-200/70 bg-amber-50/20 shadow-subtle">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold text-amber-800 uppercase tracking-wider">Due Soon</span>
+            <span className="text-xs font-bold text-amber-900 uppercase tracking-wider">Due Soon</span>
             <AlertTriangle className="w-4 h-4 text-amber-600" />
           </div>
-          <p className="text-2xl font-bold font-mono text-amber-900 mt-2">{kpis.approachingSla}</p>
-          <p className="text-[11px] text-amber-700 mt-1 font-medium">&lt; 2h remaining</p>
+          <p className="text-3xl font-extrabold font-mono text-amber-950 mt-2">{kpis.approachingSla}</p>
+          <p className="text-xs text-amber-800 font-bold mt-1">&lt; 2h remaining</p>
         </div>
 
         <div className="bg-white p-4 rounded-lg border border-rose-200/70 bg-rose-50/20 shadow-subtle">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold text-rose-800 uppercase tracking-wider">Breached SLA</span>
+            <span className="text-xs font-bold text-rose-900 uppercase tracking-wider">Breached SLA</span>
             <AlertTriangle className="w-4 h-4 text-rose-600" />
           </div>
-          <p className="text-2xl font-bold font-mono text-rose-900 mt-2">{kpis.breachedSla}</p>
-          <p className="text-[11px] text-rose-700 mt-1 font-medium">Overdue deadline</p>
+          <p className="text-3xl font-extrabold font-mono text-rose-950 mt-2">{kpis.breachedSla}</p>
+          <p className="text-xs text-rose-800 font-bold mt-1">Overdue deadline</p>
         </div>
       </div>
 
@@ -123,8 +123,8 @@ export function TechnicianDashboard() {
       <div className="bg-white rounded-lg border border-slate-200/80 shadow-subtle overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-200/80 flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-semibold text-slate-900">My Assigned Incident Queue</h3>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <h3 className="text-base font-bold text-slate-900">My Assigned Incident Queue</h3>
+            <p className="text-sm font-medium text-slate-600 mt-0.5">
               Priority-ranked technical incidents awaiting diagnostic steps and resolution.
             </p>
           </div>
@@ -148,8 +148,8 @@ export function TechnicianDashboard() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50/75 text-slate-500 text-[11px] uppercase tracking-wider font-semibold border-b border-slate-200/80">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-slate-50/75 text-slate-700 text-xs uppercase tracking-wider font-bold border-b border-slate-200">
                 <tr>
                   <th className="px-4 py-2.5 font-medium">Incident #</th>
                   <th className="px-4 py-2.5 font-medium">Branch & Location</th>
@@ -164,34 +164,34 @@ export function TechnicianDashboard() {
                 {myIncidents.map((inc: any) => {
                   return (
                     <tr key={inc.id} className="hover:bg-slate-50/70 transition-colors">
-                      <td className="px-4 py-3 font-mono font-semibold text-slate-900">
+                      <td className="px-4 py-3.5.5 font-mono font-bold text-sm text-slate-900">
                         <Link to={`/incidents/${inc.id}`} className="hover:text-brand-700 hover:underline">
                           {inc.incidentNumber}
                         </Link>
                       </td>
-                      <td className="px-4 py-3 text-slate-700">
+                      <td className="px-4 py-3.5 text-slate-700">
                         <span className="font-medium text-slate-900 block">{inc.branch?.name}</span>
-                        <span className="text-slate-400 text-[11px]">{inc.branch?.location}</span>
+                        <span className="text-slate-500 text-xs font-medium">{inc.branch?.location}</span>
                       </td>
-                      <td className="px-4 py-3 max-w-[280px]">
+                      <td className="px-4 py-3.5.5 max-w-[280px]">
                         <p className="font-medium text-slate-900 truncate">{inc.title}</p>
-                        <p className="text-[11px] text-slate-400 truncate mt-0.5">
+                        <p className="text-xs text-slate-500 truncate mt-0.5">
                           Category: <span className="font-medium text-slate-600">{inc.category?.name}</span>
                         </p>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3.5">
                         <PriorityBadge priority={inc.priority} />
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3.5">
                         <StatusBadge status={inc.status} />
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3.5">
                         <SlaBadge deadline={inc.slaDeadline} breached={inc.slaBreached} />
                       </td>
-                      <td className="px-4 py-3 text-right">
+                      <td className="px-4 py-3.5 text-right">
                         <Link
                           to={`/incidents/${inc.id}`}
-                          className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 bg-brand-900 hover:bg-brand-800 text-white rounded transition-colors shadow-subtle"
+                          className="inline-flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 bg-brand-900 hover:bg-brand-800 text-white rounded transition-colors shadow-subtle"
                         >
                           <Wrench className="w-3.5 h-3.5" />
                           Troubleshoot

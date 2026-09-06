@@ -113,12 +113,12 @@ export function AllIncidentsPage() {
       <div className="bg-white border border-slate-200/80 rounded-lg p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-subtle">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Incident Directory</span>
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Incident Directory</span>
             <span className="text-slate-300">•</span>
-            <span className="text-[11px] font-medium text-slate-500">Tier-2 Operational Oversight</span>
+            <span className="text-xs font-semibold text-slate-700">Tier-2 Operational Oversight</span>
           </div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight mt-1">All Branch Incidents</h1>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight mt-1.5">All Branch Incidents</h1>
+          <p className="text-sm font-medium text-slate-600 mt-0.5">
             Comprehensive ticket log across all branches, divisions, SLA milestones, and technician assignments.
           </p>
         </div>
@@ -222,7 +222,7 @@ export function AllIncidentsPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 text-slate-600 text-xs uppercase font-semibold border-b border-slate-200">
+              <thead className="bg-slate-50 text-slate-700 text-xs uppercase font-bold border-b border-slate-200">
                 <tr>
                   <th className="px-4 py-2.5">Incident #</th>
                   <th className="px-4 py-2.5">Branch</th>
@@ -238,32 +238,32 @@ export function AllIncidentsPage() {
               <tbody className="divide-y divide-slate-100">
                 {incidents.map((inc) => (
                   <tr key={inc.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="px-4 py-3 font-mono font-semibold text-xs text-slate-900">
+                    <td className="px-4 py-3.5.5 font-mono font-bold text-sm text-slate-900">
                       {inc.incidentNumber}
                     </td>
-                    <td className="px-4 py-3 text-xs font-semibold text-slate-800">
+                    <td className="px-4 py-3.5 text-xs font-semibold text-slate-800">
                       {inc.branch?.name}
                     </td>
-                    <td className="px-4 py-3 text-xs">
+                    <td className="px-4 py-3.5 text-xs">
                       <DivisionBadge
                         code={inc.category.division?.code}
                         name={inc.category.division?.name}
                       />
-                      <span className="text-[11px] text-slate-600 block mt-1 font-medium">
+                      <span className="text-xs text-slate-600 block mt-1 font-semibold">
                         {inc.category.name}
                       </span>
                     </td>
-                    <td className="px-4 py-3 max-w-xs">
+                    <td className="px-4 py-3.5 max-w-xs">
                       <p className="font-semibold text-slate-800 line-clamp-1">{inc.title}</p>
-                      <p className="text-[11px] text-slate-400">{formatDateTime(inc.createdAt)}</p>
+                      <p className="text-xs text-slate-500 font-medium">{formatDateTime(inc.createdAt)}</p>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3.5">
                       <PriorityBadge priority={inc.priority} />
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3.5">
                       <StatusBadge status={inc.status} />
                     </td>
-                    <td className="px-4 py-3 text-xs">
+                    <td className="px-4 py-3.5 text-xs">
                       {inc.assignedTechnician ? (
                         <span className="font-medium text-slate-800">{inc.assignedTechnician.name}</span>
                       ) : (
@@ -272,16 +272,16 @@ export function AllIncidentsPage() {
                             setAssignModalIncident(inc);
                             setSelectedTechId('');
                           }}
-                          className="px-2 py-1 text-[11px] font-bold text-amber-700 bg-amber-50 hover:bg-amber-100 rounded border border-amber-200"
+                          className="px-2 py-1 text-xs font-bold text-amber-900 bg-amber-50 hover:bg-amber-100 rounded border border-amber-300 px-2.5 py-1"
                         >
                           + Assign Tech
                         </button>
                       )}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3.5">
                       <SlaBadge deadline={inc.slaDeadline} breached={inc.slaBreached} />
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-4 py-3.5 text-right">
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => {

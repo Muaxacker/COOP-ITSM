@@ -13,7 +13,7 @@
     text-rendering: optimizeLegibility;
   }
   body {
-    @apply bg-background text-text-primary text-[13px] leading-normal;
+    @apply bg-background text-slate-900 text-sm font-medium leading-relaxed;
     margin: 0;
   }
   /* Tabular figures for numbers, timers, ticket IDs */

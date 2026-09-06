@@ -32,12 +32,12 @@ export function SupervisorReportsPage() {
       <div className="bg-white border border-slate-200/80 rounded-lg p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-subtle">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Analytics & Governance</span>
+            <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Analytics & Governance</span>
             <span className="text-slate-300">•</span>
-            <span className="text-[11px] font-medium text-slate-500">Tier-2 Performance Telemetry</span>
+            <span className="text-xs font-semibold text-slate-700">Tier-2 Performance Telemetry</span>
           </div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight mt-1">Operational Analytics & Reports</h1>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight mt-1.5">Operational Analytics & Reports</h1>
+          <p className="text-sm font-medium text-slate-600 mt-0.5">
             Regional branch incident volume, division workload distribution, and technician turnaround telemetry.
           </p>
         </div>
@@ -47,13 +47,13 @@ export function SupervisorReportsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white p-4 rounded-lg border border-slate-200/80 shadow-subtle">
           <span className="text-xs font-semibold text-slate-500 uppercase">Total Incidents Recorded</span>
-          <p className="text-2xl font-bold font-mono text-slate-900 mt-2">{totalIncidents}</p>
+          <p className="text-3xl font-extrabold font-mono text-slate-900 mt-2">{totalIncidents}</p>
           <p className="text-xs text-slate-400 mt-1">Across 8 bank branches</p>
         </div>
 
         <div className="bg-white p-4 rounded-lg border border-slate-200/80 shadow-subtle">
           <span className="text-xs font-semibold text-slate-500 uppercase">Average Resolution Time</span>
-          <p className="text-2xl font-bold font-mono text-slate-900 mt-2">
+          <p className="text-3xl font-extrabold font-mono text-slate-900 mt-2">
             {avgResolutionHours > 0 ? `${avgResolutionHours}h` : 'N/A'}
           </p>
           <p className="text-xs text-emerald-600 mt-1">From assignment to fix verification</p>
@@ -61,7 +61,7 @@ export function SupervisorReportsPage() {
 
         <div className="bg-white p-4 rounded-lg border border-slate-200/80 shadow-subtle">
           <span className="text-xs font-semibold text-slate-500 uppercase">Active Technical Specialists</span>
-          <p className="text-2xl font-bold font-mono text-slate-900 mt-2">{technicianPerformance.length}</p>
+          <p className="text-3xl font-extrabold font-mono text-slate-900 mt-2">{technicianPerformance.length}</p>
           <p className="text-xs text-indigo-600 mt-1">ATM, App, Network, Maintenance</p>
         </div>
       </div>
@@ -107,25 +107,25 @@ export function SupervisorReportsPage() {
             <div className="p-3 bg-rose-50/40 border border-rose-200/70 rounded-md">
               <span className="text-xs font-bold text-red-700 block">CRITICAL</span>
               <p className="text-xl font-bold font-mono text-red-900 mt-1">{byPriority.CRITICAL}</p>
-              <span className="text-[10px] text-red-600">Major bank disruption (1h SLA)</span>
+              <span className="text-xs font-semibold text-red-600">Major bank disruption (1h SLA)</span>
             </div>
 
             <div className="p-3 bg-amber-50/40 border border-amber-200/70 rounded-md">
               <span className="text-xs font-bold text-orange-700 block">HIGH</span>
               <p className="text-xl font-bold font-mono text-orange-900 mt-1">{byPriority.HIGH}</p>
-              <span className="text-[10px] text-orange-600">Important service affected (4h SLA)</span>
+              <span className="text-xs font-semibold text-orange-600">Important service affected (4h SLA)</span>
             </div>
 
             <div className="p-3 bg-amber-50/20 border border-amber-200/60 rounded-md">
               <span className="text-xs font-bold text-amber-700 block">MEDIUM</span>
               <p className="text-xl font-bold font-mono text-amber-900 mt-1">{byPriority.MEDIUM}</p>
-              <span className="text-[10px] text-amber-600">Limited impact (24h SLA)</span>
+              <span className="text-xs font-semibold text-amber-600">Limited impact (24h SLA)</span>
             </div>
 
             <div className="p-3 bg-emerald-50/30 border border-emerald-200/60 rounded-md">
               <span className="text-xs font-bold text-emerald-700 block">LOW</span>
               <p className="text-xl font-bold font-mono text-emerald-900 mt-1">{byPriority.LOW}</p>
-              <span className="text-[10px] text-emerald-600">Minor request (72h SLA)</span>
+              <span className="text-xs font-semibold text-emerald-600">Minor request (72h SLA)</span>
             </div>
           </div>
         </div>
@@ -144,7 +144,7 @@ export function SupervisorReportsPage() {
               <div key={b.branchId} className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 text-xs">
                 <div>
                   <span className="font-bold text-slate-800">{b.name}</span>
-                  <span className="text-[11px] text-slate-400 block">{b.location} ({b.code})</span>
+                  <span className="text-xs text-slate-500 font-medium block">{b.location} ({b.code})</span>
                 </div>
                 <span className="font-extrabold text-sm text-blue-700 px-2.5 py-1 bg-white rounded-md border border-slate-200">
                   {b.totalIncidents} ticket{b.totalIncidents === 1 ? '' : 's'}
@@ -164,12 +164,12 @@ export function SupervisorReportsPage() {
             {byCategory.map((c: any, index: number) => (
               <div key={c.categoryId} className="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 text-xs">
                 <div className="flex items-center gap-2">
-                  <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center font-bold text-[10px]">
+                  <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center font-bold text-xs font-semibold">
                     {index + 1}
                   </span>
                   <div>
                     <span className="font-bold text-slate-800">{c.name}</span>
-                    <span className="text-[11px] text-slate-400 block">{c.divisionName}</span>
+                    <span className="text-xs text-slate-500 font-medium block">{c.divisionName}</span>
                   </div>
                 </div>
                 <span className="font-bold text-slate-700">
@@ -186,8 +186,8 @@ export function SupervisorReportsPage() {
         <div className="p-5 border-b border-slate-100 flex items-center gap-2">
           <Wrench className="w-5 h-5 text-blue-600" />
           <div>
-            <h3 className="text-base font-bold text-slate-800">Technician Workload & Resolution Metrics</h3>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <h3 className="text-base font-bold text-slate-900">Technician Workload & Resolution Metrics</h3>
+            <p className="text-sm font-medium text-slate-600 mt-0.5">
               Assigned load, active cases, resolution throughput, and average turnaround time
             </p>
           </div>
@@ -195,7 +195,7 @@ export function SupervisorReportsPage() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 text-slate-600 text-xs uppercase font-semibold border-b border-slate-200">
+            <thead className="bg-slate-50 text-slate-700 text-xs uppercase font-bold border-b border-slate-200">
               <tr>
                 <th className="px-4 py-2.5">Technician</th>
                 <th className="px-4 py-2.5">Division</th>
@@ -211,7 +211,7 @@ export function SupervisorReportsPage() {
                 <tr key={tech.technicianId} className="hover:bg-slate-50/80 transition-colors">
                   <td className="px-4 py-2.5.5">
                     <span className="font-bold text-xs text-slate-800 block">{tech.name}</span>
-                    <span className="text-[11px] text-slate-400">{tech.email}</span>
+                    <span className="text-xs text-slate-500 font-medium">{tech.email}</span>
                   </td>
                   <td className="px-4 py-2.5.5 text-xs font-medium text-slate-600">
                     {tech.division}
@@ -220,12 +220,12 @@ export function SupervisorReportsPage() {
                     {tech.totalAssigned}
                   </td>
                   <td className="px-4 py-2.5.5 text-center">
-                    <span className="px-2 py-0.5 rounded px-2 py-0.5 text-[11px] font-mono font-medium bg-amber-50 text-amber-800 border border-amber-200">
+                    <span className="px-2 py-0.5 rounded px-2 py-0.5 text-xs font-mono font-bold bg-amber-50 text-amber-800 border border-amber-200">
                       {tech.active}
                     </span>
                   </td>
                   <td className="px-4 py-2.5.5 text-center">
-                    <span className="px-2 py-0.5 rounded px-2 py-0.5 text-[11px] font-mono font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
+                    <span className="px-2 py-0.5 rounded px-2 py-0.5 text-xs font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
                       {tech.resolved}
                     </span>
                   </td>

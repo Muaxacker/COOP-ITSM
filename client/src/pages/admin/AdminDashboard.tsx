@@ -77,24 +77,24 @@ export function AdminDashboard() {
       <div className="bg-white border border-slate-200/80 rounded-lg p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-subtle">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Governance & Control</span>
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Governance & Control</span>
             <span className="text-slate-300">•</span>
-            <span className="text-[11px] font-medium text-slate-500">Cooperative Bank of Oromia</span>
+            <span className="text-xs font-semibold text-slate-700">Cooperative Bank of Oromia</span>
           </div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight mt-1">System Administration Console</h1>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight mt-1.5">System Administration Console</h1>
+          <p className="text-sm font-medium text-slate-600 mt-0.5">
             Centralized platform control for role access, branch directory, IT divisions, and SLA governance.
           </p>
         </div>
         <div className="flex items-center gap-4 text-xs font-medium text-slate-600 bg-slate-50/80 px-3.5 py-2 rounded-md border border-slate-200/80">
           <div className="flex items-center gap-2">
-            <span className="text-[11px] uppercase tracking-wider text-slate-500">Active Workload</span>
-            <span className="font-bold font-mono text-slate-900">{kpis.activeIncidents ?? 0}</span>
+            <span className="text-xs uppercase tracking-wider text-slate-600 font-bold">Active Workload</span>
+            <span className="font-extrabold font-mono text-slate-900 text-sm">{kpis.activeIncidents ?? 0}</span>
           </div>
           <span className="text-slate-300">|</span>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] uppercase tracking-wider text-slate-500">Resolved</span>
-            <span className="font-bold font-mono text-slate-900">{kpis.resolvedIncidents ?? 0}</span>
+            <span className="text-xs uppercase tracking-wider text-slate-600 font-bold">Resolved</span>
+            <span className="font-extrabold font-mono text-slate-900 text-sm">{kpis.resolvedIncidents ?? 0}</span>
           </div>
         </div>
       </div>
@@ -111,16 +111,16 @@ export function AdminDashboard() {
                   </div>
                   <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-slate-900 group-hover:translate-x-0.5 transition-all" />
                 </div>
-                <p className="text-xs font-bold text-slate-900 group-hover:text-brand-900 transition-colors">
+                <p className="text-sm font-bold text-slate-900 group-hover:text-brand-900 transition-colors">
                   {tile.title}
                 </p>
-                <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">
+                <p className="text-xs text-slate-600 mt-1 font-medium leading-relaxed">
                   {tile.description}
                 </p>
               </div>
               <div className="mt-4 pt-3 border-t border-slate-100 flex items-baseline justify-between">
-                <span className="text-xl font-bold font-mono text-slate-900">{tile.stat}</span>
-                <span className="text-[10px] uppercase font-semibold tracking-wider text-slate-400">{tile.statLabel}</span>
+                <span className="text-xl font-extrabold font-mono text-slate-900 text-sm">{tile.stat}</span>
+                <span className="text-xs uppercase font-bold tracking-wider text-slate-500">{tile.statLabel}</span>
               </div>
             </div>
           </Link>
@@ -131,8 +131,8 @@ export function AdminDashboard() {
       <div className="bg-white rounded-lg border border-slate-200/80 p-5 shadow-subtle space-y-4">
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div>
-            <h2 className="text-sm font-semibold text-slate-900">Technical Division Configurations</h2>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <h2 className="text-base font-bold text-slate-900">Technical Division Configurations</h2>
+            <p className="text-sm font-medium text-slate-600 mt-0.5">
               Service catalog structures, SLA assignment rules, and allocated engineering personnel.
             </p>
           </div>
@@ -148,19 +148,19 @@ export function AdminDashboard() {
           {(divisions || []).map((div: any) => (
             <div key={div.id} className="p-3.5 rounded-md border border-slate-200/80 bg-slate-50/40 hover:bg-white transition-all">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-mono font-semibold px-2 py-0.5 bg-slate-100 text-slate-800 rounded border border-slate-200">
+                <span className="text-xs font-mono font-bold px-2 py-0.5 bg-slate-100 text-slate-800 rounded border border-slate-200">
                   {div.code}
                 </span>
-                <span className="text-[11px] text-slate-500 font-mono">
+                <span className="text-xs text-slate-600 font-mono font-semibold">
                   {div._count?.categories ?? div.categories?.length ?? 0} categories
                 </span>
               </div>
-              <p className="text-xs font-semibold text-slate-900">{div.name}</p>
+              <p className="text-sm font-bold text-slate-900">{div.name}</p>
               {div.description && (
-                <p className="text-[11px] text-slate-500 mt-1 line-clamp-2 leading-relaxed">{div.description}</p>
+                <p className="text-xs text-slate-600 mt-1 font-medium line-clamp-2 leading-relaxed">{div.description}</p>
               )}
               <div className="mt-3 pt-2.5 border-t border-slate-200/60 flex items-center justify-between text-xs text-slate-500">
-                <span className="text-[11px]">Technicians</span>
+                <span className="text-xs font-semibold">Technicians</span>
                 <span className="font-mono font-semibold text-slate-900">
                   {div._count?.users ?? div.users?.length ?? 0}
                 </span>

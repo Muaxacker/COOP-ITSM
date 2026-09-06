@@ -124,7 +124,7 @@ export function CreateIncidentPage() {
       <button
         type="button"
         onClick={() => navigate(-1)}
-        className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
+        className="inline-flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors"
       >
         <ArrowLeft className="w-3.5 h-3.5" />
         Back to Dashboard
@@ -137,8 +137,8 @@ export function CreateIncidentPage() {
             <PlusCircle className="w-4 h-4" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-slate-900 tracking-tight">Report Technical Incident</h1>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Report Technical Incident</h1>
+            <p className="text-sm font-medium text-slate-600 mt-0.5">
               Dispatch an operational service ticket to regional Tier-2 IT support engineering.
             </p>
           </div>
@@ -148,7 +148,7 @@ export function CreateIncidentPage() {
       <form onSubmit={handleSubmit} className="bg-white rounded-lg border border-slate-200/80 shadow-subtle p-5 space-y-5">
         {/* Branch Selection */}
         <div>
-          <label className="block text-[11px] font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+          <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">
             1. Originating Bank Branch
           </label>
           <div className="relative">
@@ -170,7 +170,7 @@ export function CreateIncidentPage() {
 
         {/* Division Selection (The 4 core IT areas) */}
         <div>
-          <label className="block text-[11px] font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+          <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">
             2. Responsible IT Technical Division
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -201,10 +201,10 @@ export function CreateIncidentPage() {
                     {meta.icon}
                   </div>
                   <div>
-                    <p className={`text-xs font-semibold ${isSelected ? 'text-slate-900' : 'text-slate-800'}`}>
+                    <p className={`text-sm font-bold ${isSelected ? 'text-slate-900' : 'text-slate-800'}`}>
                       {meta.title}
                     </p>
-                    <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+                    <p className="text-xs text-slate-600 mt-0.5 font-medium leading-relaxed">
                       {meta.subtitle}
                     </p>
                   </div>
@@ -216,7 +216,7 @@ export function CreateIncidentPage() {
 
         {/* Category Selection */}
         <div>
-          <label className="block text-[11px] font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+          <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">
             3. Specific Issue Category
           </label>
           <select
@@ -242,7 +242,7 @@ export function CreateIncidentPage() {
 
         {/* Title */}
         <div>
-          <label className="block text-[11px] font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+          <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">
             4. Incident Title / Summary
           </label>
           <Input
@@ -256,7 +256,7 @@ export function CreateIncidentPage() {
 
         {/* Description */}
         <div>
-          <label className="block text-[11px] font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+          <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">
             5. Technical Description & Observations
           </label>
           <Textarea
@@ -267,7 +267,7 @@ export function CreateIncidentPage() {
             className="text-xs"
             required
           />
-          <p className="text-[11px] text-slate-400 mt-1.5 flex items-center gap-1">
+          <p className="text-xs text-slate-500 mt-1.5 font-medium flex items-center gap-1.5">
             <HelpCircle className="w-3 h-3" />
             Providing specific error codes and equipment serial numbers accelerates SLA resolution time.
           </p>
@@ -287,7 +287,7 @@ export function CreateIncidentPage() {
             type="submit"
             size="sm"
             loading={loading}
-            className="bg-brand-900 hover:bg-brand-800 text-white font-semibold px-5 shadow-subtle"
+            className="bg-brand-900 hover:bg-brand-800 text-white font-bold px-6 py-2 shadow-subtle text-sm"
           >
             Dispatch Incident
           </Button>

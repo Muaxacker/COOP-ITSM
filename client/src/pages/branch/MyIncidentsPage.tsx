@@ -36,12 +36,12 @@ export function MyIncidentsPage() {
       <div className="bg-white border border-slate-200/80 rounded-lg p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-subtle">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Branch Dispatch</span>
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Branch Dispatch</span>
             <span className="text-slate-300">•</span>
-            <span className="text-[11px] font-medium text-slate-500">Service Request Directory</span>
+            <span className="text-xs font-semibold text-slate-700">Service Request Directory</span>
           </div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight mt-1">Branch Incidents & Requests</h1>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight mt-1.5">Branch Incidents & Requests</h1>
+          <p className="text-sm font-medium text-slate-600 mt-0.5">
             Track active tickets, review troubleshooting updates, and verify resolution closures.
           </p>
         </div>
@@ -119,7 +119,7 @@ export function MyIncidentsPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 text-slate-600 text-xs uppercase font-semibold border-b border-slate-200">
+              <thead className="bg-slate-50 text-slate-700 text-xs uppercase font-bold border-b border-slate-200">
                 <tr>
                   <th className="px-4 py-2.5">Incident #</th>
                   <th className="px-4 py-2.5">Title & Reported Date</th>
@@ -134,39 +134,39 @@ export function MyIncidentsPage() {
               <tbody className="divide-y divide-slate-100">
                 {incidents.map((inc) => (
                   <tr key={inc.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="px-4 py-3 font-mono font-semibold text-xs text-slate-900">
+                    <td className="px-4 py-3.5.5 font-mono font-bold text-sm text-slate-900">
                       {inc.incidentNumber}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3.5">
                       <p className="font-semibold text-slate-800 line-clamp-1">{inc.title}</p>
                       <p className="text-xs text-slate-400 mt-0.5">{formatDateTime(inc.createdAt)}</p>
                     </td>
-                    <td className="px-4 py-3 text-xs">
+                    <td className="px-4 py-3.5 text-xs">
                       <span className="font-semibold text-slate-700 block">{inc.category.name}</span>
                       {inc.category.division && (
-                        <span className="text-[11px] text-slate-500">{inc.category.division.name}</span>
+                        <span className="text-xs text-slate-500 font-medium">{inc.category.division.name}</span>
                       )}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3.5">
                       <PriorityBadge priority={inc.priority} />
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3.5">
                       <StatusBadge status={inc.status} />
                     </td>
-                    <td className="px-4 py-3 text-xs">
+                    <td className="px-4 py-3.5 text-xs">
                       {inc.assignedTechnician ? (
                         <span className="font-medium text-slate-800">{inc.assignedTechnician.name}</span>
                       ) : (
                         <span className="text-slate-400 italic">Unassigned</span>
                       )}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3.5">
                       <SlaBadge deadline={inc.slaDeadline} breached={inc.slaBreached} />
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-4 py-3.5 text-right">
                       <Link
                         to={`/incidents/${inc.id}`}
-                        className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 text-slate-700 bg-white border border-slate-200 rounded hover:bg-slate-50 transition-colors"
+                        className="inline-flex items-center gap-1 text-xs font-bold px-3 py-1.5 text-slate-800 bg-white border border-slate-300 rounded hover:bg-slate-50 transition-colors"
                       >
                         Details <ArrowRight className="w-3 h-3" />
                       </Link>

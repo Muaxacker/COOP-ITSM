@@ -235,7 +235,7 @@ export function UserManagementPage() {
                     <td className="px-5 py-3.5">
                       <span
                         className={cn(
-                          'inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border',
+                          'inline-flex items-center px-2 py-0.5 rounded text-xs font-bold border',
                           ROLE_COLORS[user.role]
                         )}
                       >

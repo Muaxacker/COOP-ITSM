@@ -254,11 +254,11 @@ export function BranchIncidentDetailsPage() {
               <PriorityBadge priority={incident.priority} />
               <StatusBadge status={incident.status} />
             </div>
-            <h1 className="text-xl font-bold text-slate-900 mt-2">{incident.title}</h1>
+            <h1 className="text-2xl font-extrabold text-slate-900 mt-2">{incident.title}</h1>
           </div>
           <div className="text-right">
             <SlaBadge deadline={incident.slaDeadline} breached={incident.slaBreached} />
-            <p className="text-[11px] text-slate-400 mt-1">
+            <p className="text-xs text-slate-500 font-medium mt-1">
               Target SLA: <span className="font-medium text-slate-600">{slaRemaining.text}</span>
             </p>
           </div>
@@ -267,29 +267,29 @@ export function BranchIncidentDetailsPage() {
         {/* Metadata Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 py-2 text-xs">
           <div>
-            <span className="text-slate-400 block font-medium">Bank Branch</span>
-            <span className="font-semibold text-slate-800 flex items-center gap-1 mt-0.5">
+            <span className="text-xs font-bold text-slate-600 uppercase tracking-wider block mb-1">Bank Branch</span>
+            <span className="text-sm font-bold text-slate-900 flex items-center gap-1.5 mt-0.5">
               <Building2 className="w-3.5 h-3.5 text-slate-400" />
               {incident.branch?.name}
             </span>
           </div>
 
           <div>
-            <span className="text-slate-400 block font-medium">Category</span>
-            <span className="font-semibold text-slate-800 block mt-0.5">
+            <span className="text-xs font-bold text-slate-600 uppercase tracking-wider block mb-1">Category</span>
+            <span className="text-sm font-bold text-slate-900 block mt-0.5">
               {incident.category?.name}
             </span>
           </div>
 
           <div>
-            <span className="text-slate-400 block font-medium">Reported By</span>
-            <span className="font-semibold text-slate-800 block mt-0.5">
+            <span className="text-xs font-bold text-slate-600 uppercase tracking-wider block mb-1">Reported By</span>
+            <span className="text-sm font-bold text-slate-900 block mt-0.5">
               {incident.reportedBy?.name}
             </span>
           </div>
 
           <div>
-            <span className="text-slate-400 block font-medium">Assigned Technician</span>
+            <span className="text-xs font-bold text-slate-600 uppercase tracking-wider block mb-1">Assigned Technician</span>
             <div className="flex items-center gap-2 mt-0.5">
               <span
                 className={`font-semibold ${
@@ -302,7 +302,7 @@ export function BranchIncidentDetailsPage() {
                 <button
                   type="button"
                   onClick={() => setAssignModalOpen(true)}
-                  className="text-[11px] font-bold text-blue-600 hover:text-blue-800 hover:underline"
+                  className="text-xs font-bold text-brand-700 hover:text-blue-800 hover:underline"
                 >
                   [{incident.assignedTechnician ? "Change" : "Assign"}]
                 </button>
@@ -313,29 +313,29 @@ export function BranchIncidentDetailsPage() {
 
         {/* Problem Description Box */}
         <div className="bg-slate-50/60 rounded-md p-3.5 border border-slate-200/70 text-xs">
-          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+          <span className="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-1.5">
             Problem Description
           </span>
-          <p className="text-slate-800 leading-relaxed whitespace-pre-wrap">{incident.description}</p>
+          <p className="text-sm font-medium text-slate-900 leading-relaxed whitespace-pre-wrap">{incident.description}</p>
         </div>
 
         {/* Resolution Box (if recorded) */}
         {(incident.rootCause || incident.resolution) && (
           <div className="bg-emerald-50/40 rounded-md p-3.5 border border-emerald-200/80 text-xs space-y-2">
-            <span className="text-[11px] font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
+            <span className="text-xs font-bold text-sm font-medium text-emerald-950 uppercase tracking-wider flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
               Recorded Resolution & Root Cause
             </span>
             {incident.rootCause && (
               <div>
                 <span className="font-bold text-emerald-950">Root Cause: </span>
-                <span className="text-emerald-900">{incident.rootCause}</span>
+                <span className="text-sm font-medium text-emerald-950">{incident.rootCause}</span>
               </div>
             )}
             {incident.resolution && (
               <div>
                 <span className="font-bold text-emerald-950">Resolution Summary: </span>
-                <span className="text-emerald-900">{incident.resolution}</span>
+                <span className="text-sm font-medium text-emerald-950">{incident.resolution}</span>
               </div>
             )}
           </div>
@@ -386,7 +386,7 @@ export function BranchIncidentDetailsPage() {
 
       {/* Timeline & Conversation History */}
       <div className="bg-white rounded-lg border border-slate-200/80 p-5 shadow-subtle space-y-4">
-        <h3 className="text-sm font-bold text-slate-800">Incident Timeline & Audit History</h3>
+        <h3 className="text-base font-bold text-slate-900">Incident Timeline & Audit History</h3>
 
         <div className="space-y-3">
           {(incident.updates || []).length === 0 ? (
@@ -402,14 +402,14 @@ export function BranchIncidentDetailsPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between text-xs mb-1">
-                    <span className="font-semibold text-slate-800">
+                    <span className="text-sm font-bold text-slate-900">
                       {update.user?.name || "System"}
                     </span>
-                    <span className="text-[11px] text-slate-400">
+                    <span className="text-xs font-medium text-slate-500">
                       {formatDateTime(update.createdAt)} ({timeAgo(update.createdAt)})
                     </span>
                   </div>
-                  <p className="text-xs text-slate-600 whitespace-pre-wrap">{update.message}</p>
+                  <p className="text-sm font-medium text-slate-800 whitespace-pre-wrap">{update.message}</p>
                 </div>
               </div>
             ))

@@ -53,9 +53,9 @@ export function LoginPage() {
           <div className="inline-flex items-center justify-center w-12 h-12 bg-slate-800/90 rounded-md mb-3 border border-slate-700 shadow-subtle text-slate-100">
             <Server className="w-6 h-6 text-slate-200" />
           </div>
-          <h1 className="text-xl font-semibold text-white tracking-tight">COOP-ITSM</h1>
-          <p className="text-xs text-slate-300 font-medium mt-0.5">Cooperative Bank of Oromia</p>
-          <p className="text-[11px] text-slate-500 mt-0.5">
+          <h1 className="text-2xl font-extrabold text-white tracking-tight">COOP-ITSM</h1>
+          <p className="text-sm text-slate-200 font-semibold mt-0.5">Cooperative Bank of Oromia</p>
+          <p className="text-xs text-slate-400 font-medium mt-0.5">
             IT Service Request & Incident Management Portal
           </p>
         </div>
@@ -64,10 +64,10 @@ export function LoginPage() {
         <div className="bg-white rounded-lg border border-slate-200/90 shadow-modal p-6 sm:p-7">
           <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-100">
             <div>
-              <h2 className="text-sm font-semibold text-slate-900 tracking-tight">Enterprise Authentication</h2>
-              <p className="text-[11px] text-slate-500 mt-0.5">Authorized bank staff and IT personnel only</p>
+              <h2 className="text-base font-bold text-slate-900 tracking-tight">Enterprise Authentication</h2>
+              <p className="text-xs text-slate-400 font-medium mt-0.5">Authorized bank staff and IT personnel only</p>
             </div>
-            <div className="flex items-center gap-1.5 text-[11px] font-medium text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200/70">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-900 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-200">
               <ShieldCheck className="w-3 h-3 text-emerald-700" />
               Secure Network
             </div>
@@ -118,10 +118,10 @@ export function LoginPage() {
           {/* Demo Credentials Switcher */}
           <div className="mt-5 pt-4 border-t border-slate-100">
             <div className="flex items-center justify-between mb-2.5">
-              <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+              <p className="text-xs font-bold text-slate-700 uppercase tracking-wider">
                 Authorized Demo Role Selector
               </p>
-              <span className="text-[10px] text-slate-400 font-mono">Click to prefill</span>
+              <span className="text-xs text-slate-500 font-mono font-medium">Click to prefill</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
               {demoAccounts.map((item) => (
@@ -133,12 +133,12 @@ export function LoginPage() {
                 >
                   <div className="min-w-0 pr-1">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] font-mono font-medium px-1 py-0.2 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                      <span className="text-xs font-mono font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-800 border border-slate-200">
                         {item.role}
                       </span>
                     </div>
-                    <p className="text-xs font-medium text-slate-800 mt-1 truncate">{item.name}</p>
-                    <p className="text-[10px] text-slate-400 truncate">{item.division}</p>
+                    <p className="text-sm font-bold text-slate-900 mt-1 truncate">{item.name}</p>
+                    <p className="text-xs text-slate-500 font-medium truncate">{item.division}</p>
                   </div>
                   <ArrowRight className="w-3 h-3 text-slate-300 group-hover:text-slate-700 flex-shrink-0" />
                 </button>
@@ -147,7 +147,7 @@ export function LoginPage() {
           </div>
         </div>
 
-        <p className="text-center text-[11px] text-slate-500 mt-4">
+        <p className="text-center text-xs text-slate-400 font-medium mt-4">
           Cooperative Bank of Oromia · Centralized IT Incident Operations
         </p>
       </div>

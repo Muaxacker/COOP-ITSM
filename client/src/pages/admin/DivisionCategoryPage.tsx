@@ -167,7 +167,7 @@ export function DivisionCategoryPage() {
               <span>{div.name}</span>
               <span
                 className={cn(
-                  'px-1.5 py-0.2 rounded text-[10px] font-mono',
+                  'px-1.5 py-0.2 rounded text-xs font-mono font-bold',
                   selectedDivisionId === div.id ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-600'
                 )}
               >
