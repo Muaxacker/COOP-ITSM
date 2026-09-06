@@ -46,10 +46,38 @@ api.interceptors.response.use(
 // ─── Auth API ───────────────────────────────────────────────────────────────
 export const authApi = {
   login: (email: string, password: string) =>
-    api.post<{ success: boolean; data: { token: string; user: User }; message: string }>('/auth/login', {
+    api.post<{
+      success: boolean;
+      data: { token?: string; user?: User; require2FA?: boolean; tempToken?: string };
+      message: string;
+    }>('/auth/login', {
       email,
       password,
     }),
+  verify2faLogin: (tempToken: string, code: string) =>
+    api.post<{
+      success: boolean;
+      data: { token: string; user: User };
+      message: string;
+    }>('/auth/2fa/verify-login', { tempToken, code }),
+  setup2fa: () =>
+    api.post<{
+      success: boolean;
+      data: { secret: string; otpauthUrl: string; qrCodeDataUrl: string };
+      message: string;
+    }>('/auth/2fa/setup'),
+  enable2fa: (data: { secret: string; code: string }) =>
+    api.post<{
+      success: boolean;
+      data: User;
+      message: string;
+    }>('/auth/2fa/enable', data),
+  disable2fa: (data: { password: string }) =>
+    api.post<{
+      success: boolean;
+      data: User;
+      message: string;
+    }>('/auth/2fa/disable', data),
   logout: () => api.post('/auth/logout'),
   getMe: () => api.get<{ success: boolean; data: User }>('/auth/me'),
   updateProfile: (data: { name?: string; phone?: string | null; avatarUrl?: string | null }) =>

@@ -1,6 +1,8 @@
 import { prisma } from '../config/prisma';
 import { NotificationType } from '../types';
 
+import { emitToUser } from '../config/socket';
+
 export async function createNotification(data: {
   userId: string;
   incidentId?: string;
@@ -9,6 +11,13 @@ export async function createNotification(data: {
   type: NotificationType;
 }) {
   return prisma.notification.create({ data });
+  const notif = await prisma.notification.create({ data });
+  try {
+    emitToUser(data.userId, 'notification:new', notif);
+  } catch (err) {
+    // Non-blocking socket notification error
+  }
+  return notif;
 }
 
 export async function createNotifications(
@@ -22,6 +31,15 @@ export async function createNotifications(
 ) {
   if (notifications.length === 0) return;
   return prisma.notification.createMany({ data: notifications });
+  const result = await prisma.notification.createMany({ data: notifications });
+  try {
+    for (const notif of notifications) {
+      emitToUser(notif.userId, 'notification:new', notif);
+    }
+  } catch (err) {
+    // Non-blocking
+  }
+  return result;
 }
 
 export async function getNotifications(userId: string) {

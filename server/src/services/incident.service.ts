@@ -12,6 +12,18 @@ import {
 import { generateIncidentNumber } from '../utils/requestNumber';
 import { createNotification, createNotifications } from './notification.service';
 import { logAudit } from './audit.service';
+import {
+  emitToUser,
+  emitToRole,
+  emitToDivision,
+  broadcastEvent,
+} from '../config/socket';
+import {
+  sendIncidentCreatedNotification,
+  sendIncidentAssignedNotification,
+  sendIncidentResolvedNotification,
+  sendSlaBreachEscalationNotification,
+} from './email.service';
 
 // ─── SLA Hours by Priority ──────────────────────────────────────────────────
 export const PRIORITY_SLA_HOURS: Record<Priority, number> = {
@@ -180,6 +192,30 @@ export async function createIncident(data: {
       }))
     );
   }
+
+  // Real-time WebSocket Push
+  try {
+    broadcastEvent('incident:created', incident);
+    emitToRole(Role.IT_SUPERVISOR, 'incident:created', incident);
+    emitToRole(Role.ADMIN, 'incident:created', incident);
+    if (category.divisionId) {
+      emitToDivision(category.divisionId, 'incident:created', incident);
+    }
+  } catch (err) {
+    // Non-blocking
+  }
+
+  // Zero-cost asynchronous email dispatch
+  (async () => {
+    try {
+      const reporter = await prisma.user.findUnique({ where: { id: data.reportedById } });
+      if (reporter?.email) {
+        await sendIncidentCreatedNotification(incident, reporter.email, branch.name);
+      }
+    } catch (err) {
+      // Non-blocking
+    }
+  })();
 
   return incident;
 }
@@ -443,6 +479,25 @@ export async function assignTechnician(
     type: NotificationType.INCIDENT_ASSIGNED,
   });
 
+  // Real-time WebSocket Push
+  try {
+    emitToUser(technicianId, 'incident:assigned', updated);
+    broadcastEvent('incident:updated', updated);
+  } catch (err) {
+    // Non-blocking
+  }
+
+  // Zero-cost email notification to assigned technician
+  (async () => {
+    try {
+      if (technician.email) {
+        await sendIncidentAssignedNotification(updated, technician.email, technician.name);
+      }
+    } catch (err) {
+      // Non-blocking
+    }
+  })();
+
   return updated;
 }
 
@@ -658,6 +713,26 @@ export async function resolveIncident(
     type: NotificationType.INCIDENT_RESOLVED,
   });
 
+  // Real-time WebSocket Push
+  try {
+    emitToUser(incident.reportedById, 'incident:resolved', updated);
+    broadcastEvent('incident:updated', updated);
+  } catch (err) {
+    // Non-blocking
+  }
+
+  // Zero-cost email notification to branch reporter
+  (async () => {
+    try {
+      const reporter = await prisma.user.findUnique({ where: { id: incident.reportedById } });
+      if (reporter?.email) {
+        await sendIncidentResolvedNotification(updated, reporter.email);
+      }
+    } catch (err) {
+      // Non-blocking
+    }
+  })();
+
   return updated;
 }
 
@@ -831,7 +906,64 @@ export async function checkSlaBreaches(): Promise<number> {
           type: NotificationType.SLA_BREACHED,
         }))
       );
+
+      // Real-time WebSocket Push to Supervisors
+      try {
+        emitToRole(Role.IT_SUPERVISOR, 'incident:sla_breached', {
+          incidentId: incident.id,
+          incidentNumber: incident.incidentNumber,
+          title: incident.title,
+          branchName: incident.branch.name,
+        });
+        broadcastEvent('incident:updated', incident);
+      } catch (err) {
+        // Non-blocking
+      }
+
+      // Zero-cost email notification to supervisors
+      (async () => {
+        try {
+          const supervisorUsers = await prisma.user.findMany({
+            where: { role: Role.IT_SUPERVISOR, isActive: true },
+            select: { email: true },
+          });
+          for (const sup of supervisorUsers) {
+            if (sup.email) {
+              await sendSlaBreachEscalationNotification(incident, sup.email);
+            }
+          }
+        } catch (err) {
+          // Non-blocking
+        }
+      })();
     }
+  }
+
+  // Tier 2: Check for Unassigned CRITICAL or HIGH incidents older than 30 minutes
+  try {
+    const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+    const idleHighPriorityIncidents = await prisma.incident.findMany({
+      where: {
+        status: IncidentStatus.OPEN,
+        priority: { in: [Priority.CRITICAL, Priority.HIGH] },
+        createdAt: { lt: thirtyMinutesAgo },
+      },
+      include: { branch: true },
+      take: 10,
+    });
+
+    for (const idle of idleHighPriorityIncidents) {
+      emitToRole(Role.IT_SUPERVISOR, 'incident:unassigned_alert', {
+        incidentId: idle.id,
+        incidentNumber: idle.incidentNumber,
+        title: idle.title,
+        priority: idle.priority,
+        branch: idle.branch.name,
+        message: `Urgent: ${idle.priority} incident unassigned for over 30 minutes!`,
+      });
+    }
+  } catch (err) {
+    // Non-blocking
   }
 
   return overdueIncidents.length;

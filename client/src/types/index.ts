@@ -72,6 +72,7 @@ export interface User {
   branchId?: string | null;
   divisionId?: string | null;
   isActive: boolean;
+  twoFactorEnabled?: boolean;
   createdAt: string;
   branch?: { id: string; name: string; code: string; location: string } | null;
   division?: { id: string; name: string; code: DivisionCode } | null;

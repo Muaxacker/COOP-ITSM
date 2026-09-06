@@ -5,6 +5,9 @@ import { prisma } from './config/prisma';
 import { checkSlaBreaches } from './services/incident.service';
 import cron from 'node-cron';
 
+import http from 'http';
+import { initSocket } from './config/socket';
+
 async function main() {
   const rawDbUrl = process.env.DATABASE_URL || config.databaseUrl || '';
   const maskedDbUrl = rawDbUrl.replace(/:([^:@]+)@/, ':****@');
@@ -12,6 +15,10 @@ async function main() {
 
   await prisma.$connect();
   console.log('✅ Database connected successfully');
+
+  const httpServer = http.createServer(app);
+  const io = initSocket(httpServer);
+  console.log('⚡ Socket.io Real-Time Engine initialized');
 
   // Check SLA deadlines every 5 minutes
   cron.schedule('*/5 * * * *', async () => {
@@ -25,7 +32,7 @@ async function main() {
     }
   });
 
-  app.listen(config.port, '0.0.0.0', () => {
+  httpServer.listen(config.port, '0.0.0.0', () => {
     console.log(`🚀 COOP-ITSM API running on port ${config.port} (0.0.0.0)`);
     console.log(`   Environment: ${config.nodeEnv}`);
   });
