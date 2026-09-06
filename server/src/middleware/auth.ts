@@ -24,6 +24,7 @@ export function authorize(...roles: Role[]) {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
     if (!req.user) return unauthorized(res);
     if (!roles.includes(req.user.role)) {
+      console.warn(`[AUTH FORBIDDEN] User '${req.user.email}' (role: ${req.user.role}) denied access to [${req.method} ${req.originalUrl}] - requires: [${roles.join(', ')}]`);
       return forbidden(res, 'You do not have permission to perform this action');
     }
     return next();

@@ -37,6 +37,8 @@ router.post('/:id/resolve', authorize(Role.TECHNICIAN, Role.ADMIN), resolveIncid
 
 router.post('/:id/provide-info', authorize(Role.BRANCH_USER, Role.ADMIN), provideMoreInfo);
 router.post('/:id/verify', authorize(Role.BRANCH_USER, Role.ADMIN), verifyResolution);
+router.post('/:id/provide-info', authorize(Role.BRANCH_USER, Role.IT_SUPERVISOR, Role.TECHNICIAN, Role.ADMIN), provideMoreInfo);
+router.post('/:id/verify', authorize(Role.BRANCH_USER, Role.IT_SUPERVISOR, Role.ADMIN), verifyResolution);
 
 router.post('/:id/notes', addNote);
 

@@ -578,6 +578,7 @@ export async function requestMoreInfo(id: string, technicianId: string, question
 
 // ─── Provide More Info (Branch User) ────────────────────────────────────────
 export async function provideMoreInfo(id: string, branchUserId: string, response: string) {
+export async function provideMoreInfo(id: string, userId: string, response: string) {
   const incident = await prisma.incident.findUnique({ where: { id } });
   if (!incident) throw new AppError('Incident not found', 404);
 
@@ -597,6 +598,7 @@ export async function provideMoreInfo(id: string, branchUserId: string, response
     data: {
       incidentId: id,
       userId: branchUserId,
+      userId,
       action: ActivityAction.INFO_PROVIDED,
       message: response,
     },
@@ -608,8 +610,16 @@ export async function provideMoreInfo(id: string, branchUserId: string, response
       incidentId: id,
       title: `Info Provided: ${incident.incidentNumber}`,
       message: `Branch user replied: "${response}"`,
+      message: `Additional info provided: "${response}"`,
       type: NotificationType.INFO_PROVIDED,
     });
+  }
+
+  // Real-time WebSocket Push
+  try {
+    broadcastEvent('incident:updated', updated);
+  } catch (err) {
+    // Non-blocking
   }
 
   return updated;
