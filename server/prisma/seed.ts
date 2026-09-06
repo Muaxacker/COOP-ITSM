@@ -6,6 +6,12 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Starting COOP-ITSM database seed...');
 
+  const userCount = await prisma.user.count();
+  if (userCount > 0 && process.env.FORCE_SEED !== 'true') {
+    console.log(`ℹ️ Database already initialized with ${userCount} users. Skipping seed.`);
+    return;
+  }
+
   // 1. Clean existing records in reverse dependency order
   await prisma.auditLog.deleteMany();
   await prisma.attachment.deleteMany();
