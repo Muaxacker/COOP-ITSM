@@ -2,7 +2,9 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { reportApi } from '../../services/api';
 import { PriorityBadge } from '../../components/ui/Badge';
-import { BarChart3, Building2, Layers, Wrench, Clock, CheckCircle2 } from 'lucide-react';
+import { Button } from '../../components/ui/Button';
+import { BarChart3, Building2, Layers, Wrench, Clock, CheckCircle2, Download } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export function SupervisorReportsPage() {
   const { data, isLoading } = useQuery({
@@ -26,6 +28,42 @@ export function SupervisorReportsPage() {
 
   const totalIncidents = byDivision.reduce((sum: number, d: any) => sum + d.totalIncidents, 0);
 
+  const handleExportReportCsv = () => {
+    const lines: string[] = [];
+    lines.push('--- COOPERATIVE BANK OF OROMIA ITSM OPERATIONAL REPORT ---');
+    lines.push(`Generated at: ${new Date().toISOString()}`);
+    lines.push(`Total Incidents: ${totalIncidents}`);
+    lines.push(`Average Resolution Hours: ${avgResolutionHours}h`);
+    lines.push('');
+    lines.push('--- DIVISION BREAKDOWN ---');
+    lines.push('Division Name,Code,Total Incidents');
+    byDivision.forEach((d: any) => {
+      lines.push(`"${d.name}","${d.code}",${d.totalIncidents}`);
+    });
+    lines.push('');
+    lines.push('--- BRANCH INCIDENT BREAKDOWN ---');
+    lines.push('Branch Name,Code,City,Total Incidents');
+    byBranch.forEach((b: any) => {
+      lines.push(`"${b.name}","${b.code}","${b.city || ''}",${b.totalIncidents}`);
+    });
+    lines.push('');
+    lines.push('--- TECHNICIAN PERFORMANCE ---');
+    lines.push('Technician Name,Email,Division,Active Incidents,Resolved Incidents,Avg Resolution Hours');
+    technicianPerformance.forEach((t: any) => {
+      lines.push(`"${t.name}","${t.email}","${t.division || 'General'}",${t.activeIncidents},${t.resolvedIncidents},${t.avgResolutionHours || 0}`);
+    });
+
+    const csvContent = 'data:text/csv;charset=utf-8,' + lines.join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `COOP_Operational_Report_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success('Operational analytics report exported to CSV');
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -40,6 +78,17 @@ export function SupervisorReportsPage() {
           <p className="text-sm font-medium text-slate-600 mt-0.5">
             Regional branch incident volume, division workload distribution, and technician turnaround telemetry.
           </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            icon={<Download className="w-3.5 h-3.5" />}
+            onClick={handleExportReportCsv}
+          >
+            Export Analytics CSV
+          </Button>
         </div>
       </div>
 

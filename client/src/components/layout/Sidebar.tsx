@@ -14,6 +14,8 @@ import {
   Bell,
   PlusCircle,
   Wrench,
+  Shield,
+  User,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useNotifications } from '../../hooks/useNotifications';
@@ -39,6 +41,7 @@ function getNavItems(role: Role): NavItem[] {
         { label: 'Dashboard', to: '/dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
         { label: 'All Incidents', to: '/incidents', icon: <FileText className="w-4 h-4" /> },
         { label: 'Operational Reports', to: '/reports', icon: <BarChart3 className="w-4 h-4" /> },
+        { label: 'Audit Trail', to: '/audit-logs', icon: <Shield className="w-4 h-4" /> },
       ];
     case 'TECHNICIAN':
       return [
@@ -52,6 +55,7 @@ function getNavItems(role: Role): NavItem[] {
         { label: 'Bank Branches', to: '/branches', icon: <Building2 className="w-4 h-4" /> },
         { label: 'Divisions & Categories', to: '/divisions', icon: <Layers className="w-4 h-4" /> },
         { label: 'Operational Reports', to: '/reports', icon: <BarChart3 className="w-4 h-4" /> },
+        { label: 'Audit Trail', to: '/audit-logs', icon: <Shield className="w-4 h-4" /> },
       ];
     default:
       return [];
@@ -144,6 +148,22 @@ export function Sidebar() {
               {unreadCount > 9 ? '9+' : unreadCount}
             </span>
           )}
+        </Link>
+
+        <Link
+          to="/profile"
+          onClick={() => setMobileOpen(false)}
+          className={cn(
+            'flex items-center gap-2.5 px-3.5 py-2 rounded-md text-sm font-semibold transition-colors duration-100',
+            location.pathname === '/profile'
+              ? 'bg-slate-800 text-white font-semibold'
+              : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+          )}
+        >
+          <span className="flex items-center gap-2.5">
+            <User className="w-3.5 h-3.5" />
+            Profile & Security
+          </span>
         </Link>
 
         <div className="px-3 py-2 rounded-md bg-slate-900/80 border border-slate-800/60">

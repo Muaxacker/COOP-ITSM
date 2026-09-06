@@ -11,6 +11,7 @@ import {
 } from '../types';
 import { generateIncidentNumber } from '../utils/requestNumber';
 import { createNotification, createNotifications } from './notification.service';
+import { logAudit } from './audit.service';
 
 // ─── SLA Hours by Priority ──────────────────────────────────────────────────
 export const PRIORITY_SLA_HOURS: Record<Priority, number> = {
@@ -152,6 +153,14 @@ export async function createIncident(data: {
       action: ActivityAction.INCIDENT_CREATED,
       message: `Incident reported from ${branch.name} for category "${category.name}".`,
     },
+  });
+
+  await logAudit({
+    userId: data.reportedById,
+    action: 'INCIDENT_CREATED',
+    entityType: 'Incident',
+    entityId: incident.id,
+    newValue: { incidentNumber: incident.incidentNumber, title: incident.title, priority: incident.priority, branchId: data.branchId },
   });
 
   // Notify supervisors
@@ -416,6 +425,15 @@ export async function assignTechnician(
     },
   });
 
+  await logAudit({
+    userId: supervisorId,
+    action: isReassignment ? 'INCIDENT_REASSIGNED' : 'INCIDENT_ASSIGNED',
+    entityType: 'Incident',
+    entityId: id,
+    oldValue: { assignedTechnicianId: incident.assignedTechnicianId },
+    newValue: { assignedTechnicianId: technicianId, notes },
+  });
+
   // Notify technician
   await createNotification({
     userId: technicianId,
@@ -623,6 +641,14 @@ export async function resolveIncident(
     },
   });
 
+  await logAudit({
+    userId: technicianId,
+    action: 'INCIDENT_RESOLVED',
+    entityType: 'Incident',
+    entityId: id,
+    newValue: { rootCause: data.rootCause, resolution: data.resolution, notes: data.notes },
+  });
+
   // Notify branch user to verify
   await createNotification({
     userId: incident.reportedById,
@@ -669,6 +695,14 @@ export async function verifyResolution(
         action: ActivityAction.VERIFIED_CLOSED,
         message: data.feedback || 'Branch confirmed problem is fully solved. Incident closed.',
       },
+    });
+
+    await logAudit({
+      userId: branchUserId,
+      action: 'INCIDENT_VERIFIED_CLOSED',
+      entityType: 'Incident',
+      entityId: id,
+      newValue: { feedback: data.feedback },
     });
 
     if (incident.assignedTechnicianId) {
@@ -803,3 +837,53 @@ export async function checkSlaBreaches(): Promise<number> {
   return overdueIncidents.length;
 }
 
+
+// ─── Reclassify Incident Category & Division ──────────────────────────────
+export async function reclassifyIncident(
+  id: string,
+  userId: string,
+  data: { categoryId: string; notes?: string }
+) {
+  const incident = await prisma.incident.findUnique({
+    where: { id },
+    include: { category: { include: { division: true } } },
+  });
+  if (!incident) throw new AppError('Incident not found', 404);
+
+  const newCategory = await prisma.incidentCategory.findUnique({
+    where: { id: data.categoryId },
+    include: { division: true },
+  });
+  if (!newCategory) throw new AppError('Target category not found', 400);
+
+  const oldCategoryName = incident.category.name;
+  const oldDivisionName = incident.category.division.name;
+
+  const updated = await prisma.incident.update({
+    where: { id },
+    data: {
+      categoryId: data.categoryId,
+    },
+    select: INCIDENT_SELECT,
+  });
+
+  await prisma.incidentUpdate.create({
+    data: {
+      incidentId: id,
+      userId,
+      action: ActivityAction.STATUS_CHANGED,
+      message: `Incident reclassified from [${oldDivisionName} - ${oldCategoryName}] to [${newCategory.division.name} - ${newCategory.name}]. ${data.notes ? `Reason: ${data.notes}` : ''}`,
+    },
+  });
+
+  await logAudit({
+    userId,
+    action: 'INCIDENT_RECLASSIFIED',
+    entityType: 'Incident',
+    entityId: id,
+    oldValue: { division: oldDivisionName, category: oldCategoryName },
+    newValue: { division: newCategory.division.name, category: newCategory.name, notes: data.notes },
+  });
+
+  return updated;
+}

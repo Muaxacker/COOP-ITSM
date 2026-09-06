@@ -16,6 +16,7 @@ import { BranchDashboard } from './pages/branch/BranchDashboard';
 import { CreateIncidentPage } from './pages/branch/CreateIncidentPage';
 import { MyIncidentsPage } from './pages/branch/MyIncidentsPage';
 import { BranchIncidentDetailsPage } from './pages/branch/BranchIncidentDetailsPage';
+import { PrintableWorkOrderPage } from './pages/branch/PrintableWorkOrderPage';
 
 // IT Supervisor
 import { SupervisorDashboard } from './pages/supervisor/SupervisorDashboard';
@@ -31,9 +32,11 @@ import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { UserManagementPage } from './pages/admin/UserManagementPage';
 import { BranchManagementPage } from './pages/admin/BranchManagementPage';
 import { DivisionCategoryPage } from './pages/admin/DivisionCategoryPage';
+import { AuditLogPage } from './pages/admin/AuditLogPage';
 
 // Shared
 import { NotificationsPage } from './pages/NotificationsPage';
+import { ProfilePage } from './pages/ProfilePage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -181,6 +184,24 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/audit-logs"
+          element={
+            <ProtectedRoute allowedRoles={['IT_SUPERVISOR', 'ADMIN']}>
+              <AuditLogPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* User Profile & Security */}
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Notifications (All Roles) */}
         <Route
@@ -192,6 +213,16 @@ function AppRoutes() {
           }
         />
       </Route>
+
+      {/* Standalone Printable Official Banking Work Order */}
+      <Route
+        path="/incidents/:id/print"
+        element={
+          <ProtectedRoute>
+            <PrintableWorkOrderPage />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Fallback Redirects */}
       <Route path="/" element={<Navigate to="/dashboard" replace />} />

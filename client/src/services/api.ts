@@ -5,6 +5,8 @@ import {
   IncidentCategory,
   Incident,
   Notification,
+  Attachment,
+  AuditLog,
   TechnicianWithWorkload,
   User,
   Priority,
@@ -50,6 +52,10 @@ export const authApi = {
     }),
   logout: () => api.post('/auth/logout'),
   getMe: () => api.get<{ success: boolean; data: User }>('/auth/me'),
+  updateProfile: (data: { name?: string; phone?: string }) =>
+    api.patch<{ success: boolean; data: User; message: string }>('/auth/profile', data),
+  changePassword: (data: { currentPassword: string; newPassword: string }) =>
+    api.post<{ success: boolean; message: string }>('/auth/change-password', data),
 };
 
 // ─── Incidents API ─────────────────────────────────────────────────────────
@@ -120,6 +126,10 @@ export const incidentApi = {
 
   addNote: (id: string, data: { message: string; isInternal?: boolean }) =>
     api.post<{ success: boolean; data: unknown }>(`/incidents/${id}/notes`, data),
+
+  reclassify: (id: string, data: { categoryId: string; notes?: string }) =>
+    api.patch<{ success: boolean; data: Incident }>(`/incidents/${id}/reclassify`, data),
+
 };
 
 // ─── Branches API ──────────────────────────────────────────────────────────
@@ -199,6 +209,37 @@ export const notificationApi = {
     }>('/notifications'),
   markAsRead: (id: string) => api.patch(`/notifications/${id}/read`),
   markAllAsRead: () => api.patch('/notifications/read-all'),
+};
+
+
+// ─── Attachments API ───────────────────────────────────────────────────────
+export const attachmentApi = {
+  upload: (incidentId: string, data: { fileName: string; filePath: string; fileType?: string; fileSize?: number }) =>
+    api.post<{ success: boolean; data: Attachment; message: string }>(`/incidents/${incidentId}/attachments`, data),
+  getByIncident: (incidentId: string) =>
+    api.get<{ success: boolean; data: Attachment[] }>(`/incidents/${incidentId}/attachments`),
+  delete: (attachmentId: string) =>
+    api.delete<{ success: boolean; message: string }>(`/attachments/${attachmentId}`),
+};
+
+// ─── Audit Trail API ───────────────────────────────────────────────────────
+export const auditApi = {
+  getAuditLogs: (params?: {
+    page?: number;
+    limit?: number;
+    action?: string;
+    entityType?: string;
+    userId?: string;
+    startDate?: string;
+    endDate?: string;
+  }) =>
+    api.get<{
+      success: boolean;
+      data: {
+        logs: AuditLog[];
+        pagination: { page: number; limit: number; total: number; totalPages: number };
+      };
+    }>('/audit-logs', { params }),
 };
 
 export default api;

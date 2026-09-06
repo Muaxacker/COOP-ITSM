@@ -213,3 +213,22 @@ export async function addNote(req: AuthRequest, res: Response, next: NextFunctio
   }
 }
 
+
+const reclassifySchema = z.object({
+  categoryId: z.string().uuid(),
+  notes: z.string().optional(),
+});
+
+export async function reclassifyIncident(req: AuthRequest, res: Response, next: NextFunction) {
+  try {
+    const { categoryId, notes } = reclassifySchema.parse(req.body);
+    const incident = await incidentService.reclassifyIncident(
+      param(req.params.id),
+      req.user!.userId,
+      { categoryId, notes }
+    );
+    return success(res, incident, 'Incident reclassified successfully');
+  } catch (err) {
+    return next(err);
+  }
+}

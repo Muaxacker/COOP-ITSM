@@ -21,7 +21,11 @@ import {
   Plus,
   Phone,
   User as UserIcon,
+  Printer,
+  RefreshCw,
 } from 'lucide-react';
+import { AttachmentSection } from '../../components/ui/AttachmentSection';
+import { ReclassifyModal } from '../../components/ui/ReclassifyModal';
 
 export function TechnicianIncidentPage() {
   const { id } = useParams<{ id: string }>();
@@ -44,6 +48,9 @@ export function TechnicianIncidentPage() {
   const [rootCause, setRootCause] = useState('');
   const [resolutionSummary, setResolutionSummary] = useState('');
   const [resolveNotes, setResolveNotes] = useState('');
+
+  // Reclassify modal
+  const [reclassifyModalOpen, setReclassifyModalOpen] = useState(false);
 
   const { data: incident, isLoading, error } = useQuery({
     queryKey: ['incident', id],
@@ -159,6 +166,27 @@ export function TechnicianIncidentPage() {
 
         {/* Action Controls */}
         <div className="flex flex-wrap items-center gap-2">
+          {/* Printable Official Banking Work Order */}
+          <Button
+            variant="outline"
+            size="sm"
+            icon={<Printer className="w-3.5 h-3.5" />}
+            onClick={() => window.open(`/incidents/${incident.id}/print`, '_blank')}
+          >
+            Print Work Order
+          </Button>
+
+          {incident.status !== 'CLOSED' && (
+            <Button
+              variant="outline"
+              size="sm"
+              icon={<RefreshCw className="w-3.5 h-3.5" />}
+              onClick={() => setReclassifyModalOpen(true)}
+            >
+              Reclassify
+            </Button>
+          )}
+
           {incident.status === 'ASSIGNED' && (
             <Button
               onClick={() => startInvestMutation.mutate()}
@@ -286,6 +314,9 @@ export function TechnicianIncidentPage() {
           </div>
         )}
       </div>
+
+      {/* Attachments & Photographic Evidence */}
+      <AttachmentSection incidentId={incident.id} />
 
       {/* Structured Troubleshooting Log Entry & History */}
       <div className="bg-white rounded-lg border border-slate-200/80 p-5 shadow-subtle space-y-6">
@@ -502,6 +533,16 @@ export function TechnicianIncidentPage() {
           </div>
         </div>
       )}
+
+      {/* Reclassify Modal */}
+      <ReclassifyModal
+        isOpen={reclassifyModalOpen}
+        onClose={() => setReclassifyModalOpen(false)}
+        incidentId={incident.id}
+        incidentNumber={incident.incidentNumber}
+        currentDivisionName={incident.category?.division?.name}
+        currentCategoryName={incident.category?.name}
+      />
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { incidentApi, branchApi, divisionApi, userApi } from '../../services/api';
 import { StatusBadge, PriorityBadge, SlaBadge, DivisionBadge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
-import { Search, Filter, Wrench, ArrowRight, UserCheck, Edit3 } from 'lucide-react';
+import { Search, Filter, Wrench, ArrowRight, UserCheck, Edit3, Download } from 'lucide-react';
 import { formatDateTime } from '../../utils';
 import { IncidentStatus, Priority, DivisionCode, Incident } from '../../types';
 import toast from 'react-hot-toast';
@@ -107,6 +107,47 @@ export function AllIncidentsPage() {
   const incidents = data?.incidents || [];
   const pagination = data?.pagination || { page: 1, limit: 15, total: 0, totalPages: 1 };
 
+  const handleExportCsv = () => {
+    if (!incidents.length) return;
+    const headers = [
+      'Incident Number',
+      'Title',
+      'Branch',
+      'Division',
+      'Category',
+      'Priority',
+      'Status',
+      'SLA Breached',
+      'Assigned Technician',
+      'Reported By',
+      'Created Date',
+    ];
+
+    const rows = incidents.map((inc) => [
+      `"${inc.incidentNumber}"`,
+      `"${(inc.title || '').replace(/"/g, '""')}"`,
+      `"${(inc.branch?.name || '').replace(/"/g, '""')}"`,
+      `"${(inc.category?.division?.name || '').replace(/"/g, '""')}"`,
+      `"${(inc.category?.name || '').replace(/"/g, '""')}"`,
+      `"${inc.priority}"`,
+      `"${inc.status}"`,
+      inc.slaBreached ? 'YES' : 'NO',
+      `"${(inc.assignedTechnician?.name || 'Unassigned').replace(/"/g, '""')}"`,
+      `"${(inc.reportedBy?.name || '').replace(/"/g, '""')}"`,
+      `"${formatDateTime(inc.createdAt)}"`,
+    ]);
+
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `COOP_Incidents_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success('Incident ledger exported to CSV');
+  };
+
   return (
     <div className="space-y-6">
       {/* Page Title */}
@@ -121,6 +162,18 @@ export function AllIncidentsPage() {
           <p className="text-sm font-medium text-slate-600 mt-0.5">
             Comprehensive ticket log across all branches, divisions, SLA milestones, and technician assignments.
           </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            icon={<Download className="w-3.5 h-3.5" />}
+            onClick={handleExportCsv}
+            disabled={incidents.length === 0}
+          >
+            Export CSV ({pagination.total})
+          </Button>
         </div>
       </div>
 

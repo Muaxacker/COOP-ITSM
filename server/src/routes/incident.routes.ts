@@ -12,6 +12,7 @@ import {
   resolveIncident,
   verifyResolution,
   addNote,
+  reclassifyIncident,
 } from '../controllers/incident.controller';
 import { authenticate, authorize } from '../middleware/auth';
 import { Role } from '../types';
@@ -26,6 +27,7 @@ router.post('/', authorize(Role.BRANCH_USER, Role.ADMIN), createIncident);
 router.get('/:id', getIncidentById);
 
 router.patch('/:id/review', authorize(Role.IT_SUPERVISOR, Role.ADMIN), reviewIncident);
+router.patch('/:id/reclassify', authorize(Role.IT_SUPERVISOR, Role.TECHNICIAN, Role.ADMIN), reclassifyIncident);
 router.post('/:id/assign', authorize(Role.IT_SUPERVISOR, Role.ADMIN), assignTechnician);
 
 router.post('/:id/investigate', authorize(Role.TECHNICIAN, Role.ADMIN), startInvestigation);

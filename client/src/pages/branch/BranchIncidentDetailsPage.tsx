@@ -21,7 +21,11 @@ import {
   ShieldCheck,
   UserCheck,
   Edit3,
+  Printer,
+  RefreshCw,
 } from "lucide-react";
+import { AttachmentSection } from "../../components/ui/AttachmentSection";
+import { ReclassifyModal } from "../../components/ui/ReclassifyModal";
 
 export function BranchIncidentDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -44,6 +48,9 @@ export function BranchIncidentDetailsPage() {
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [newPriority, setNewPriority] = useState<Priority>("MEDIUM");
   const [reviewNotes, setReviewNotes] = useState("");
+
+  // Reclassify Modal State
+  const [reclassifyModalOpen, setReclassifyModalOpen] = useState(false);
 
   const { data: incident, isLoading, error } = useQuery({
     queryKey: ["incident", id],
@@ -186,31 +193,52 @@ export function BranchIncidentDetailsPage() {
           Back to Incidents
         </button>
 
-        {/* Supervisor / Admin Quick Action Buttons */}
-        {canManage && incident.status !== "CLOSED" && (
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              icon={<Edit3 className="w-3.5 h-3.5" />}
-              onClick={() => {
-                setNewPriority(incident.priority);
-                setReviewModalOpen(true);
-              }}
-            >
-              Review Priority
-            </Button>
+        <div className="flex items-center gap-2">
+          {/* Printable Official Banking Work Order */}
+          <Button
+            variant="outline"
+            size="sm"
+            icon={<Printer className="w-3.5 h-3.5" />}
+            onClick={() => window.open(`/incidents/${incident.id}/print`, '_blank')}
+          >
+            Print Work Order
+          </Button>
 
-            <Button
-              size="sm"
-              icon={<UserCheck className="w-4 h-4" />}
-              onClick={() => setAssignModalOpen(true)}
-              className="bg-brand-900 hover:bg-brand-800 text-white shadow-subtle font-semibold"
-            >
-              {incident.assignedTechnician ? "Reassign Technician" : "Assign Technician"}
-            </Button>
-          </div>
-        )}
+          {/* Supervisor / Admin Quick Action Buttons */}
+          {canManage && incident.status !== "CLOSED" && (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                icon={<RefreshCw className="w-3.5 h-3.5" />}
+                onClick={() => setReclassifyModalOpen(true)}
+              >
+                Reclassify
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                icon={<Edit3 className="w-3.5 h-3.5" />}
+                onClick={() => {
+                  setNewPriority(incident.priority);
+                  setReviewModalOpen(true);
+                }}
+              >
+                Review Priority
+              </Button>
+
+              <Button
+                size="sm"
+                icon={<UserCheck className="w-4 h-4" />}
+                onClick={() => setAssignModalOpen(true)}
+                className="bg-brand-900 hover:bg-brand-800 text-white shadow-subtle font-semibold"
+              >
+                {incident.assignedTechnician ? "Reassign Technician" : "Assign Technician"}
+              </Button>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Verification Banner (If RESOLVED) */}
@@ -344,6 +372,9 @@ export function BranchIncidentDetailsPage() {
 
       {/* Troubleshooting Log Viewer */}
       <TroubleshootingLogViewer logs={incident.troubleshootingLogs || []} />
+
+      {/* Attachments & Photographic Evidence */}
+      <AttachmentSection incidentId={incident.id} />
 
       {/* More Info Request Banner */}
       {incident.status === "WAITING_FOR_INFO" && (
@@ -657,6 +688,16 @@ export function BranchIncidentDetailsPage() {
           </div>
         </div>
       )}
+
+      {/* Reclassify Modal */}
+      <ReclassifyModal
+        isOpen={reclassifyModalOpen}
+        onClose={() => setReclassifyModalOpen(false)}
+        incidentId={incident.id}
+        incidentNumber={incident.incidentNumber}
+        currentDivisionName={incident.category?.division?.name}
+        currentCategoryName={incident.category?.name}
+      />
     </div>
   );
 }

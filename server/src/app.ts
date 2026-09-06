@@ -13,6 +13,8 @@ import incidentRoutes from './routes/incident.routes';
 import notificationRoutes from './routes/notification.routes';
 import dashboardRoutes from './routes/dashboard.routes';
 import reportRoutes from './routes/report.routes';
+import auditRoutes from './routes/audit.routes';
+import attachmentRoutes from './routes/attachment.routes';
 
 const app = express();
 
@@ -72,6 +74,8 @@ app.use('/api/incidents', incidentRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/audit-logs', auditRoutes);
+app.use('/api', attachmentRoutes);
 
 // ─── Error Handling ──────────────────────────────────────────────────────────
 app.use(notFoundHandler);

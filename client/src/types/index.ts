@@ -172,3 +172,20 @@ export interface TechnicianWithWorkload {
   division?: { id: string; name: string; code: DivisionCode } | null;
   activeWorkload: number;
 }
+
+export interface AuditLog {
+  id: string;
+  userId?: string | null;
+  action: string;
+  entityType: string;
+  entityId: string;
+  oldValue?: string | null;
+  newValue?: string | null;
+  createdAt: string;
+  user?: {
+    id: string;
+    name: string;
+    email: string;
+    role: Role;
+  } | null;
+}
