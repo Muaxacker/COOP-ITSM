@@ -1,12 +1,28 @@
-import { Role, Priority, RequestStatus, ActivityAction, NotificationType } from '@prisma/client';
+import {
+  Role,
+  Priority,
+  IncidentStatus,
+  DivisionCode,
+  ActivityAction,
+  NotificationType,
+} from '@prisma/client';
 import { Request } from 'express';
 
-export { Role, Priority, RequestStatus, ActivityAction, NotificationType };
+export {
+  Role,
+  Priority,
+  IncidentStatus,
+  DivisionCode,
+  ActivityAction,
+  NotificationType,
+};
 
 export interface JwtPayload {
   userId: string;
   role: Role;
   email: string;
+  branchId?: string | null;
+  divisionId?: string | null;
 }
 
 export interface AuthRequest extends Request {
@@ -25,11 +41,16 @@ export interface PaginationQuery {
   limit?: number;
 }
 
-export interface RequestFilters {
-  status?: RequestStatus;
+export interface IncidentFilters {
+  status?: IncidentStatus;
   priority?: Priority;
+  divisionId?: string;
+  divisionCode?: DivisionCode;
   categoryId?: string;
-  assignedOfficerId?: string;
-  customerId?: string;
+  branchId?: string;
+  assignedTechnicianId?: string;
+  reportedById?: string;
+  slaBreached?: boolean;
   search?: string;
 }
+

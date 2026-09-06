@@ -1,117 +1,106 @@
-import { format, formatDistanceToNow, isPast, isAfter } from 'date-fns';
-import { RequestStatus, Priority, DeadlineStatus } from '../types';
+import { format, formatDistanceToNow, isPast } from 'date-fns';
+import { IncidentStatus, Priority, DivisionCode } from '../types';
+import { clsx, type ClassValue } from 'clsx';
+
+export function cn(...inputs: ClassValue[]) {
+  return clsx(inputs);
+}
 
 export function formatDate(date: string | Date) {
-  return format(new Date(date), 'MMM d, yyyy');
+  try {
+    return format(new Date(date), 'MMM d, yyyy');
+  } catch {
+    return String(date);
+  }
 }
 
 export function formatDateTime(date: string | Date) {
-  return format(new Date(date), 'MMM d, yyyy h:mm a');
+  try {
+    return format(new Date(date), 'MMM d, yyyy h:mm a');
+  } catch {
+    return String(date);
+  }
 }
 
 export function formatTime(date: string | Date) {
-  return format(new Date(date), 'h:mm a');
+  try {
+    return format(new Date(date), 'h:mm a');
+  } catch {
+    return String(date);
+  }
 }
 
 export function timeAgo(date: string | Date) {
-  return formatDistanceToNow(new Date(date), { addSuffix: true });
-}
-
-export function getDeadlineStatus(deadline: string | Date, createdAt: string | Date): DeadlineStatus {
-  const deadlineDate = new Date(deadline);
-  const createdDate = new Date(createdAt);
-  const now = new Date();
-
-  if (isPast(deadlineDate)) return 'OVERDUE';
-
-  const totalMs = deadlineDate.getTime() - createdDate.getTime();
-  const remainingMs = deadlineDate.getTime() - now.getTime();
-  const ratio = remainingMs / totalMs;
-
-  if (ratio <= 0.25) return 'DEADLINE_APPROACHING';
-  return 'ON_TRACK';
-}
-
-export function formatTimeRemaining(deadline: string | Date): string {
-  const deadlineDate = new Date(deadline);
-  const now = new Date();
-  const diff = deadlineDate.getTime() - now.getTime();
-
-  if (diff <= 0) {
-    const abs = Math.abs(diff);
-    const hours = Math.floor(abs / 3_600_000);
-    const minutes = Math.floor((abs % 3_600_000) / 60_000);
-    if (hours > 0) return `${hours}h ${minutes}m overdue`;
-    return `${minutes}m overdue`;
+  try {
+    return formatDistanceToNow(new Date(date), { addSuffix: true });
+  } catch {
+    return String(date);
   }
-  const hours = Math.floor(diff / 3_600_000);
-  const minutes = Math.floor((diff % 3_600_000) / 60_000);
-  if (hours > 0) return `${hours}h ${minutes}m remaining`;
-  return `${minutes}m remaining`;
 }
 
-export function getDeadlinePercent(deadline: string | Date, createdAt: string | Date): number {
-  const deadlineDate = new Date(deadline);
-  const createdDate = new Date(createdAt);
-  const now = new Date();
+export function formatTimeRemaining(deadline: string | Date): { text: string; isBreached: boolean } {
+  try {
+    const deadlineDate = new Date(deadline);
+    const now = new Date();
+    const diff = deadlineDate.getTime() - now.getTime();
 
-  const totalMs = deadlineDate.getTime() - createdDate.getTime();
-  const elapsedMs = now.getTime() - createdDate.getTime();
-  const percent = Math.min(100, Math.max(0, (elapsedMs / totalMs) * 100));
-  return Math.round(percent);
+    if (diff <= 0) {
+      const abs = Math.abs(diff);
+      const hours = Math.floor(abs / 3_600_000);
+      const minutes = Math.floor((abs % 3_600_000) / 60_000);
+      return {
+        text: hours > 0 ? `${hours}h ${minutes}m overdue` : `${minutes}m overdue`,
+        isBreached: true,
+      };
+    }
+    const hours = Math.floor(diff / 3_600_000);
+    const minutes = Math.floor((diff % 3_600_000) / 60_000);
+    return {
+      text: hours > 0 ? `${hours}h ${minutes}m remaining` : `${minutes}m remaining`,
+      isBreached: false,
+    };
+  } catch {
+    return { text: 'N/A', isBreached: false };
+  }
 }
 
-export const STATUS_LABELS: Record<RequestStatus, string> = {
-  NEW: 'New',
-  REVIEWED: 'Reviewed',
+export const STATUS_LABELS: Record<IncidentStatus, string> = {
+  OPEN: 'Open',
   ASSIGNED: 'Assigned',
-  INVESTIGATING: 'Investigating',
+  IN_PROGRESS: 'In Progress',
+  WAITING_FOR_INFO: 'Waiting for Info',
   RESOLVED: 'Resolved',
   CLOSED: 'Closed',
   REOPENED: 'Reopened',
-  OVERDUE: 'Overdue',
-  ESCALATED: 'Escalated',
 };
 
-export const STATUS_COLORS: Record<RequestStatus, string> = {
-  NEW: 'bg-info-light text-info',
-  REVIEWED: 'bg-info-light text-info',
-  ASSIGNED: 'bg-warning-light text-warning',
-  INVESTIGATING: 'bg-warning-light text-warning',
-  RESOLVED: 'bg-success-light text-success',
-  CLOSED: 'bg-gray-100 text-gray-500',
-  REOPENED: 'bg-purple-100 text-purple-700',
-  OVERDUE: 'bg-danger-light text-danger',
-  ESCALATED: 'bg-danger-light text-danger',
+export const STATUS_COLORS: Record<IncidentStatus, string> = {
+  OPEN: 'bg-blue-100 text-blue-800 border border-blue-200',
+  ASSIGNED: 'bg-indigo-100 text-indigo-800 border border-indigo-200',
+  IN_PROGRESS: 'bg-amber-100 text-amber-800 border border-amber-200',
+  WAITING_FOR_INFO: 'bg-orange-100 text-orange-800 border border-orange-200',
+  RESOLVED: 'bg-teal-100 text-teal-800 border border-teal-200',
+  CLOSED: 'bg-slate-100 text-slate-700 border border-slate-200',
+  REOPENED: 'bg-rose-100 text-rose-800 border border-rose-200',
 };
 
 export const PRIORITY_LABELS: Record<Priority, string> = {
-  LOW: 'Low',
-  MEDIUM: 'Medium',
+  CRITICAL: 'Critical',
   HIGH: 'High',
+  MEDIUM: 'Medium',
+  LOW: 'Low',
 };
 
 export const PRIORITY_COLORS: Record<Priority, string> = {
-  LOW: 'bg-gray-100 text-gray-600',
-  MEDIUM: 'bg-warning-light text-warning',
-  HIGH: 'bg-danger-light text-danger',
+  CRITICAL: 'bg-red-100 text-red-800 border border-red-300 font-semibold',
+  HIGH: 'bg-orange-100 text-orange-800 border border-orange-200 font-medium',
+  MEDIUM: 'bg-amber-100 text-amber-800 border border-amber-200',
+  LOW: 'bg-emerald-100 text-emerald-800 border border-emerald-200',
 };
 
-export function getStatusIcon(status: RequestStatus): string {
-  const icons: Record<RequestStatus, string> = {
-    NEW: '📥',
-    REVIEWED: '👁️',
-    ASSIGNED: '👤',
-    INVESTIGATING: '🔍',
-    RESOLVED: '✅',
-    CLOSED: '🔒',
-    REOPENED: '🔄',
-    OVERDUE: '⚠️',
-    ESCALATED: '🚨',
-  };
-  return icons[status] || '📋';
-}
-
-export function cn(...classes: (string | undefined | null | false)[]) {
-  return classes.filter(Boolean).join(' ');
-}
+export const DIVISION_COLORS: Record<DivisionCode, string> = {
+  ATM: 'bg-cyan-100 text-cyan-800 border-cyan-200',
+  APPLICATION: 'bg-violet-100 text-violet-800 border-violet-200',
+  NETWORKING: 'bg-blue-100 text-blue-800 border-blue-200',
+  MAINTENANCE: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+};

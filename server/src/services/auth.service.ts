@@ -8,7 +8,10 @@ import { JwtPayload } from '../types';
 export async function loginUser(email: string, password: string) {
   const user = await prisma.user.findUnique({
     where: { email: email.toLowerCase() },
-    include: { department: { select: { id: true, name: true } } },
+    include: {
+      branch: { select: { id: true, name: true, code: true, location: true } },
+      division: { select: { id: true, name: true, code: true } },
+    },
   });
 
   if (!user) throw new AppError('Invalid email or password', 401);
@@ -21,6 +24,8 @@ export async function loginUser(email: string, password: string) {
     userId: user.id,
     role: user.role,
     email: user.email,
+    branchId: user.branchId,
+    divisionId: user.divisionId,
   };
 
   const token = jwt.sign(payload, config.jwtSecret, {
@@ -41,9 +46,11 @@ export async function getMe(userId: string) {
       name: true,
       email: true,
       role: true,
+      phone: true,
       isActive: true,
       createdAt: true,
-      department: { select: { id: true, name: true } },
+      branch: { select: { id: true, name: true, code: true, location: true } },
+      division: { select: { id: true, name: true, code: true } },
     },
   });
 

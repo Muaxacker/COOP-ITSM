@@ -1,291 +1,155 @@
-# BankCare — Banking Service Request & Complaint Management System
+# COOP-ITSM — IT Service Request & Incident Management System
 
-> Academic internship project — banking environment prototype.  
-> **Not connected to real banking infrastructure or real customer data.**
-
----
-
-## Problem Statement
-
-Customer complaints and service requests in a banking environment can get lost, delayed, or forgotten when handled through fragmented manual channels (phone, paper, email). There is no single place where customers can track their request, officers can see their workload, or managers can monitor resolution rates and overdue cases.
-
-## Solution
-
-BankCare is a centralized service request and complaint management platform that creates a transparent, accountable workflow from the moment a customer submits a request to the moment it is resolved and confirmed.
-
-**The core value:** *This system prevents customer requests from getting lost, forgotten, or delayed.*
+**Cooperative Bank of Oromia (COOP Bank)**  
+*Centralized IT Infrastructure, Branch Problem Reporting, and Technical Incident Resolution Platform*
 
 ---
 
-## Core Features
+## 🎯 Problem Statement & Background
 
-| Feature | Description |
-|---|---|
-| **Centralized Request Center** | Customers submit requests in a structured multi-step form with category selection |
-| **Smart Rule-Based Assignment** | Requests are automatically routed to the responsible department and assigned to the least-loaded officer |
-| **Case Tracking & Activity Timeline** | Every action is logged with who did what and when — full audit trail |
-| **Service Deadline Monitoring** | Each category has a configured deadline; overdue cases surface automatically to managers |
-| **Resolution & Customer Feedback** | Officers resolve cases; customers confirm or reopen; 5-star feedback collected |
+Commercial bank branches depend heavily on diverse IT infrastructure:
+- Automatic Teller Machines (ATMs)
+- Core Banking Applications & Transaction Gateways
+- Network Infrastructure (LAN, WAN, VPN, Telecom links)
+- Hardware, Workstations, Receipt & Passbook Printers
 
----
+When branch staff experience technical failures (such as card reader jams, ATM cash dispenser hardware faults, database connection timeouts, switch port dropouts, or computer malware infections), support requests often get delayed or lost when handled through informal phone calls or messaging.
 
-## User Roles
-
-| Role | Access |
-|---|---|
-| **Customer** | Submit requests, track status, confirm resolution, submit feedback |
-| **Officer** | Review, assign, investigate, resolve, add notes, escalate cases |
-| **Manager** | Monitor all requests, view overdue/escalated cases, reassign, view KPIs |
-| **Admin** | Manage users, configure service categories and deadlines |
+**COOP-ITSM** centralizes problem reporting, technician workload assignment, step-by-step diagnostic logging, resolution verification, and SLA deadline tracking across all bank branches.
 
 ---
 
-## Technology Stack
+## 🏛️ IT Technical Divisions
 
-**Frontend**
-- React 18 + TypeScript
-- Vite (bundler)
-- Tailwind CSS (design system)
-- React Router v6 (routing)
-- TanStack Query (server state)
-- Axios (HTTP client)
-- react-hot-toast (notifications)
+Directly modeled from COOP Bank operational infrastructure:
 
-**Backend**
-- Node.js + Express + TypeScript
-- Prisma ORM
-- PostgreSQL 16
-- JWT + bcryptjs (authentication)
-- Zod (validation)
-- Helmet + CORS (security)
-- node-cron (deadline monitoring)
-
----
-
-## Request Workflow
-
-```
-Customer submits request
-        ↓
-Category → Department → Officer Auto-Assignment
-        ↓
-NEW → REVIEWED → ASSIGNED → INVESTIGATING → RESOLVED → CLOSED
-        ↓                        ↓
-     (OVERDUE if deadline      ESCALATED → Manager
-      passes at any stage)         ↓
-                               RESOLVED
-        ↑
-  REOPENED (if customer rejects resolution)
-```
-
----
-
-## Database Schema
-
-- **User** — id, name, email, passwordHash, role, departmentId, isActive
-- **Department** — id, name, description
-- **ServiceCategory** — id, name, departmentId, defaultDeadlineHours, defaultPriority
-- **ServiceRequest** — id, requestNumber (SR-YYYY-XXXXX), customerId, categoryId, assignedOfficerId, title, description, priority, status, deadline
-- **RequestActivity** — id, requestId, userId, action, description, isCustomerVisible
-- **Notification** — id, userId, requestId, title, message, type, isRead
-- **Feedback** — id, requestId, customerId, rating (1–5), comment
-
----
-
-## Installation
-
-### Prerequisites
-- Node.js 18+
-- PostgreSQL 16 (or Docker)
-
-### Local Development
-
-```bash
-# 1. Clone / navigate to project
-cd bankcare
-
-# 2. Set up environment
-cp .env.example .env
-# Edit .env with your database credentials
-
-# 3. Create the database (PostgreSQL must be running)
-bash setup-db.sh
-
-# 4. Install dependencies
-cd server && npm install
-cd ../client && npm install
-
-# 5. Run database migrations
-cd server
-DATABASE_URL="..." npx prisma migrate dev
-
-# 6. Seed demo data
-DATABASE_URL="..." npm run db:seed
-
-# 7. Start the backend (port 5000)
-cd server && npm run dev
-
-# 8. Start the frontend (port 3000) — in a new terminal
-cd client && npm run dev
-```
-
-Open http://localhost:3000
-
-### With Docker
-
-```bash
-cp .env.example .env
-# Edit .env — set a strong JWT_SECRET
-
-docker compose up --build
-```
-
-Open http://localhost
-
-The database will be migrated automatically on first start.  
-To seed demo data after Docker startup:
-```bash
-docker exec bankcare-server npx prisma db seed
-```
-
----
-
-## Environment Variables
-
-| Variable | Description | Default |
+| Division Code | Division Name | Scope of Problems |
 |---|---|---|
-| `DATABASE_URL` | PostgreSQL connection string | — |
-| `JWT_SECRET` | JWT signing secret (keep strong!) | — |
-| `JWT_EXPIRES_IN` | Token expiry | `7d` |
-| `PORT` | Backend port | `5000` |
-| `NODE_ENV` | Environment | `development` |
-| `CLIENT_URL` | Frontend URL for CORS | `http://localhost:3000` |
+| **ATM** | ATM Support Division | Cash dispenser faults, card reader jams, ATM network offline, receipt printer failures, vault lock sensor errors |
+| **APPLICATION** | Application Support Division | Core banking transaction timeouts, user account lockouts, mobile banking sync, report export crashes |
+| **NETWORKING** | Network & Telecom Division | Branch WAN disconnection, router interface flaps, VPN tunnel failures, branch switch PoE drops |
+| **MAINTENANCE** | Hardware & Maintenance Division | Teller PC motherboard failures, passbook printer head damage, UPS battery failures, malware disinfection |
 
 ---
 
-## Demo Accounts
+## 👥 User Roles & Access Control
 
-> Password for all demo accounts: **`Password123!`**
-
-| Role | Email |
-|---|---|
-| Customer | ahmed@bankcare.demo |
-| Officer | sara@bankcare.demo |
-| Officer | khalid@bankcare.demo |
-| Manager | fatima@bankcare.demo |
-| Admin | admin@bankcare.demo |
-
-The seed script creates **15 realistic requests** across all statuses including overdue, escalated, resolved, and closed cases — so dashboards show realistic data on first login.
+| Role | Portal / Responsibility | Key Capabilities |
+|---|---|---|
+| **BRANCH_USER** | Branch Portal | Reports IT incidents, filters by division, tracks ticket status in real-time, responds to technician info requests, and **verifies resolution** ("Problem Solved" or "Problem Still Exists"). |
+| **IT_SUPERVISOR** | Supervisor Operations Desk | Reviews unassigned branch tickets, assesses priority/category, assigns tickets to technicians based on workload, and views operational analytics. |
+| **TECHNICIAN** | Technician Workbench | Views assigned queue, begins investigations, records **Troubleshooting Logs** (Action, Observation, Result), requests branch clarification, and submits formal resolutions. |
+| **ADMIN** | System Administration | Manages user accounts, configures bank branch directory, manages IT divisions, and sets SLA response deadlines. |
 
 ---
 
-## API Overview
+## 🔄 Incident Lifecycle & Resolution Loop
 
 ```
-POST   /api/auth/login
-POST   /api/auth/logout
-GET    /api/auth/me
-
-GET    /api/dashboard/customer
-GET    /api/dashboard/officer
-GET    /api/dashboard/manager
-
-GET    /api/requests
-POST   /api/requests
-GET    /api/requests/:id
-POST   /api/requests/:id/review
-POST   /api/requests/:id/assign
-POST   /api/requests/:id/start
-POST   /api/requests/:id/note
-POST   /api/requests/:id/escalate
-POST   /api/requests/:id/resolve
-POST   /api/requests/:id/reopen
-POST   /api/requests/:id/close
-POST   /api/requests/:id/feedback
-
-GET    /api/notifications
-PATCH  /api/notifications/read-all
-PATCH  /api/notifications/:id/read
-
-GET    /api/users
-POST   /api/users
-PATCH  /api/users/:id
-PATCH  /api/users/:id/status
-
-GET    /api/categories
-POST   /api/categories
-PATCH  /api/categories/:id
-
-GET    /api/departments
+Branch Staff Submits Incident (INC-YYYY-XXXXX)
+                     ↓
+        STATUS: OPEN (Priority & Category set)
+                     ↓
+IT Supervisor Reviews & Assigns to Technician (Least active workload)
+                     ↓
+             STATUS: ASSIGNED
+                     ↓
+Technician Begins Diagnostic Investigation
+                     ↓
+            STATUS: IN_PROGRESS
+           ├── Request More Info ──→ STATUS: WAITING_FOR_INFO
+           │                             ↓ (Branch responds)
+           │                        STATUS: IN_PROGRESS
+           └── Step-by-Step Diagnostic Logs:
+               • Action Taken
+               • Technical Observation
+               • Result / Finding
+                     ↓
+Technician Submits Resolution (Root Cause + Fix Summary)
+                     ↓
+             STATUS: RESOLVED
+                     ↓
+Branch User Resolution Verification:
+   ├── Confirms "Problem Solved"  ──→ STATUS: CLOSED
+   └── Rejects "Problem Exists"   ──→ STATUS: REOPENED (Returns to In-Progress)
 ```
 
 ---
 
-## Security
+## ⚡ Key Technical Features
 
-- Passwords hashed with bcrypt (12 rounds)
-- JWT authentication with HTTP Authorization header
-- Role-Based Access Control enforced on every API endpoint (not just frontend)
-- Resource ownership checks (customers cannot access other customers' requests)
-- Input validation on all endpoints via Zod
-- Parameterized queries via Prisma (no SQL injection)
-- Helmet for HTTP security headers
-- CORS configured to frontend origin only
-- Login rate limiting (20 requests per 15 minutes)
-- No secrets committed to repository
+1. **Step-by-Step Troubleshooting Logs**:
+   Technicians document diagnostic steps (`action`, `observation`, `result`, timestamp, technician name). An interactive visual timeline displays these diagnostic logs for supervisors, branches, and auditors.
+
+2. **Branch Resolution Verification**:
+   When a technician marks an incident resolved, branch staff must verify whether the machine/system is genuinely functional. If confirmed, the ticket transitions to `CLOSED`. If rejected, it transitions to `REOPENED` with feedback explaining the ongoing symptoms.
+
+3. **Automated SLA Breach Monitor**:
+   Background cron scheduler runs every 5 minutes (`server/src/server.ts`), checking SLA deadlines against real-time timestamps and flagging breached incidents automatically with in-app alerts.
+
+4. **Realistic Demo Data**:
+   Populated with 8 actual Ethiopian branches (Hawassa, Bole, Finfinnee, Jimma, Adama, Shashemene, Nekemte, Dire Dawa), 20 diagnostic incident categories, and 10 pre-configured accounts.
 
 ---
 
-## Deadline Monitoring
+## 🔑 Pre-Configured Demo Credentials
 
-Each service category has a `defaultDeadlineHours` value. When a request is created:
+All demo accounts use the standard password: **`Password123!`**
 
+| Role | Account Name | Email | Division / Branch |
+|---|---|---|---|
+| **Branch User** | Hawassa Branch Teller | `teller.hawassa@coopbank.et` | Hawassa Central Branch |
+| **Branch User** | Bole Branch Operations | `bole.ops@coopbank.et` | Bole Branch (Finfinnee) |
+| **Branch User** | Finfinnee Main Teller | `finfinnee.teller@coopbank.et` | Finfinnee Main Branch |
+| **IT Supervisor** | IT Support Supervisor | `supervisor@coopbank.et` | Central IT Support Desk |
+| **Technician** | ATM Field Engineer | `tech.atm@coopbank.et` | ATM Division |
+| **Technician** | Application Analyst | `tech.app@coopbank.et` | Application Division |
+| **Technician** | Networking Specialist | `tech.network@coopbank.et` | Networking Division |
+| **Technician** | Hardware Support Tech | `tech.hardware@coopbank.et` | Maintenance Division |
+| **Administrator** | System Administrator | `admin@coopbank.et` | IT Operations HQ |
+
+*Quick login buttons for all roles are available directly on the login screen.*
+
+---
+
+## 🚀 Quick Start Guide
+
+### 1. Database Setup (Docker Postgres)
+```bash
+# Start PostgreSQL container on port 5435
+docker compose up -d postgres
 ```
-deadline = createdAt + category.defaultDeadlineHours
+
+### 2. Backend Setup & Seed
+```bash
+cd server
+npm install
+npx prisma db push
+npx tsx prisma/seed.ts
+npm run build
+npm start   # Runs on http://localhost:5000
 ```
 
-Deadline status is calculated dynamically:
-- 🟢 **On Track** — more than 25% time remaining
-- 🟡 **Approaching** — 25% or less remaining
-- 🔴 **Overdue** — deadline passed
+### 3. Frontend Setup
+```bash
+cd ../client
+npm install
+npm run build
+npm run dev   # Runs on http://localhost:3003
+```
 
-A background job (node-cron) runs every 5 minutes to mark overdue requests and notify the assigned officer and managers.
-
-**Demo deadline values** (configurable by Admin):
-| Category | Deadline |
-|---|---|
-| ATM Services | 8 hours |
-| Card Services | 12 hours |
-| Mobile Banking | 24 hours |
-| Transfer Issues | 24 hours |
-| Account Services | 48 hours |
-| General Complaint | 48 hours |
-
-*These are demo values. Actual banking service deadlines would be configured per institutional policy.*
+### Root Scripts
+From the repository root (`COOP-ITSM/`):
+```bash
+npm run build         # Builds both server and client
+npm run dev:server    # Starts backend in dev mode
+npm run dev:client    # Starts frontend in dev mode
+```
 
 ---
 
-## Future Improvements
+## 🛠️ Technology Stack
 
-- Email / SMS notifications
-- File attachments on requests
-- Branch-level filtering for multi-branch banks
-- Officer performance reports
-- Excel/PDF export
-- Real-time updates via WebSockets
-- Mobile application
-- Integration with core banking APIs (out of scope for MVP)
-
----
-
-## Important Disclaimer
-
-This is an **academic prototype** built as a university internship project. It:
-- Does not connect to real banking infrastructure
-- Does not process real financial transactions
-- Uses only fake/demo data
-- Should not be deployed to production without a full security audit
-
----
-
-*Built with React, Express, Prisma, and PostgreSQL.*
+- **Backend**: Node.js, Express 5, TypeScript, Prisma ORM, PostgreSQL 16, JWT, Bcrypt, Zod, node-cron
+- **Frontend**: React 18, TypeScript, Vite, Tailwind CSS, TanStack Query v5, Lucide Icons, React Router v6, react-hot-toast
+- **Infrastructure**: Docker Compose, PostgreSQL Container

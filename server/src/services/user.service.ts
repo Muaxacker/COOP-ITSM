@@ -1,27 +1,43 @@
 import bcrypt from 'bcryptjs';
 import { prisma } from '../config/prisma';
 import { AppError } from '../middleware/errorHandler';
-import { Role } from '../types';
+import { IncidentStatus, Role } from '../types';
 
 const USER_SELECT = {
   id: true,
   name: true,
   email: true,
   role: true,
+  phone: true,
+  branchId: true,
+  divisionId: true,
   isActive: true,
   createdAt: true,
   updatedAt: true,
-  department: { select: { id: true, name: true } },
+  branch: { select: { id: true, name: true, code: true, location: true } },
+  division: { select: { id: true, name: true, code: true } },
 };
 
-export async function getUsers(filters: { role?: Role; search?: string; page?: number; limit?: number }) {
-  const { role, search, page = 1, limit = 20 } = filters;
+export async function getUsers(filters: {
+  role?: Role;
+  branchId?: string;
+  divisionId?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
+}) {
+  const { role, branchId, divisionId, search, page = 1, limit = 50 } = filters;
   const where: Record<string, unknown> = {};
+
   if (role) where.role = role;
+  if (branchId) where.branchId = branchId;
+  if (divisionId) where.divisionId = divisionId;
+
   if (search) {
     where.OR = [
       { name: { contains: search, mode: 'insensitive' } },
       { email: { contains: search, mode: 'insensitive' } },
+      { phone: { contains: search, mode: 'insensitive' } },
     ];
   }
 
@@ -39,6 +55,45 @@ export async function getUsers(filters: { role?: Role; search?: string; page?: n
   return { users, total, page, limit };
 }
 
+export async function getTechnicians(divisionId?: string) {
+  const technicians = await prisma.user.findMany({
+    where: {
+      role: Role.TECHNICIAN,
+      isActive: true,
+      ...(divisionId ? { divisionId } : {}),
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+      division: { select: { id: true, name: true, code: true } },
+      incidentsAssigned: {
+        where: {
+          status: {
+            in: [
+              IncidentStatus.ASSIGNED,
+              IncidentStatus.IN_PROGRESS,
+              IncidentStatus.WAITING_FOR_INFO,
+            ],
+          },
+        },
+        select: { id: true },
+      },
+    },
+    orderBy: { name: 'asc' },
+  });
+
+  return technicians.map((tech) => ({
+    id: tech.id,
+    name: tech.name,
+    email: tech.email,
+    phone: tech.phone,
+    division: tech.division,
+    activeWorkload: tech.incidentsAssigned.length,
+  }));
+}
+
 export async function getUserById(id: string) {
   const user = await prisma.user.findUnique({ where: { id }, select: USER_SELECT });
   if (!user) throw new AppError('User not found', 404);
@@ -50,30 +105,40 @@ export async function createUser(data: {
   email: string;
   password: string;
   role: Role;
-  departmentId?: string;
+  branchId?: string;
+  divisionId?: string;
+  phone?: string;
 }) {
   const existing = await prisma.user.findUnique({ where: { email: data.email.toLowerCase() } });
   if (existing) throw new AppError('A user with this email already exists', 409);
 
   const passwordHash = await bcrypt.hash(data.password, 12);
 
-  const user = await prisma.user.create({
+  return prisma.user.create({
     data: {
       name: data.name,
       email: data.email.toLowerCase(),
       passwordHash,
       role: data.role,
-      departmentId: data.departmentId || null,
+      branchId: data.branchId || null,
+      divisionId: data.divisionId || null,
+      phone: data.phone || null,
     },
     select: USER_SELECT,
   });
-
-  return user;
 }
 
 export async function updateUser(
   id: string,
-  data: { name?: string; email?: string; role?: Role; departmentId?: string | null }
+  data: {
+    name?: string;
+    email?: string;
+    role?: Role;
+    branchId?: string | null;
+    divisionId?: string | null;
+    phone?: string | null;
+    isActive?: boolean;
+  }
 ) {
   const existing = await prisma.user.findUnique({ where: { id } });
   if (!existing) throw new AppError('User not found', 404);
@@ -83,29 +148,28 @@ export async function updateUser(
     if (emailTaken) throw new AppError('Email already in use', 409);
   }
 
-  const user = await prisma.user.update({
+  return prisma.user.update({
     where: { id },
     data: {
       ...(data.name && { name: data.name }),
       ...(data.email && { email: data.email.toLowerCase() }),
       ...(data.role && { role: data.role }),
-      ...(data.departmentId !== undefined && { departmentId: data.departmentId }),
+      ...(data.branchId !== undefined && { branchId: data.branchId }),
+      ...(data.divisionId !== undefined && { divisionId: data.divisionId }),
+      ...(data.phone !== undefined && { phone: data.phone }),
+      ...(data.isActive !== undefined && { isActive: data.isActive }),
     },
     select: USER_SELECT,
   });
-
-  return user;
 }
 
 export async function toggleUserStatus(id: string) {
   const user = await prisma.user.findUnique({ where: { id } });
   if (!user) throw new AppError('User not found', 404);
 
-  const updated = await prisma.user.update({
+  return prisma.user.update({
     where: { id },
     data: { isActive: !user.isActive },
     select: USER_SELECT,
   });
-
-  return updated;
 }

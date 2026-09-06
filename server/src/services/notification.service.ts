@@ -3,7 +3,7 @@ import { NotificationType } from '../types';
 
 export async function createNotification(data: {
   userId: string;
-  requestId?: string;
+  incidentId?: string;
   title: string;
   message: string;
   type: NotificationType;
@@ -14,7 +14,7 @@ export async function createNotification(data: {
 export async function createNotifications(
   notifications: Array<{
     userId: string;
-    requestId?: string;
+    incidentId?: string;
     title: string;
     message: string;
     type: NotificationType;
@@ -30,7 +30,7 @@ export async function getNotifications(userId: string) {
     orderBy: { createdAt: 'desc' },
     take: 50,
     include: {
-      request: { select: { id: true, requestNumber: true, title: true } },
+      incident: { select: { id: true, incidentNumber: true, title: true } },
     },
   });
 }

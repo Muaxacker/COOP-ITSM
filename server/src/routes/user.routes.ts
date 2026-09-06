@@ -1,14 +1,25 @@
 import { Router } from 'express';
-import { getUsers, getUserById, createUser, updateUser, toggleUserStatus } from '../controllers/user.controller';
+import {
+  getUsers,
+  getTechnicians,
+  getUserById,
+  createUser,
+  updateUser,
+  toggleUserStatus,
+} from '../controllers/user.controller';
 import { authenticate, authorize } from '../middleware/auth';
+import { Role } from '../types';
 
 const router = Router();
 
-// Officers can GET users (for assign dropdown) — but only ADMIN can create/edit/delete
-router.get('/', authenticate, authorize('ADMIN', 'MANAGER', 'OFFICER'), getUsers);
-router.post('/', authenticate, authorize('ADMIN'), createUser);
-router.get('/:id', authenticate, authorize('ADMIN', 'MANAGER', 'OFFICER'), getUserById);
-router.patch('/:id', authenticate, authorize('ADMIN'), updateUser);
-router.patch('/:id/status', authenticate, authorize('ADMIN'), toggleUserStatus);
+router.use(authenticate);
+
+router.get('/technicians', authorize(Role.ADMIN, Role.IT_SUPERVISOR), getTechnicians);
+router.get('/', authorize(Role.ADMIN, Role.IT_SUPERVISOR), getUsers);
+router.get('/:id', authorize(Role.ADMIN, Role.IT_SUPERVISOR), getUserById);
+
+router.post('/', authorize(Role.ADMIN), createUser);
+router.patch('/:id', authorize(Role.ADMIN), updateUser);
+router.patch('/:id/status', authorize(Role.ADMIN), toggleUserStatus);
 
 export default router;

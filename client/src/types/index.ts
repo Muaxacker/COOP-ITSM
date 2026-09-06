@@ -1,146 +1,174 @@
-export type Role = 'CUSTOMER' | 'OFFICER' | 'MANAGER' | 'ADMIN';
-export type Priority = 'LOW' | 'MEDIUM' | 'HIGH';
-export type RequestStatus =
-  | 'NEW'
-  | 'REVIEWED'
+export type Role = 'BRANCH_USER' | 'IT_SUPERVISOR' | 'TECHNICIAN' | 'ADMIN';
+export type Priority = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+export type IncidentStatus =
+  | 'OPEN'
   | 'ASSIGNED'
-  | 'INVESTIGATING'
+  | 'IN_PROGRESS'
+  | 'WAITING_FOR_INFO'
   | 'RESOLVED'
   | 'CLOSED'
-  | 'REOPENED'
-  | 'OVERDUE'
-  | 'ESCALATED';
+  | 'REOPENED';
+
+export type DivisionCode = 'ATM' | 'APPLICATION' | 'NETWORKING' | 'MAINTENANCE';
+
 export type NotificationType =
-  | 'REQUEST_UPDATE'
-  | 'DEADLINE_WARNING'
-  | 'OVERDUE'
-  | 'RESOLUTION'
-  | 'ASSIGNMENT'
-  | 'ESCALATION'
-  | 'GENERAL';
-export type DeadlineStatus = 'ON_TRACK' | 'DEADLINE_APPROACHING' | 'OVERDUE';
+  | 'INCIDENT_CREATED'
+  | 'INCIDENT_ASSIGNED'
+  | 'STATUS_CHANGED'
+  | 'INFO_REQUESTED'
+  | 'INFO_PROVIDED'
+  | 'INCIDENT_RESOLVED'
+  | 'INCIDENT_CLOSED'
+  | 'INCIDENT_REOPENED'
+  | 'SLA_WARNING'
+  | 'SLA_BREACHED';
+
+export interface ApiResponse<T = any> {
+  success: boolean;
+  data: T;
+  message?: string;
+}
+
+
+export interface Branch {
+  id: string;
+  name: string;
+  code: string;
+  location: string;
+  phone?: string | null;
+  isActive: boolean;
+  createdAt: string;
+  _count?: { users: number; incidents: number };
+}
+
+export interface Division {
+  id: string;
+  name: string;
+  code: DivisionCode;
+  description?: string | null;
+  categories?: IncidentCategory[];
+  users?: { id: string; name: string; email: string; phone?: string | null }[];
+  _count?: { users: number; categories: number };
+}
+
+export interface IncidentCategory {
+  id: string;
+  divisionId: string;
+  name: string;
+  description?: string | null;
+  defaultPriority: Priority;
+  defaultSlaHours: number;
+  isActive: boolean;
+  division?: { id: string; name: string; code: DivisionCode };
+}
 
 export interface User {
   id: string;
   name: string;
   email: string;
   role: Role;
+  phone?: string | null;
+  branchId?: string | null;
+  divisionId?: string | null;
   isActive: boolean;
   createdAt: string;
-  department?: { id: string; name: string } | null;
+  branch?: { id: string; name: string; code: string; location: string } | null;
+  division?: { id: string; name: string; code: DivisionCode } | null;
 }
 
-export interface Department {
+export interface TroubleshootingLog {
   id: string;
-  name: string;
-  description?: string;
-}
-
-export interface ServiceCategory {
-  id: string;
-  name: string;
-  description?: string;
-  departmentId: string;
-  defaultDeadlineHours: number;
-  defaultPriority: Priority;
-  isActive: boolean;
-  department: { id: string; name: string };
-}
-
-export interface ServiceRequest {
-  id: string;
-  requestNumber: string;
-  title: string;
-  description: string;
-  priority: Priority;
-  status: RequestStatus;
-  deadline: string;
-  resolvedAt?: string | null;
-  closedAt?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  deadlineStatus?: DeadlineStatus;
-  customer: { id: string; name: string; email: string };
-  category: { id: string; name: string; defaultDeadlineHours: number; department?: { id: string; name: string } };
-  assignedOfficer?: { id: string; name: string; email: string } | null;
-  activities?: RequestActivity[];
-  feedback?: Feedback | null;
-}
-
-export interface RequestActivity {
-  id: string;
-  requestId: string;
+  incidentId: string;
+  technicianId: string;
   action: string;
-  description: string;
-  isCustomerVisible: boolean;
+  observation: string;
+  result: string;
+  createdAt: string;
+  technician?: { id: string; name: string };
+}
+
+export interface IncidentUpdate {
+  id: string;
+  incidentId: string;
+  userId: string;
+  action: string;
+  message: string;
+  isInternal: boolean;
   createdAt: string;
   user: { id: string; name: string; role: Role };
+}
+
+export interface Attachment {
+  id: string;
+  incidentId: string;
+  uploadedById: string;
+  fileName: string;
+  filePath: string;
+  fileType: string;
+  fileSize: number;
+  createdAt: string;
+  uploadedBy?: { id: string; name: string };
+}
+
+export interface Incident {
+  id: string;
+  incidentNumber: string;
+  title: string;
+  description: string;
+  branchId: string;
+  categoryId: string;
+  reportedById: string;
+  assignedTechnicianId?: string | null;
+  priority: Priority;
+  status: IncidentStatus;
+  slaDeadline: string;
+  slaBreached: boolean;
+  rootCause?: string | null;
+  resolution?: string | null;
+  reportedAt: string;
+  assignedAt?: string | null;
+  resolvedAt?: string | null;
+  closedAt?: string | null;
+  reopenedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  branch: { id: string; name: string; code: string; location: string; phone?: string | null };
+  category: {
+    id: string;
+    name: string;
+    division?: { id: string; name: string; code: DivisionCode };
+  };
+  reportedBy: { id: string; name: string; email: string; phone?: string | null; role?: Role };
+  assignedTechnician?: {
+    id: string;
+    name: string;
+    email: string;
+    phone?: string | null;
+    role?: Role;
+    division?: { id: string; name: string; code: DivisionCode };
+  } | null;
+  updates?: IncidentUpdate[];
+  troubleshootingLogs?: TroubleshootingLog[];
+  attachments?: Attachment[];
 }
 
 export interface Notification {
   id: string;
   userId: string;
-  requestId?: string | null;
+  incidentId?: string | null;
   title: string;
   message: string;
   type: NotificationType;
   isRead: boolean;
   createdAt: string;
-  request?: { id: string; requestNumber: string; title: string } | null;
+  incident?: { id: string; incidentNumber: string; title: string } | null;
 }
 
-export interface Feedback {
+export interface TechnicianWithWorkload {
   id: string;
-  requestId: string;
-  customerId: string;
-  rating: number;
-  comment?: string | null;
-  createdAt: string;
-}
-
-export interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  message?: string;
-  errors?: Array<{ field: string; message: string }>;
-}
-
-export interface PaginatedResponse<T> {
-  requests?: T[];
-  users?: T[];
-  total: number;
-  page: number;
-  limit: number;
-}
-
-export interface CustomerDashboard {
-  stats: { totalRequests: number; activeRequests: number; resolvedRequests: number };
-  recentRequests: ServiceRequest[];
-  unreadNotifications: number;
-}
-
-export interface OfficerDashboard {
-  stats: {
-    openRequests: number;
-    newRequests: number;
-    dueSoon: number;
-    overdue: number;
-    completedToday: number;
-  };
-  attentionRequests: ServiceRequest[];
-}
-
-export interface ManagerDashboard {
-  stats: {
-    totalRequests: number;
-    openRequests: number;
-    resolvedRequests: number;
-    overdueRequests: number;
-    onTimeResolutionRate: number;
-    avgResolutionHours: number | null;
-    avgRating: number | null;
-  };
-  overdueRequests: ServiceRequest[];
-  escalatedRequests: ServiceRequest[];
-  deadlineApproaching: ServiceRequest[];
+  name: string;
+  email: string;
+  phone?: string | null;
+  division?: { id: string; name: string; code: DivisionCode } | null;
+  activeWorkload: number;
 }

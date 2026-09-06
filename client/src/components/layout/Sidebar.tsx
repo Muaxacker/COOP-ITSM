@@ -1,8 +1,19 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
-  LayoutDashboard, FileText, AlertTriangle, Users, Settings,
-  LogOut, Menu, X, Shield, Bell, ClipboardList
+  LayoutDashboard,
+  FileText,
+  Users,
+  Building2,
+  Layers,
+  BarChart3,
+  LogOut,
+  Menu,
+  X,
+  Server,
+  Bell,
+  PlusCircle,
+  Wrench,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useNotifications } from '../../hooks/useNotifications';
@@ -17,28 +28,30 @@ interface NavItem {
 
 function getNavItems(role: Role): NavItem[] {
   switch (role) {
-    case 'CUSTOMER':
+    case 'BRANCH_USER':
       return [
         { label: 'Dashboard', to: '/dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
-        { label: 'My Requests', to: '/requests', icon: <FileText className="w-4 h-4" /> },
-        { label: 'New Request', to: '/requests/new', icon: <ClipboardList className="w-4 h-4" /> },
+        { label: 'Report IT Problem', to: '/incidents/new', icon: <PlusCircle className="w-4 h-4" /> },
+        { label: 'My Incidents', to: '/incidents', icon: <FileText className="w-4 h-4" /> },
       ];
-    case 'OFFICER':
+    case 'IT_SUPERVISOR':
       return [
         { label: 'Dashboard', to: '/dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
-        { label: 'Request Queue', to: '/requests', icon: <ClipboardList className="w-4 h-4" /> },
+        { label: 'All Incidents', to: '/incidents', icon: <FileText className="w-4 h-4" /> },
+        { label: 'Operational Reports', to: '/reports', icon: <BarChart3 className="w-4 h-4" /> },
       ];
-    case 'MANAGER':
+    case 'TECHNICIAN':
       return [
-        { label: 'Dashboard', to: '/dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
-        { label: 'All Requests', to: '/requests', icon: <FileText className="w-4 h-4" /> },
-        { label: 'Needs Attention', to: '/attention', icon: <AlertTriangle className="w-4 h-4" /> },
+        { label: 'Workbench', to: '/dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
+        { label: 'Assigned Incidents', to: '/incidents', icon: <Wrench className="w-4 h-4" /> },
       ];
     case 'ADMIN':
       return [
         { label: 'Dashboard', to: '/dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
         { label: 'User Management', to: '/users', icon: <Users className="w-4 h-4" /> },
-        { label: 'Service Rules', to: '/service-rules', icon: <Settings className="w-4 h-4" /> },
+        { label: 'Bank Branches', to: '/branches', icon: <Building2 className="w-4 h-4" /> },
+        { label: 'Divisions & Categories', to: '/divisions', icon: <Layers className="w-4 h-4" /> },
+        { label: 'Operational Reports', to: '/reports', icon: <BarChart3 className="w-4 h-4" /> },
       ];
     default:
       return [];
@@ -46,10 +59,10 @@ function getNavItems(role: Role): NavItem[] {
 }
 
 const ROLE_LABELS: Record<Role, string> = {
-  CUSTOMER: 'Customer Portal',
-  OFFICER: 'Officer Portal',
-  MANAGER: 'Manager Portal',
-  ADMIN: 'Admin Portal',
+  BRANCH_USER: 'Branch Portal',
+  IT_SUPERVISOR: 'IT Supervisor Desk',
+  TECHNICIAN: 'Technician Workbench',
+  ADMIN: 'System Administration',
 };
 
 export function Sidebar() {
@@ -61,27 +74,33 @@ export function Sidebar() {
   if (!user) return null;
 
   const navItems = getNavItems(user.role);
-  const isCustomer = user.role === 'CUSTOMER';
 
   const sidebarContent = (
-    <div className="flex flex-col h-full">
-      {/* Logo */}
-      <div className="px-6 py-5 border-b border-white/10">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 bg-teal rounded-lg flex items-center justify-center flex-shrink-0">
-            <Shield className="w-4 h-4 text-white" />
+    <div className="flex flex-col h-full bg-[#0b2545] text-white">
+      {/* Brand Header */}
+      <div className="px-5 py-5 border-b border-white/10">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0 shadow-md">
+            <Server className="w-5 h-5 text-white" />
           </div>
           <div>
-            <p className="text-sm font-bold text-white">BankCare</p>
-            <p className="text-xs text-primary-300">{ROLE_LABELS[user.role]}</p>
+            <div className="flex items-center gap-1.5">
+              <span className="font-extrabold text-base tracking-tight text-white">COOP</span>
+              <span className="font-semibold text-xs px-1.5 py-0.5 bg-blue-500/30 text-blue-200 rounded border border-blue-400/30">ITSM</span>
+            </div>
+            <p className="text-[11px] text-blue-200/80 font-medium">Cooperative Bank of Oromia</p>
           </div>
+        </div>
+        <div className="mt-3 inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-white/10 text-blue-100">
+          {ROLE_LABELS[user.role]}
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
-          const isActive = location.pathname === item.to ||
+          const isActive =
+            location.pathname === item.to ||
             (item.to !== '/dashboard' && location.pathname.startsWith(item.to));
           return (
             <Link
@@ -91,8 +110,8 @@ export function Sidebar() {
               className={cn(
                 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
                 isActive
-                  ? 'bg-teal text-white'
-                  : 'text-primary-300 hover:bg-white/10 hover:text-white'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'text-blue-100/75 hover:bg-white/10 hover:text-white'
               )}
             >
               {item.icon}
@@ -102,38 +121,50 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* User section */}
-      <div className="px-3 pb-4 border-t border-white/10 pt-4 space-y-1">
+      {/* User Section */}
+      <div className="px-3 pb-4 border-t border-white/10 pt-3 space-y-1">
         <Link
           to="/notifications"
           onClick={() => setMobileOpen(false)}
           className={cn(
-            'flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
+            'flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
             location.pathname === '/notifications'
-              ? 'bg-teal text-white'
-              : 'text-primary-300 hover:bg-white/10 hover:text-white'
+              ? 'bg-blue-600 text-white'
+              : 'text-blue-100/75 hover:bg-white/10 hover:text-white'
           )}
         >
-          <span className="flex items-center gap-3">
+          <span className="flex items-center gap-2.5">
             <Bell className="w-4 h-4" />
             Notifications
           </span>
           {unreadCount > 0 && (
-            <span className="bg-danger text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+            <span className="bg-red-500 text-white text-[11px] rounded-full px-1.5 py-0.2 min-w-[20px] text-center font-bold">
               {unreadCount > 9 ? '9+' : unreadCount}
             </span>
           )}
         </Link>
-        <div className="px-3 py-2">
+
+        <div className="px-3 py-2 rounded-lg bg-black/20">
           <p className="text-xs font-semibold text-white truncate">{user.name}</p>
-          <p className="text-xs text-primary-300 truncate">{user.email}</p>
+          <p className="text-[11px] text-blue-200/70 truncate">{user.email}</p>
+          {user.branch && (
+            <p className="text-[10px] text-emerald-300 font-medium mt-0.5 truncate">
+              📍 {user.branch.name}
+            </p>
+          )}
+          {user.division && (
+            <p className="text-[10px] text-amber-300 font-medium mt-0.5 truncate">
+              ⚙️ {user.division.name}
+            </p>
+          )}
         </div>
+
         <button
           onClick={logout}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-primary-300 hover:bg-white/10 hover:text-white transition-colors"
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-red-300 hover:bg-red-500/20 hover:text-red-200 transition-colors"
         >
-          <LogOut className="w-4 h-4" />
-          Log Out
+          <LogOut className="w-3.5 h-3.5" />
+          Sign Out
         </button>
       </div>
     </div>
@@ -141,36 +172,35 @@ export function Sidebar() {
 
   return (
     <>
-      {/* Mobile menu button */}
       <button
-        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-primary rounded-lg text-white"
+        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-[#0b2545] rounded-lg text-white shadow-lg"
         onClick={() => setMobileOpen(!mobileOpen)}
         aria-label="Toggle navigation"
       >
         {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </button>
 
-      {/* Mobile overlay */}
       {mobileOpen && (
         <div
-          className="md:hidden fixed inset-0 z-40 bg-black/50"
+          className="md:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
           onClick={() => setMobileOpen(false)}
         />
       )}
 
-      {/* Desktop sidebar */}
-      <aside className={cn(
-        'fixed left-0 top-0 h-full w-64 bg-primary z-40 transform transition-transform duration-200',
-        'hidden md:block'
-      )}>
+      <aside
+        className={cn(
+          'fixed left-0 top-0 h-full w-64 z-40 transform transition-transform duration-200 hidden md:block shadow-xl'
+        )}
+      >
         {sidebarContent}
       </aside>
 
-      {/* Mobile sidebar */}
-      <aside className={cn(
-        'fixed left-0 top-0 h-full w-64 bg-primary z-50 transform transition-transform duration-200 md:hidden',
-        mobileOpen ? 'translate-x-0' : '-translate-x-full'
-      )}>
+      <aside
+        className={cn(
+          'fixed left-0 top-0 h-full w-64 z-50 transform transition-transform duration-200 md:hidden shadow-2xl',
+          mobileOpen ? 'translate-x-0' : '-translate-x-full'
+        )}
+      >
         {sidebarContent}
       </aside>
     </>

@@ -10,13 +10,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const savedToken = localStorage.getItem('bankcare_token');
-    const savedUser = localStorage.getItem('bankcare_user');
+    const savedToken = localStorage.getItem('coop_itsm_token') || localStorage.getItem('bankcare_token');
+    const savedUser = localStorage.getItem('coop_itsm_user') || localStorage.getItem('bankcare_user');
     if (savedToken && savedUser) {
       try {
         setToken(savedToken);
         setUser(JSON.parse(savedUser));
       } catch {
+        localStorage.removeItem('coop_itsm_token');
+        localStorage.removeItem('coop_itsm_user');
         localStorage.removeItem('bankcare_token');
         localStorage.removeItem('bankcare_user');
       }
@@ -26,18 +28,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(async (email: string, password: string) => {
     const data = await AuthService.login(email, password);
-    localStorage.setItem('bankcare_token', data.token);
-    localStorage.setItem('bankcare_user', JSON.stringify(data.user));
+    localStorage.setItem('coop_itsm_token', data.token);
+    localStorage.setItem('coop_itsm_user', JSON.stringify(data.user));
     setToken(data.token);
     setUser(data.user);
   }, []);
 
   const logout = useCallback(() => {
+    localStorage.removeItem('coop_itsm_token');
+    localStorage.removeItem('coop_itsm_user');
     localStorage.removeItem('bankcare_token');
     localStorage.removeItem('bankcare_user');
     setToken(null);
     setUser(null);
-    toast.success('Logged out');
+    toast.success('Logged out successfully');
   }, []);
 
   return (

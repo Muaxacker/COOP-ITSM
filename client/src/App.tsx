@@ -11,26 +11,26 @@ import { useAuth } from './hooks/useAuth';
 // Auth
 import { LoginPage } from './pages/auth/LoginPage';
 
-// Customer
-import { CustomerDashboard } from './pages/customer/CustomerDashboard';
-import { CreateRequestPage } from './pages/customer/CreateRequestPage';
-import { MyRequestsPage } from './pages/customer/MyRequestsPage';
-import { RequestDetailsPage } from './pages/customer/RequestDetailsPage';
+// Branch User
+import { BranchDashboard } from './pages/branch/BranchDashboard';
+import { CreateIncidentPage } from './pages/branch/CreateIncidentPage';
+import { MyIncidentsPage } from './pages/branch/MyIncidentsPage';
+import { BranchIncidentDetailsPage } from './pages/branch/BranchIncidentDetailsPage';
 
-// Officer
-import { OfficerDashboard } from './pages/officer/OfficerDashboard';
-import { RequestQueuePage } from './pages/officer/RequestQueuePage';
-import { CaseManagementPage } from './pages/officer/CaseManagementPage';
+// IT Supervisor
+import { SupervisorDashboard } from './pages/supervisor/SupervisorDashboard';
+import { AllIncidentsPage } from './pages/supervisor/AllIncidentsPage';
+import { SupervisorReportsPage } from './pages/supervisor/SupervisorReportsPage';
 
-// Manager
-import { ManagerDashboard } from './pages/manager/ManagerDashboard';
-import { AllRequestsPage } from './pages/manager/AllRequestsPage';
-import { AttentionPage } from './pages/manager/AttentionPage';
+// IT Technician
+import { TechnicianDashboard } from './pages/technician/TechnicianDashboard';
+import { TechnicianIncidentPage } from './pages/technician/TechnicianIncidentPage';
 
-// Admin
+// System Admin
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { UserManagementPage } from './pages/admin/UserManagementPage';
-import { ServiceRulesPage } from './pages/admin/ServiceRulesPage';
+import { BranchManagementPage } from './pages/admin/BranchManagementPage';
+import { DivisionCategoryPage } from './pages/admin/DivisionCategoryPage';
 
 // Shared
 import { NotificationsPage } from './pages/NotificationsPage';
@@ -50,64 +50,150 @@ function DashboardRedirect() {
   if (!user) return <Navigate to="/login" replace />;
 
   switch (user.role) {
-    case 'CUSTOMER': return <CustomerDashboard />;
-    case 'OFFICER':  return <OfficerDashboard />;
-    case 'MANAGER':  return <ManagerDashboard />;
-    case 'ADMIN':    return <AdminDashboard />;
-    default:         return <Navigate to="/login" replace />;
+    case 'BRANCH_USER':
+      return <BranchDashboard />;
+    case 'IT_SUPERVISOR':
+      return <SupervisorDashboard />;
+    case 'TECHNICIAN':
+      return <TechnicianDashboard />;
+    case 'ADMIN':
+      return <AdminDashboard />;
+    default:
+      return <Navigate to="/login" replace />;
   }
 }
 
-// Requests page — officer sees queue, manager/admin see all, customer sees own
-function RequestsRedirect() {
+// Incidents list redirect based on role
+function IncidentsRedirect() {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
 
   switch (user.role) {
-    case 'CUSTOMER': return <MyRequestsPage />;
-    case 'OFFICER':  return <RequestQueuePage />;
-    case 'MANAGER':
-    case 'ADMIN':    return <AllRequestsPage />;
-    default:         return <Navigate to="/dashboard" replace />;
+    case 'BRANCH_USER':
+      return <MyIncidentsPage />;
+    case 'TECHNICIAN':
+      return <TechnicianDashboard />;
+    case 'IT_SUPERVISOR':
+    case 'ADMIN':
+      return <AllIncidentsPage />;
+    default:
+      return <Navigate to="/dashboard" replace />;
   }
 }
 
-// Request detail — officer sees CaseManagementPage, others see RequestDetailsPage
-function RequestDetailRedirect() {
+// Incident detail router: Technician workbench vs Branch/Supervisor view
+function IncidentDetailRedirect() {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
 
-  switch (user.role) {
-    case 'OFFICER':
-    case 'MANAGER':
-    case 'ADMIN': return <CaseManagementPage />;
-    default:      return <RequestDetailsPage />;
+  if (user.role === 'TECHNICIAN') {
+    return <TechnicianIncidentPage />;
   }
+  return <BranchIncidentDetailsPage />;
 }
 
 function AppRoutes() {
   return (
     <Routes>
       {/* Public */}
-      <Route path="/login" element={<GuestRoute><LoginPage /></GuestRoute>} />
+      <Route
+        path="/login"
+        element={
+          <GuestRoute>
+            <LoginPage />
+          </GuestRoute>
+        }
+      />
 
-      {/* Protected — all authenticated users */}
-      <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-        <Route path="/dashboard" element={<ProtectedRoute><DashboardRedirect /></ProtectedRoute>} />
-        <Route path="/requests" element={<ProtectedRoute><RequestsRedirect /></ProtectedRoute>} />
-        <Route path="/requests/new" element={<ProtectedRoute allowedRoles={['CUSTOMER']}><CreateRequestPage /></ProtectedRoute>} />
-        <Route path="/requests/:id" element={<ProtectedRoute><RequestDetailRedirect /></ProtectedRoute>} />
-        <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
+      {/* Protected Layout */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <AppLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardRedirect />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/incidents"
+          element={
+            <ProtectedRoute>
+              <IncidentsRedirect />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/incidents/new"
+          element={
+            <ProtectedRoute allowedRoles={['BRANCH_USER', 'ADMIN']}>
+              <CreateIncidentPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/incidents/:id"
+          element={
+            <ProtectedRoute>
+              <IncidentDetailRedirect />
+            </ProtectedRoute>
+          }
+        />
 
-        {/* Manager-only */}
-        <Route path="/attention" element={<ProtectedRoute allowedRoles={['MANAGER', 'ADMIN']}><AttentionPage /></ProtectedRoute>} />
+        {/* Operational Analytics (Supervisor & Admin) */}
+        <Route
+          path="/reports"
+          element={
+            <ProtectedRoute allowedRoles={['IT_SUPERVISOR', 'ADMIN']}>
+              <SupervisorReportsPage />
+            </ProtectedRoute>
+          }
+        />
 
-        {/* Admin-only */}
-        <Route path="/users" element={<ProtectedRoute allowedRoles={['ADMIN']}><UserManagementPage /></ProtectedRoute>} />
-        <Route path="/service-rules" element={<ProtectedRoute allowedRoles={['ADMIN']}><ServiceRulesPage /></ProtectedRoute>} />
+        {/* Admin Management */}
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN']}>
+              <UserManagementPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/branches"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN']}>
+              <BranchManagementPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/divisions"
+          element={
+            <ProtectedRoute allowedRoles={['ADMIN']}>
+              <DivisionCategoryPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Notifications (All Roles) */}
+        <Route
+          path="/notifications"
+          element={
+            <ProtectedRoute>
+              <NotificationsPage />
+            </ProtectedRoute>
+          }
+        />
       </Route>
 
-      {/* Default redirects */}
+      {/* Fallback Redirects */}
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
@@ -125,13 +211,23 @@ export default function App() {
             toastOptions={{
               duration: 4000,
               style: {
-                borderRadius: '10px',
-                background: '#172B4D',
+                background: '#0b2545',
                 color: '#fff',
+                borderRadius: '8px',
                 fontSize: '13px',
               },
-              success: { iconTheme: { primary: '#16A34A', secondary: '#fff' } },
-              error: { iconTheme: { primary: '#DC2626', secondary: '#fff' } },
+              success: {
+                iconTheme: {
+                  primary: '#10b981',
+                  secondary: '#fff',
+                },
+              },
+              error: {
+                iconTheme: {
+                  primary: '#ef4444',
+                  secondary: '#fff',
+                },
+              },
             }}
           />
         </AuthProvider>

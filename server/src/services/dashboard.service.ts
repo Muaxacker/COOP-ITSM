@@ -1,234 +1,269 @@
 import { prisma } from '../config/prisma';
-import { RequestStatus } from '../types';
+import { IncidentStatus, Priority, Role } from '../types';
 
-// ─── Customer Dashboard ────────────────────────────────────────────────────
-export async function getCustomerDashboard(customerId: string) {
-  const [totalRequests, activeRequests, resolvedRequests, recentRequests, unreadNotifications] =
-    await Promise.all([
-      prisma.serviceRequest.count({ where: { customerId } }),
-      prisma.serviceRequest.count({
-        where: {
-          customerId,
-          status: { notIn: ['RESOLVED', 'CLOSED'] },
-        },
-      }),
-      prisma.serviceRequest.count({
-        where: {
-          customerId,
-          status: { in: ['RESOLVED', 'CLOSED'] },
-        },
-      }),
-      prisma.serviceRequest.findMany({
-        where: { customerId },
-        orderBy: { createdAt: 'desc' },
-        take: 5,
-        select: {
-          id: true,
-          requestNumber: true,
-          title: true,
-          status: true,
-          priority: true,
-          deadline: true,
-          createdAt: true,
-          category: { select: { id: true, name: true } },
-        },
-      }),
-      prisma.notification.count({ where: { userId: customerId, isRead: false } }),
-    ]);
-
-  return {
-    stats: { totalRequests, activeRequests, resolvedRequests },
-    recentRequests,
-    unreadNotifications,
-  };
+export async function getDashboardData(currentUser: {
+  userId: string;
+  role: Role;
+  branchId?: string | null;
+  divisionId?: string | null;
+}) {
+  switch (currentUser.role) {
+    case Role.BRANCH_USER:
+      return getBranchUserDashboard(currentUser.userId, currentUser.branchId);
+    case Role.TECHNICIAN:
+      return getTechnicianDashboard(currentUser.userId, currentUser.divisionId);
+    case Role.IT_SUPERVISOR:
+      return getSupervisorDashboard();
+    case Role.ADMIN:
+      return getAdminDashboard();
+    default:
+      return getSupervisorDashboard();
+  }
 }
 
-// ─── Officer Dashboard ─────────────────────────────────────────────────────
-export async function getOfficerDashboard(officerId: string) {
-  const now = new Date();
+async function getBranchUserDashboard(userId: string, branchId?: string | null) {
+  const branchFilter = branchId ? { branchId } : { reportedById: userId };
 
-  const [openRequests, newRequests, dueSoon, overdue, completedToday, attentionRequests] =
-    await Promise.all([
-      // Open: assigned to me, active
-      prisma.serviceRequest.count({
-        where: {
-          assignedOfficerId: officerId,
-          status: { in: ['ASSIGNED', 'INVESTIGATING', 'REOPENED', 'ESCALATED'] },
-        },
-      }),
-      // New today
-      prisma.serviceRequest.count({
-        where: {
-          assignedOfficerId: officerId,
-          createdAt: { gte: new Date(now.setHours(0, 0, 0, 0)) },
-        },
-      }),
-      // Due within 4 hours
-      prisma.serviceRequest.count({
-        where: {
-          assignedOfficerId: officerId,
-          status: { in: ['ASSIGNED', 'INVESTIGATING', 'REOPENED', 'ESCALATED'] },
-          deadline: { lte: new Date(Date.now() + 4 * 60 * 60 * 1000), gt: new Date() },
-        },
-      }),
-      // Overdue
-      prisma.serviceRequest.count({
-        where: {
-          assignedOfficerId: officerId,
-          status: 'OVERDUE',
-        },
-      }),
-      // Resolved today
-      prisma.serviceRequest.count({
-        where: {
-          assignedOfficerId: officerId,
-          status: { in: ['RESOLVED', 'CLOSED'] },
-          resolvedAt: { gte: new Date(new Date().setHours(0, 0, 0, 0)) },
-        },
-      }),
-      // Requests needing attention (priority sorted)
-      prisma.serviceRequest.findMany({
-        where: {
-          OR: [
-            { assignedOfficerId: officerId, status: { in: ['ASSIGNED', 'INVESTIGATING', 'REOPENED', 'ESCALATED', 'OVERDUE'] } },
-            { assignedOfficerId: null, status: 'NEW' },
-          ],
-        },
-        orderBy: [{ status: 'asc' }, { deadline: 'asc' }],
-        take: 10,
-        select: {
-          id: true,
-          requestNumber: true,
-          title: true,
-          status: true,
-          priority: true,
-          deadline: true,
-          createdAt: true,
-          customer: { select: { id: true, name: true } },
-          category: { select: { id: true, name: true } },
-        },
-      }),
-    ]);
-
-  return {
-    stats: {
-      openRequests,
-      newRequests,
-      dueSoon,
-      overdue,
-      completedToday,
-    },
-    attentionRequests,
-  };
-}
-
-// ─── Manager Dashboard ─────────────────────────────────────────────────────
-export async function getManagerDashboard() {
-  const now = new Date();
-
-  const [totalRequests, openRequests, resolvedRequests, overdueRequests, avgResolutionTime, avgRating, overdueList, escalatedList] =
-    await Promise.all([
-      prisma.serviceRequest.count(),
-      prisma.serviceRequest.count({
-        where: { status: { notIn: ['RESOLVED', 'CLOSED'] } },
-      }),
-      prisma.serviceRequest.count({
-        where: { status: { in: ['RESOLVED', 'CLOSED'] } },
-      }),
-      prisma.serviceRequest.count({
-        where: { status: 'OVERDUE' },
-      }),
-      // Average resolution time in hours (using Prisma raw with correct quoted column names)
-      prisma.$queryRaw<Array<{ avg_hours: number | null }>>`
-        SELECT AVG(EXTRACT(EPOCH FROM ("resolvedAt" - "createdAt")) / 3600) as avg_hours
-        FROM service_requests
-        WHERE "resolvedAt" IS NOT NULL
-        AND status IN ('RESOLVED', 'CLOSED')
-      `,
-      // Average rating
-      prisma.feedback.aggregate({
-        _avg: { rating: true },
-      }),
-      // Overdue requests (top 10)
-      prisma.serviceRequest.findMany({
-        where: { status: 'OVERDUE' },
-        orderBy: { deadline: 'asc' },
-        take: 10,
-        select: {
-          id: true,
-          requestNumber: true,
-          title: true,
-          priority: true,
-          deadline: true,
-          createdAt: true,
-          customer: { select: { id: true, name: true } },
-          assignedOfficer: { select: { id: true, name: true } },
-          category: { select: { id: true, name: true } },
-        },
-      }),
-      // Escalated requests
-      prisma.serviceRequest.findMany({
-        where: { status: 'ESCALATED' },
-        orderBy: { updatedAt: 'desc' },
-        take: 10,
-        select: {
-          id: true,
-          requestNumber: true,
-          title: true,
-          priority: true,
-          deadline: true,
-          createdAt: true,
-          customer: { select: { id: true, name: true } },
-          assignedOfficer: { select: { id: true, name: true } },
-          category: { select: { id: true, name: true } },
-        },
-      }),
-    ]);
-
-  // Deadline approaching (within next 2 hours, not yet overdue)
-  const deadlineApproaching = await prisma.serviceRequest.findMany({
-    where: {
-      status: { in: ['ASSIGNED', 'INVESTIGATING', 'REOPENED'] },
-      deadline: {
-        gt: now,
-        lte: new Date(Date.now() + 2 * 60 * 60 * 1000),
+  const [total, open, active, resolved, closed, recentIncidents] = await Promise.all([
+    prisma.incident.count({ where: branchFilter }),
+    prisma.incident.count({ where: { ...branchFilter, status: IncidentStatus.OPEN } }),
+    prisma.incident.count({
+      where: {
+        ...branchFilter,
+        status: { in: [IncidentStatus.ASSIGNED, IncidentStatus.IN_PROGRESS, IncidentStatus.WAITING_FOR_INFO] },
       },
+    }),
+    prisma.incident.count({ where: { ...branchFilter, status: IncidentStatus.RESOLVED } }),
+    prisma.incident.count({ where: { ...branchFilter, status: IncidentStatus.CLOSED } }),
+    prisma.incident.findMany({
+      where: branchFilter,
+      orderBy: { createdAt: 'desc' },
+      take: 6,
+      include: {
+        category: { include: { division: true } },
+        assignedTechnician: { select: { id: true, name: true } },
+        branch: { select: { id: true, name: true } },
+      },
+    }),
+  ]);
+
+  return {
+    kpis: {
+      total,
+      open,
+      active,
+      resolved,
+      closed,
     },
-    orderBy: { deadline: 'asc' },
-    take: 10,
-    select: {
-      id: true,
-      requestNumber: true,
-      title: true,
-      priority: true,
-      deadline: true,
-      createdAt: true,
-      customer: { select: { id: true, name: true } },
-      assignedOfficer: { select: { id: true, name: true } },
-      category: { select: { id: true, name: true } },
+    recentIncidents,
+  };
+}
+
+async function getTechnicianDashboard(userId: string, divisionId?: string | null) {
+  const now = new Date();
+  const approachingDeadline = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+
+  const [assignedTotal, active, resolved, breachedSla, approachingSla, myIncidents, divisionOpen] = await Promise.all([
+    prisma.incident.count({ where: { assignedTechnicianId: userId } }),
+    prisma.incident.count({
+      where: {
+        assignedTechnicianId: userId,
+        status: { in: [IncidentStatus.ASSIGNED, IncidentStatus.IN_PROGRESS, IncidentStatus.WAITING_FOR_INFO] },
+      },
+    }),
+    prisma.incident.count({
+      where: {
+        assignedTechnicianId: userId,
+        status: { in: [IncidentStatus.RESOLVED, IncidentStatus.CLOSED] },
+      },
+    }),
+    prisma.incident.count({
+      where: {
+        assignedTechnicianId: userId,
+        slaBreached: true,
+        status: { notIn: [IncidentStatus.CLOSED] },
+      },
+    }),
+    prisma.incident.count({
+      where: {
+        assignedTechnicianId: userId,
+        status: { in: [IncidentStatus.ASSIGNED, IncidentStatus.IN_PROGRESS] },
+        slaDeadline: { lte: approachingDeadline, gte: now },
+        slaBreached: false,
+      },
+    }),
+    prisma.incident.findMany({
+      where: {
+        assignedTechnicianId: userId,
+        status: { not: IncidentStatus.CLOSED },
+      },
+      orderBy: [{ priority: 'asc' }, { slaDeadline: 'asc' }],
+      take: 10,
+      include: {
+        branch: true,
+        category: { include: { division: true } },
+        reportedBy: { select: { id: true, name: true, phone: true } },
+      },
+    }),
+    divisionId
+      ? prisma.incident.findMany({
+          where: {
+            category: { divisionId },
+            status: IncidentStatus.OPEN,
+          },
+          orderBy: { createdAt: 'desc' },
+          take: 5,
+          include: { branch: true, category: true },
+        })
+      : Promise.resolve([]),
+  ]);
+
+  return {
+    kpis: {
+      assignedTotal,
+      active,
+      resolved,
+      breachedSla,
+      approachingSla,
     },
+    myIncidents,
+    divisionOpen,
+  };
+}
+
+async function getSupervisorDashboard() {
+  const [
+    total,
+    open,
+    active,
+    critical,
+    breached,
+    divisions,
+    recentIncidents,
+  ] = await Promise.all([
+    prisma.incident.count(),
+    prisma.incident.count({ where: { status: IncidentStatus.OPEN } }),
+    prisma.incident.count({
+      where: {
+        status: { in: [IncidentStatus.ASSIGNED, IncidentStatus.IN_PROGRESS, IncidentStatus.WAITING_FOR_INFO] },
+      },
+    }),
+    prisma.incident.count({
+      where: {
+        priority: Priority.CRITICAL,
+        status: { not: IncidentStatus.CLOSED },
+      },
+    }),
+    prisma.incident.count({
+      where: {
+        slaBreached: true,
+        status: { not: IncidentStatus.CLOSED },
+      },
+    }),
+    prisma.division.findMany({
+      select: {
+        id: true,
+        name: true,
+        code: true,
+        categories: {
+          select: {
+            _count: { select: { incidents: true } },
+          },
+        },
+      },
+    }),
+    prisma.incident.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 8,
+      include: {
+        branch: true,
+        category: { include: { division: true } },
+        assignedTechnician: { select: { id: true, name: true } },
+        reportedBy: { select: { id: true, name: true } },
+      },
+    }),
+  ]);
+
+  // Division breakdown
+  const incidentsByDivision = divisions.map((d) => {
+    const count = d.categories.reduce((acc, cat) => acc + cat._count.incidents, 0);
+    return {
+      divisionId: d.id,
+      name: d.name,
+      code: d.code,
+      count,
+    };
   });
 
-  const totalClosed = await prisma.serviceRequest.count({ where: { status: { in: ['RESOLVED', 'CLOSED'] } } });
-  const total = await prisma.serviceRequest.count();
-  const onTimeResolutionRate = total > 0 ? Math.round((totalClosed / total) * 100) : 0;
+  // By Status
+  const [openCount, assignedCount, inProgressCount, waitingCount, resolvedCount, closedCount] = await Promise.all([
+    prisma.incident.count({ where: { status: IncidentStatus.OPEN } }),
+    prisma.incident.count({ where: { status: IncidentStatus.ASSIGNED } }),
+    prisma.incident.count({ where: { status: IncidentStatus.IN_PROGRESS } }),
+    prisma.incident.count({ where: { status: IncidentStatus.WAITING_FOR_INFO } }),
+    prisma.incident.count({ where: { status: IncidentStatus.RESOLVED } }),
+    prisma.incident.count({ where: { status: IncidentStatus.CLOSED } }),
+  ]);
 
   return {
-    stats: {
-      totalRequests,
-      openRequests,
-      resolvedRequests,
-      overdueRequests,
-      onTimeResolutionRate,
-      avgResolutionHours: avgResolutionTime[0]?.avg_hours
-        ? Math.round(Number(avgResolutionTime[0].avg_hours) * 10) / 10
-        : null,
-      avgRating: avgRating._avg.rating
-        ? Math.round(avgRating._avg.rating * 10) / 10
-        : null,
+    kpis: {
+      total,
+      open,
+      active,
+      critical,
+      breached,
     },
-    overdueRequests: overdueList,
-    escalatedRequests: escalatedList,
-    deadlineApproaching,
+    incidentsByDivision,
+    incidentsByStatus: {
+      OPEN: openCount,
+      ASSIGNED: assignedCount,
+      IN_PROGRESS: inProgressCount,
+      WAITING_FOR_INFO: waitingCount,
+      RESOLVED: resolvedCount,
+      CLOSED: closedCount,
+    },
+    recentIncidents,
+  };
+}
+
+async function getAdminDashboard() {
+  const [
+    totalUsers,
+    totalBranches,
+    totalDivisions,
+    totalIncidents,
+    activeIncidents,
+    resolvedIncidents,
+    breachedCount,
+  ] = await Promise.all([
+    prisma.user.count({ where: { isActive: true } }),
+    prisma.branch.count({ where: { isActive: true } }),
+    prisma.division.count(),
+    prisma.incident.count(),
+    prisma.incident.count({
+      where: {
+        status: { in: [IncidentStatus.OPEN, IncidentStatus.ASSIGNED, IncidentStatus.IN_PROGRESS, IncidentStatus.WAITING_FOR_INFO] },
+      },
+    }),
+    prisma.incident.count({
+      where: { status: { in: [IncidentStatus.RESOLVED, IncidentStatus.CLOSED] } },
+    }),
+    prisma.incident.count({ where: { slaBreached: true } }),
+  ]);
+
+  const slaComplianceRate = totalIncidents > 0
+    ? Math.round(((totalIncidents - breachedCount) / totalIncidents) * 100)
+    : 100;
+
+  return {
+    kpis: {
+      totalUsers,
+      totalBranches,
+      totalDivisions,
+      totalIncidents,
+      activeIncidents,
+      resolvedIncidents,
+      slaComplianceRate,
+    },
   };
 }

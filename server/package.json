@@ -1,7 +1,7 @@
 {
-  "name": "bankcare-server",
+  "name": "coop-itsm-server",
   "version": "1.0.0",
-  "description": "BankCare Backend API",
+  "description": "COOP-ITSM Backend API",
   "main": "dist/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",

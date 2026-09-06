@@ -16,7 +16,7 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <LoadingState text="Loading BankCare..." />
+        <LoadingState text="Loading COOP-ITSM..." />
       </div>
     );
   }

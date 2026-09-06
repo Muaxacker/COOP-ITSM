@@ -6,15 +6,16 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'outline';
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
+  isLoading?: boolean;
   icon?: React.ReactNode;
 }
 
 const variants = {
-  primary: 'bg-teal text-white hover:bg-teal-700 focus:ring-teal/40 shadow-sm',
-  secondary: 'bg-primary text-white hover:bg-primary-700 focus:ring-primary/40 shadow-sm',
-  danger: 'bg-danger text-white hover:bg-red-700 focus:ring-danger/40 shadow-sm',
-  ghost: 'bg-transparent text-text-secondary hover:bg-gray-100 focus:ring-gray-200',
-  outline: 'border border-gray-200 bg-white text-text-primary hover:bg-gray-50 focus:ring-gray-200',
+  primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500/40 shadow-sm',
+  secondary: 'bg-[#0b2545] text-white hover:bg-[#134074] focus:ring-[#0b2545]/40 shadow-sm',
+  danger: 'bg-rose-600 text-white hover:bg-rose-700 focus:ring-rose-500/40 shadow-sm',
+  ghost: 'bg-transparent text-gray-700 hover:bg-gray-100 focus:ring-gray-200',
+  outline: 'border border-gray-200 bg-white text-gray-800 hover:bg-gray-50 focus:ring-gray-200',
 };
 
 const sizes = {
@@ -27,12 +28,14 @@ export function Button({
   variant = 'primary',
   size = 'md',
   loading = false,
+  isLoading = false,
   icon,
   children,
   className,
   disabled,
   ...props
 }: ButtonProps) {
+  const isBusy = loading || isLoading;
   return (
     <button
       className={cn(
@@ -41,10 +44,10 @@ export function Button({
         sizes[size],
         className
       )}
-      disabled={disabled || loading}
+      disabled={disabled || isBusy}
       {...props}
     >
-      {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : icon}
+      {isBusy ? <Loader2 className="w-4 h-4 animate-spin" /> : icon}
       {children}
     </button>
   );

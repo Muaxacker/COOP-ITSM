@@ -1,9 +1,11 @@
 import { prisma } from '../config/prisma';
 
-export async function generateRequestNumber(): Promise<string> {
+export async function generateIncidentNumber(): Promise<string> {
   const year = new Date().getFullYear();
-  // Count total requests to get sequence
-  const count = await prisma.serviceRequest.count();
+  const count = await prisma.incident.count();
   const sequence = String(count + 1).padStart(5, '0');
-  return `SR-${year}-${sequence}`;
+  return `INC-${year}-${sequence}`;
 }
+
+export const generateRequestNumber = generateIncidentNumber;
+

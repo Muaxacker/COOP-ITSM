@@ -1,658 +1,533 @@
-import { PrismaClient, Role, Priority, RequestStatus, ActivityAction, NotificationType } from '@prisma/client';
+import { PrismaClient, Role, Priority, IncidentStatus, DivisionCode, ActivityAction, NotificationType } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-import dotenv from 'dotenv';
-import path from 'path';
-
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Seeding BankCare database...');
+  console.log('🌱 Starting COOP-ITSM database seed...');
 
-  // ─── Clean existing data ───────────────────────────────────────────────
-  await prisma.feedback.deleteMany();
+  // 1. Clean existing records in reverse dependency order
+  await prisma.auditLog.deleteMany();
+  await prisma.attachment.deleteMany();
+  await prisma.troubleshootingLog.deleteMany();
+  await prisma.incidentUpdate.deleteMany();
   await prisma.notification.deleteMany();
-  await prisma.requestActivity.deleteMany();
-  await prisma.serviceRequest.deleteMany();
-  await prisma.serviceCategory.deleteMany();
-  await prisma.department.deleteMany();
+  await prisma.incident.deleteMany();
+  await prisma.incidentCategory.deleteMany();
   await prisma.user.deleteMany();
+  await prisma.branch.deleteMany();
+  await prisma.division.deleteMany();
 
-  // ─── Departments ────────────────────────────────────────────────────────
-  const depts = await prisma.department.createManyAndReturn({
-    data: [
-      { name: 'Card Operations', description: 'Handles ATM and card-related issues' },
-      { name: 'Digital Banking', description: 'Mobile banking and online services' },
-      { name: 'Transfer Operations', description: 'Fund transfers and remittances' },
-      { name: 'Account Services', description: 'Account management and general inquiries' },
-      { name: 'Customer Service', description: 'General complaints and escalations' },
-    ],
-  });
+  console.log('🧹 Existing data cleaned.');
 
-  const deptMap: Record<string, string> = {};
-  depts.forEach((d) => { deptMap[d.name] = d.id; });
+  // 2. Seed Branches (Ethiopian COOP Branches)
+  const branchesData = [
+    { name: 'Hawassa Branch', code: 'BR001', location: 'Hawassa, Sidama Region', phone: '+251 46 220 1122' },
+    { name: 'Bole Branch', code: 'BR002', location: 'Bole Medhanealem, Addis Ababa', phone: '+251 11 662 3344' },
+    { name: 'Finfinnee Branch', code: 'BR003', location: 'Kazanchis, Addis Ababa', phone: '+251 11 551 5566' },
+    { name: 'Jimma Branch', code: 'BR004', location: 'Jimma Town, Oromia', phone: '+251 47 111 7788' },
+    { name: 'Adama Branch', code: 'BR005', location: 'Adama Main Road, Oromia', phone: '+251 22 112 9900' },
+    { name: 'Shashemene Branch', code: 'BR006', location: 'Shashemene Center, Oromia', phone: '+251 46 110 3344' },
+    { name: 'Nekemte Branch', code: 'BR007', location: 'Nekemte Town, Oromia', phone: '+251 57 661 2233' },
+    { name: 'Dire Dawa Branch', code: 'BR008', location: 'Kebele 02, Dire Dawa', phone: '+251 25 111 4455' },
+  ];
 
-  // ─── Service Categories ────────────────────────────────────────────────
-  const categories = await prisma.serviceCategory.createManyAndReturn({
-    data: [
-      {
-        name: 'ATM Services',
-        description: 'ATM card issues, cash dispensing problems, card retention',
-        departmentId: deptMap['Card Operations'],
-        defaultDeadlineHours: 8,
-        defaultPriority: Priority.HIGH,
-      },
-      {
-        name: 'Card Services',
-        description: 'Debit/credit card issues, card replacement, fraud',
-        departmentId: deptMap['Card Operations'],
-        defaultDeadlineHours: 12,
-        defaultPriority: Priority.HIGH,
-      },
-      {
-        name: 'Mobile Banking',
-        description: 'App login issues, transaction problems, account access',
-        departmentId: deptMap['Digital Banking'],
-        defaultDeadlineHours: 24,
-        defaultPriority: Priority.MEDIUM,
-      },
-      {
-        name: 'Transfer Issues',
-        description: 'Failed transfers, missing funds, delayed payments',
-        departmentId: deptMap['Transfer Operations'],
-        defaultDeadlineHours: 24,
-        defaultPriority: Priority.HIGH,
-      },
-      {
-        name: 'Account Services',
-        description: 'Account updates, statements, KYC, closures',
-        departmentId: deptMap['Account Services'],
-        defaultDeadlineHours: 48,
-        defaultPriority: Priority.MEDIUM,
-      },
-      {
-        name: 'General Complaint',
-        description: 'Service quality, staff behaviour, general dissatisfaction',
-        departmentId: deptMap['Customer Service'],
-        defaultDeadlineHours: 48,
-        defaultPriority: Priority.LOW,
-      },
-    ],
-  });
+  const branches = await Promise.all(
+    branchesData.map((b) => prisma.branch.create({ data: b }))
+  );
+  const branchMap = new Map(branches.map((b) => [b.code, b]));
+  console.log(`✅ Created ${branches.length} branches.`);
 
-  const catMap: Record<string, string> = {};
-  categories.forEach((c) => { catMap[c.name] = c.id; });
+  // 3. Seed 4 IT Divisions
+  const divisionsData = [
+    {
+      name: 'ATM Support Division',
+      code: DivisionCode.ATM,
+      description: 'Centralized ATM hardware, cash dispensers, card readers, receipt printers, and ATM network connectivity.',
+    },
+    {
+      name: 'Application Support Division',
+      code: DivisionCode.APPLICATION,
+      description: 'Core banking software, teller application errors, user access control, password resets, and virus/malware recovery.',
+    },
+    {
+      name: 'Networking Division',
+      code: DivisionCode.NETWORKING,
+      description: 'Branch LAN, WAN, router gateways, network switches, patch panels, ethernet cabling, and ISP connectivity.',
+    },
+    {
+      name: 'Hardware & Maintenance Division',
+      code: DivisionCode.MAINTENANCE,
+      description: 'Computer workstation hardware, hard disk drives, RAM upgrades, printer hardware, power supply UPS, and terminal repairs.',
+    },
+  ];
 
-  // ─── Password hash ─────────────────────────────────────────────────────
-  const hash = await bcrypt.hash('Password123!', 12);
+  const divisions = await Promise.all(
+    divisionsData.map((d) => prisma.division.create({ data: d }))
+  );
+  const divisionMap = new Map(divisions.map((d) => [d.code, d]));
+  console.log(`✅ Created ${divisions.length} IT divisions.`);
 
-  // ─── Users ─────────────────────────────────────────────────────────────
-  // Admin
-  const admin = await prisma.user.create({
-    data: {
-      name: 'System Admin',
-      email: 'admin@bankcare.demo',
-      passwordHash: hash,
+  // 4. Seed Incident Categories
+  const categoriesData = [
+    // ATM
+    { divisionCode: DivisionCode.ATM, name: 'ATM Offline / Out of Service', defaultPriority: Priority.CRITICAL, defaultSlaHours: 1, description: 'ATM is completely unreachable or powered down' },
+    { divisionCode: DivisionCode.ATM, name: 'Cash Dispenser Malfunction', defaultPriority: Priority.CRITICAL, defaultSlaHours: 1, description: 'Cash jam, dispenser shutter failure, or miscount' },
+    { divisionCode: DivisionCode.ATM, name: 'Card Reader Jam / Failure', defaultPriority: Priority.HIGH, defaultSlaHours: 4, description: 'Card jammed inside reader or unable to read chip' },
+    { divisionCode: DivisionCode.ATM, name: 'Receipt Printer Hardware Error', defaultPriority: Priority.MEDIUM, defaultSlaHours: 24, description: 'Receipt printer out of paper, cutter jam, or communication error' },
+    { divisionCode: DivisionCode.ATM, name: 'ATM Network / Host Disconnect', defaultPriority: Priority.CRITICAL, defaultSlaHours: 1, description: 'ATM cannot reach transaction authorization host' },
+
+    // APPLICATION
+    { divisionCode: DivisionCode.APPLICATION, name: 'Core Banking Application Error', defaultPriority: Priority.CRITICAL, defaultSlaHours: 1, description: 'Transaction posting error or system-wide timeout' },
+    { divisionCode: DivisionCode.APPLICATION, name: 'Teller Software Crash / Freezing', defaultPriority: Priority.HIGH, defaultSlaHours: 4, description: 'Front-office teller workstation software unresponsive' },
+    { divisionCode: DivisionCode.APPLICATION, name: 'User Account Locked / Access Control', defaultPriority: Priority.MEDIUM, defaultSlaHours: 24, description: 'Branch employee cannot log in or requires profile unlock' },
+    { divisionCode: DivisionCode.APPLICATION, name: 'Password Reset Request', defaultPriority: Priority.LOW, defaultSlaHours: 72, description: 'Self-service or standard supervisor password reset' },
+    { divisionCode: DivisionCode.APPLICATION, name: 'Virus / Malware Infection & OS Format', defaultPriority: Priority.HIGH, defaultSlaHours: 4, description: 'Trojan/malware detected on workstation requiring OS re-imaging' },
+
+    // NETWORKING
+    { divisionCode: DivisionCode.NETWORKING, name: 'Branch Internet Connectivity Failure', defaultPriority: Priority.CRITICAL, defaultSlaHours: 1, description: 'Primary and backup WAN links down across branch' },
+    { divisionCode: DivisionCode.NETWORKING, name: 'LAN Switch Port Link Failure', defaultPriority: Priority.HIGH, defaultSlaHours: 4, description: 'Local switch port amber/off, teller lost network connection' },
+    { divisionCode: DivisionCode.NETWORKING, name: 'Patch Panel / Cable Disconnection', defaultPriority: Priority.HIGH, defaultSlaHours: 4, description: 'Loose or damaged RJ45 cable between patch panel and workstation' },
+    { divisionCode: DivisionCode.NETWORKING, name: 'Router Gateway Latency & Packet Loss', defaultPriority: Priority.HIGH, defaultSlaHours: 4, description: 'High ping latency affecting branch transaction speed' },
+    { divisionCode: DivisionCode.NETWORKING, name: 'Workstation IP / DHCP Conflict', defaultPriority: Priority.MEDIUM, defaultSlaHours: 24, description: 'Device unable to obtain IP lease from branch router' },
+
+    // MAINTENANCE
+    { divisionCode: DivisionCode.MAINTENANCE, name: 'Hard Disk Drive Failure / OS Boot', defaultPriority: Priority.HIGH, defaultSlaHours: 4, description: 'SMART error or clicking noise indicating drive failure' },
+    { divisionCode: DivisionCode.MAINTENANCE, name: 'RAM Memory Error / Blue Screen', defaultPriority: Priority.HIGH, defaultSlaHours: 4, description: 'Random memory reboot or memory module defect' },
+    { divisionCode: DivisionCode.MAINTENANCE, name: 'Passbook / Slip Printer Mechanical Jam', defaultPriority: Priority.MEDIUM, defaultSlaHours: 24, description: 'Worn feed rollers or gear mechanism obstruction' },
+    { divisionCode: DivisionCode.MAINTENANCE, name: 'Desktop Power Supply / UPS Failure', defaultPriority: Priority.HIGH, defaultSlaHours: 4, description: 'Workstation does not power on or UPS beeping continuously' },
+    { divisionCode: DivisionCode.MAINTENANCE, name: 'Peripheral Hardware Replacement', defaultPriority: Priority.LOW, defaultSlaHours: 72, description: 'Keyboard, mouse, barcode scanner, or monitor replacement' },
+  ];
+
+  const categories = await Promise.all(
+    categoriesData.map((c) =>
+      prisma.incidentCategory.create({
+        data: {
+          divisionId: divisionMap.get(c.divisionCode)!.id,
+          name: c.name,
+          description: c.description,
+          defaultPriority: c.defaultPriority,
+          defaultSlaHours: c.defaultSlaHours,
+        },
+      })
+    )
+  );
+  console.log(`✅ Created ${categories.length} incident categories across 4 divisions.`);
+
+  // 5. Seed Users (all password: Password123!)
+  const passwordHash = await bcrypt.hash('Password123!', 10);
+
+  const usersData = [
+    // System Administrator
+    {
+      name: 'System Administrator',
+      email: 'admin@coopbank.et',
+      passwordHash,
       role: Role.ADMIN,
-      isActive: true,
+      phone: '+251 11 550 0001',
     },
-  });
+    // IT Supervisor
+    {
+      name: 'Chala Dejene (IT Supervisor)',
+      email: 'supervisor@coopbank.et',
+      passwordHash,
+      role: Role.IT_SUPERVISOR,
+      phone: '+251 11 550 0002',
+    },
+    // Technicians (1 per division)
+    {
+      name: 'Mohammed Kedir (Network Specialist)',
+      email: 'tech.network@coopbank.et',
+      passwordHash,
+      role: Role.TECHNICIAN,
+      divisionId: divisionMap.get(DivisionCode.NETWORKING)!.id,
+      phone: '+251 91 123 4567',
+    },
+    {
+      name: 'Biniam Tadesse (ATM Field Engineer)',
+      email: 'tech.atm@coopbank.et',
+      passwordHash,
+      role: Role.TECHNICIAN,
+      divisionId: divisionMap.get(DivisionCode.ATM)!.id,
+      phone: '+251 91 234 5678',
+    },
+    {
+      name: 'Selamawit Bekele (Software Analyst)',
+      email: 'tech.app@coopbank.et',
+      passwordHash,
+      role: Role.TECHNICIAN,
+      divisionId: divisionMap.get(DivisionCode.APPLICATION)!.id,
+      phone: '+251 91 345 6789',
+    },
+    {
+      name: 'Dawit Yohannes (Hardware Engineer)',
+      email: 'tech.maint@coopbank.et',
+      passwordHash,
+      role: Role.TECHNICIAN,
+      divisionId: divisionMap.get(DivisionCode.MAINTENANCE)!.id,
+      phone: '+251 91 456 7890',
+    },
+    // Branch Users
+    {
+      name: 'Abebe Bikila (Hawassa Teller)',
+      email: 'teller.hawassa@coopbank.et',
+      passwordHash,
+      role: Role.BRANCH_USER,
+      branchId: branchMap.get('BR001')!.id,
+      phone: '+251 46 220 8899',
+    },
+    {
+      name: 'Tigist Alemu (Bole Customer Service)',
+      email: 'user.bole@coopbank.et',
+      passwordHash,
+      role: Role.BRANCH_USER,
+      branchId: branchMap.get('BR002')!.id,
+      phone: '+251 11 662 9988',
+    },
+    {
+      name: 'Kenenisa Bekele (Jimma Teller Supervisor)',
+      email: 'teller.jimma@coopbank.et',
+      passwordHash,
+      role: Role.BRANCH_USER,
+      branchId: branchMap.get('BR004')!.id,
+      phone: '+251 47 111 2233',
+    },
+    {
+      name: 'Derartu Tulu (Adama Operations)',
+      email: 'user.adama@coopbank.et',
+      passwordHash,
+      role: Role.BRANCH_USER,
+      branchId: branchMap.get('BR005')!.id,
+      phone: '+251 22 112 4455',
+    },
+  ];
 
-  // Manager
-  const manager = await prisma.user.create({
+  const users = await Promise.all(usersData.map((u) => prisma.user.create({ data: u })));
+  const userMap = new Map(users.map((u) => [u.email, u]));
+  console.log(`✅ Created ${users.length} demo users across all roles.`);
+
+  // 6. Pre-populate Realistic Sample Incidents
+
+  // Helper category finder
+  const findCat = (name: string) => categories.find((c) => c.name.includes(name))!;
+
+  // Incident 1: IN_PROGRESS with detailed step-by-step troubleshooting log (from the COOP report)
+  const inc1 = await prisma.incident.create({
     data: {
-      name: 'Fatima Al-Hassan',
-      email: 'fatima@bankcare.demo',
-      passwordHash: hash,
-      role: Role.MANAGER,
-      departmentId: deptMap['Customer Service'],
-      isActive: true,
+      incidentNumber: 'INC-2026-00001',
+      title: 'Branch computers cannot access the network at teller workstation #3',
+      description: 'Teller workstation #3 lost connection to the core banking server. Ethernet connection shows disconnected icon. No internet or intranet access.',
+      branchId: branchMap.get('BR001')!.id,
+      categoryId: findCat('Patch Panel / Cable').id,
+      reportedById: userMap.get('teller.hawassa@coopbank.et')!.id,
+      assignedTechnicianId: userMap.get('tech.network@coopbank.et')!.id,
+      priority: Priority.HIGH,
+      status: IncidentStatus.IN_PROGRESS,
+      slaDeadline: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours remaining
+      slaBreached: false,
+      reportedAt: new Date(Date.now() - 3 * 60 * 60 * 1000),
+      assignedAt: new Date(Date.now() - 2.5 * 60 * 60 * 1000),
     },
   });
 
-  // Officers
-  const sara = await prisma.user.create({
-    data: {
-      name: 'Sara Ahmed',
-      email: 'sara@bankcare.demo',
-      passwordHash: hash,
-      role: Role.OFFICER,
-      departmentId: deptMap['Card Operations'],
-      isActive: true,
-    },
-  });
-
-  const khalid = await prisma.user.create({
-    data: {
-      name: 'Khalid Omar',
-      email: 'khalid@bankcare.demo',
-      passwordHash: hash,
-      role: Role.OFFICER,
-      departmentId: deptMap['Card Operations'],
-      isActive: true,
-    },
-  });
-
-  const yonas = await prisma.user.create({
-    data: {
-      name: 'Yonas Tesfaye',
-      email: 'yonas@bankcare.demo',
-      passwordHash: hash,
-      role: Role.OFFICER,
-      departmentId: deptMap['Digital Banking'],
-      isActive: true,
-    },
-  });
-
-  const hana = await prisma.user.create({
-    data: {
-      name: 'Hana Bekele',
-      email: 'hana@bankcare.demo',
-      passwordHash: hash,
-      role: Role.OFFICER,
-      departmentId: deptMap['Transfer Operations'],
-      isActive: true,
-    },
-  });
-
-  // Customers
-  const ahmed = await prisma.user.create({
-    data: {
-      name: 'Ahmed Mohammed',
-      email: 'ahmed@bankcare.demo',
-      passwordHash: hash,
-      role: Role.CUSTOMER,
-      isActive: true,
-    },
-  });
-
-  const liya = await prisma.user.create({
-    data: {
-      name: 'Liya Girma',
-      email: 'liya@bankcare.demo',
-      passwordHash: hash,
-      role: Role.CUSTOMER,
-      isActive: true,
-    },
-  });
-
-  const dawit = await prisma.user.create({
-    data: {
-      name: 'Dawit Haile',
-      email: 'dawit@bankcare.demo',
-      passwordHash: hash,
-      role: Role.CUSTOMER,
-      isActive: true,
-    },
-  });
-
-  const meron = await prisma.user.create({
-    data: {
-      name: 'Meron Tadesse',
-      email: 'meron@bankcare.demo',
-      passwordHash: hash,
-      role: Role.CUSTOMER,
-      isActive: true,
-    },
-  });
-
-  const abel = await prisma.user.create({
-    data: {
-      name: 'Abel Worku',
-      email: 'abel@bankcare.demo',
-      passwordHash: hash,
-      role: Role.CUSTOMER,
-      isActive: true,
-    },
-  });
-
-  console.log('✅ Users created');
-
-  // ─── Helper: create a full request with activities ─────────────────────
-  async function makeRequest(params: {
-    num: string;
-    customerId: string;
-    categoryId: string;
-    officerId?: string;
-    title: string;
-    description: string;
-    priority: Priority;
-    status: RequestStatus;
-    createdHoursAgo: number;
-    deadlineHours: number;
-    resolvedHoursAgo?: number;
-    activities: Array<{
-      userId: string;
-      action: ActivityAction;
-      description: string;
-      isCustomerVisible: boolean;
-      hoursAfterCreation: number;
-    }>;
-    withFeedback?: { rating: number; comment: string };
-  }) {
-    const createdAt = new Date(Date.now() - params.createdHoursAgo * 3600_000);
-    const deadline = new Date(createdAt.getTime() + params.deadlineHours * 3600_000);
-    const resolvedAt = params.resolvedHoursAgo
-      ? new Date(Date.now() - params.resolvedHoursAgo * 3600_000)
-      : null;
-
-    const request = await prisma.serviceRequest.create({
-      data: {
-        requestNumber: params.num,
-        customerId: params.customerId,
-        categoryId: params.categoryId,
-        assignedOfficerId: params.officerId || null,
-        title: params.title,
-        description: params.description,
-        priority: params.priority,
-        status: params.status,
-        deadline,
-        createdAt,
-        resolvedAt,
-        closedAt:
-          params.status === RequestStatus.CLOSED ? new Date(Date.now() - 1800_000) : null,
+  // Incident 1 updates
+  await prisma.incidentUpdate.createMany({
+    data: [
+      {
+        incidentId: inc1.id,
+        userId: userMap.get('teller.hawassa@coopbank.et')!.id,
+        action: ActivityAction.INCIDENT_CREATED,
+        message: 'Incident reported: Workstation #3 network link down at Hawassa Branch.',
+        createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000),
       },
-    });
-
-    for (const act of params.activities) {
-      await prisma.requestActivity.create({
-        data: {
-          requestId: request.id,
-          userId: act.userId,
-          action: act.action,
-          description: act.description,
-          isCustomerVisible: act.isCustomerVisible,
-          createdAt: new Date(createdAt.getTime() + act.hoursAfterCreation * 3600_000),
-        },
-      });
-    }
-
-    if (params.withFeedback) {
-      await prisma.feedback.create({
-        data: {
-          requestId: request.id,
-          customerId: params.customerId,
-          rating: params.withFeedback.rating,
-          comment: params.withFeedback.comment,
-        },
-      });
-    }
-
-    return request;
-  }
-
-  // ─── Service Requests ──────────────────────────────────────────────────
-
-  // SR-2026-00001: Ahmed — ATM Card Retained — INVESTIGATING (the demo request)
-  const req1 = await makeRequest({
-    num: 'SR-2026-00001',
-    customerId: ahmed.id,
-    categoryId: catMap['ATM Services'],
-    officerId: khalid.id,
-    title: 'ATM Card Retained',
-    description: 'The ATM at Hawassa Main Branch retained my card after I entered my PIN correctly. The machine displayed an error and returned neither my card nor the cash I requested.',
-    priority: Priority.HIGH,
-    status: RequestStatus.INVESTIGATING,
-    createdHoursAgo: 5,
-    deadlineHours: 8,
-    activities: [
-      { userId: ahmed.id, action: ActivityAction.REQUEST_CREATED, description: 'Request SR-2026-00001 submitted by customer', isCustomerVisible: true, hoursAfterCreation: 0 },
-      { userId: khalid.id, action: ActivityAction.REQUEST_REVIEWED, description: 'Request has been reviewed', isCustomerVisible: true, hoursAfterCreation: 0.5 },
-      { userId: khalid.id, action: ActivityAction.REQUEST_ASSIGNED, description: 'Request assigned to Khalid Omar', isCustomerVisible: true, hoursAfterCreation: 0.5 },
-      { userId: khalid.id, action: ActivityAction.INVESTIGATION_STARTED, description: 'Investigation started — contacting ATM operations team', isCustomerVisible: true, hoursAfterCreation: 1 },
-      { userId: khalid.id, action: ActivityAction.NOTE_ADDED, description: 'ATM log shows card jam at 09:45. Engineering team dispatched.', isCustomerVisible: false, hoursAfterCreation: 2 },
+      {
+        incidentId: inc1.id,
+        userId: userMap.get('supervisor@coopbank.et')!.id,
+        action: ActivityAction.INCIDENT_REVIEWED,
+        message: 'Reviewed incident: Confirmed HIGH priority. Assigning to Networking specialist.',
+        createdAt: new Date(Date.now() - 2.8 * 60 * 60 * 1000),
+      },
+      {
+        incidentId: inc1.id,
+        userId: userMap.get('supervisor@coopbank.et')!.id,
+        action: ActivityAction.INCIDENT_ASSIGNED,
+        message: 'Assigned to Mohammed Kedir (Networking Division).',
+        createdAt: new Date(Date.now() - 2.5 * 60 * 60 * 1000),
+      },
+      {
+        incidentId: inc1.id,
+        userId: userMap.get('tech.network@coopbank.et')!.id,
+        action: ActivityAction.INVESTIGATION_STARTED,
+        message: 'Technician Mohammed Kedir started investigation and physical inspection.',
+        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+      },
     ],
   });
 
-  // SR-2026-00002: Ahmed — Transfer Issue — RESOLVED
-  const req2 = await makeRequest({
-    num: 'SR-2026-00002',
-    customerId: ahmed.id,
-    categoryId: catMap['Transfer Issues'],
-    officerId: hana.id,
-    title: 'Transfer to Abissinia Bank Not Received',
-    description: 'I transferred ETB 15,000 to my relative\'s Abissinia Bank account two days ago. The amount was debited from my account but the recipient has not received it.',
-    priority: Priority.HIGH,
-    status: RequestStatus.RESOLVED,
-    createdHoursAgo: 36,
-    deadlineHours: 24,
-    resolvedHoursAgo: 2,
-    activities: [
-      { userId: ahmed.id, action: ActivityAction.REQUEST_CREATED, description: 'Request submitted by customer', isCustomerVisible: true, hoursAfterCreation: 0 },
-      { userId: hana.id, action: ActivityAction.REQUEST_REVIEWED, description: 'Request reviewed', isCustomerVisible: true, hoursAfterCreation: 1 },
-      { userId: hana.id, action: ActivityAction.REQUEST_ASSIGNED, description: 'Assigned to Hana Bekele', isCustomerVisible: true, hoursAfterCreation: 1 },
-      { userId: hana.id, action: ActivityAction.INVESTIGATION_STARTED, description: 'Investigation started — checking SWIFT/local interbank logs', isCustomerVisible: true, hoursAfterCreation: 3 },
-      { userId: hana.id, action: ActivityAction.RESOLVED, description: 'Transfer was delayed due to interbank reconciliation. Funds have been confirmed and will reflect within 24 hours.', isCustomerVisible: true, hoursAfterCreation: 34 },
-    ],
-    withFeedback: { rating: 4, comment: 'Resolved but took longer than expected. Officer was helpful.' },
-  });
-
-  // SR-2026-00003: Ahmed — Mobile Banking — CLOSED
-  await makeRequest({
-    num: 'SR-2026-00003',
-    customerId: ahmed.id,
-    categoryId: catMap['Mobile Banking'],
-    officerId: yonas.id,
-    title: 'Cannot Login to Mobile Banking App',
-    description: 'I have been locked out of the mobile banking app since yesterday morning. I tried resetting my password but the OTP is not arriving.',
-    priority: Priority.MEDIUM,
-    status: RequestStatus.CLOSED,
-    createdHoursAgo: 72,
-    deadlineHours: 24,
-    resolvedHoursAgo: 24,
-    activities: [
-      { userId: ahmed.id, action: ActivityAction.REQUEST_CREATED, description: 'Request submitted', isCustomerVisible: true, hoursAfterCreation: 0 },
-      { userId: yonas.id, action: ActivityAction.REQUEST_REVIEWED, description: 'Request reviewed', isCustomerVisible: true, hoursAfterCreation: 2 },
-      { userId: yonas.id, action: ActivityAction.REQUEST_ASSIGNED, description: 'Assigned to Yonas Tesfaye', isCustomerVisible: true, hoursAfterCreation: 2 },
-      { userId: yonas.id, action: ActivityAction.INVESTIGATION_STARTED, description: 'Checking OTP gateway and account lock status', isCustomerVisible: true, hoursAfterCreation: 4 },
-      { userId: yonas.id, action: ActivityAction.RESOLVED, description: 'Account was locked due to 3 failed attempts. Account unlocked and OTP gateway confirmed working.', isCustomerVisible: true, hoursAfterCreation: 20 },
-      { userId: ahmed.id, action: ActivityAction.CLOSED, description: 'Customer confirmed resolution and submitted 5-star feedback', isCustomerVisible: true, hoursAfterCreation: 48 },
-    ],
-    withFeedback: { rating: 5, comment: 'Excellent service! Issue resolved quickly.' },
-  });
-
-  // SR-2026-00004: Liya — OVERDUE
-  await makeRequest({
-    num: 'SR-2026-00004',
-    customerId: liya.id,
-    categoryId: catMap['ATM Services'],
-    officerId: sara.id,
-    title: 'ATM Dispensed Wrong Amount',
-    description: 'I requested ETB 2,000 from the ATM at Dire Dawa branch but only ETB 1,500 was dispensed. The full amount was deducted from my balance.',
-    priority: Priority.HIGH,
-    status: RequestStatus.OVERDUE,
-    createdHoursAgo: 15,
-    deadlineHours: 8,
-    activities: [
-      { userId: liya.id, action: ActivityAction.REQUEST_CREATED, description: 'Request submitted', isCustomerVisible: true, hoursAfterCreation: 0 },
-      { userId: sara.id, action: ActivityAction.REQUEST_REVIEWED, description: 'Request reviewed', isCustomerVisible: true, hoursAfterCreation: 2 },
-      { userId: sara.id, action: ActivityAction.REQUEST_ASSIGNED, description: 'Assigned to Sara Ahmed', isCustomerVisible: true, hoursAfterCreation: 2 },
-      { userId: sara.id, action: ActivityAction.INVESTIGATION_STARTED, description: 'Contacting ATM operations for cash balance audit', isCustomerVisible: true, hoursAfterCreation: 4 },
+  // Incident 1 Troubleshooting Logs (Directly reflecting the internship report's investigation!)
+  await prisma.troubleshootingLog.createMany({
+    data: [
+      {
+        incidentId: inc1.id,
+        technicianId: userMap.get('tech.network@coopbank.et')!.id,
+        action: 'Checked power and network equipment LED indicators',
+        observation: 'Switch port 14 indicator light was completely off',
+        result: 'No physical carrier signal on port 14',
+        createdAt: new Date(Date.now() - 110 * 60 * 1000),
+      },
+      {
+        incidentId: inc1.id,
+        technicianId: userMap.get('tech.network@coopbank.et')!.id,
+        action: 'Checked server connectivity and default gateway',
+        observation: 'Server pinged from adjacent teller PC with 1ms round-trip',
+        result: 'Confirmed server and core switch operational; issue localized to station #3 link',
+        createdAt: new Date(Date.now() - 95 * 60 * 1000),
+      },
+      {
+        incidentId: inc1.id,
+        technicianId: userMap.get('tech.network@coopbank.et')!.id,
+        action: 'Checked patch panel port 14 and structured cabling rack',
+        observation: 'Cable in patch panel port 14 securely connected and punched down',
+        result: 'Patch panel and rack side verified intact',
+        createdAt: new Date(Date.now() - 80 * 60 * 1000),
+      },
+      {
+        incidentId: inc1.id,
+        technicianId: userMap.get('tech.network@coopbank.et')!.id,
+        action: 'Inspected RJ45 connector and wall outlet at teller station #3',
+        observation: 'RJ45 plastic retaining clip snapped off; cable pulled partially out of wall outlet',
+        result: 'Found root fault: Damaged cable connector causing intermittent disconnect',
+        createdAt: new Date(Date.now() - 65 * 60 * 1000),
+      },
+      {
+        incidentId: inc1.id,
+        technicianId: userMap.get('tech.network@coopbank.et')!.id,
+        action: 'Re-crimped Cat6 cable with new shielded RJ45 connector and reconnected to outlet',
+        observation: 'Link LED immediately lit solid green, flashing amber on activity',
+        result: 'Physical layer link established at 1 Gbps Full-Duplex',
+        createdAt: new Date(Date.now() - 40 * 60 * 1000),
+      },
+      {
+        incidentId: inc1.id,
+        technicianId: userMap.get('tech.network@coopbank.et')!.id,
+        action: 'Conducted end-to-end network ping test and teller software verification',
+        observation: '100 packets sent to Core Banking Server with 0% loss, avg latency 1.2ms',
+        result: 'Network throughput and transaction processing fully verified',
+        createdAt: new Date(Date.now() - 15 * 60 * 1000),
+      },
     ],
   });
 
-  // SR-2026-00005: Dawit — ESCALATED
-  await makeRequest({
-    num: 'SR-2026-00005',
-    customerId: dawit.id,
-    categoryId: catMap['Transfer Issues'],
-    officerId: hana.id,
-    title: 'International Wire Transfer Missing',
-    description: 'I sent USD 500 via international wire transfer 3 days ago. The funds were debited but the recipient in Dubai has not received them. SWIFT reference: ABCD20261234.',
-    priority: Priority.HIGH,
-    status: RequestStatus.ESCALATED,
-    createdHoursAgo: 72,
-    deadlineHours: 24,
-    activities: [
-      { userId: dawit.id, action: ActivityAction.REQUEST_CREATED, description: 'Request submitted', isCustomerVisible: true, hoursAfterCreation: 0 },
-      { userId: hana.id, action: ActivityAction.REQUEST_REVIEWED, description: 'Reviewed — high value international transfer', isCustomerVisible: true, hoursAfterCreation: 1 },
-      { userId: hana.id, action: ActivityAction.REQUEST_ASSIGNED, description: 'Assigned to Hana Bekele', isCustomerVisible: true, hoursAfterCreation: 1 },
-      { userId: hana.id, action: ActivityAction.INVESTIGATION_STARTED, description: 'Contacting correspondent bank', isCustomerVisible: true, hoursAfterCreation: 3 },
-      { userId: hana.id, action: ActivityAction.ESCALATED, description: 'Escalated to manager: International wire requires SWIFT team intervention. Correspondent bank not responding within SLA.', isCustomerVisible: false, hoursAfterCreation: 24 },
+  // Incident 2: ATM Division - ASSIGNED
+  const inc2 = await prisma.incident.create({
+    data: {
+      incidentNumber: 'INC-2026-00002',
+      title: 'Main Lobby ATM Offline — Dispenser shutter mechanism locked',
+      description: 'Lobby ATM machine went offline during morning rush. Error code E-14 displayed on maintenance monitor. Cash dispenser shutter is locked.',
+      branchId: branchMap.get('BR002')!.id,
+      categoryId: findCat('Cash Dispenser Malfunction').id,
+      reportedById: userMap.get('user.bole@coopbank.et')!.id,
+      assignedTechnicianId: userMap.get('tech.atm@coopbank.et')!.id,
+      priority: Priority.CRITICAL,
+      status: IncidentStatus.ASSIGNED,
+      slaDeadline: new Date(Date.now() + 45 * 60 * 1000), // 45m remaining
+      slaBreached: false,
+      reportedAt: new Date(Date.now() - 25 * 60 * 1000),
+      assignedAt: new Date(Date.now() - 15 * 60 * 1000),
+    },
+  });
+
+  await prisma.incidentUpdate.createMany({
+    data: [
+      {
+        incidentId: inc2.id,
+        userId: userMap.get('user.bole@coopbank.et')!.id,
+        action: ActivityAction.INCIDENT_CREATED,
+        message: 'Critical incident reported: ATM Offline at Bole Branch.',
+        createdAt: new Date(Date.now() - 25 * 60 * 1000),
+      },
+      {
+        incidentId: inc2.id,
+        userId: userMap.get('supervisor@coopbank.et')!.id,
+        action: ActivityAction.INCIDENT_ASSIGNED,
+        message: 'Assigned immediately to ATM Field Engineer Biniam Tadesse. Critical SLA 1hr.',
+        createdAt: new Date(Date.now() - 15 * 60 * 1000),
+      },
     ],
   });
 
-  // SR-2026-00006: Meron — NEW (just created)
-  await makeRequest({
-    num: 'SR-2026-00006',
-    customerId: meron.id,
-    categoryId: catMap['Card Services'],
-    title: 'Debit Card Blocked Unexpectedly',
-    description: 'My debit card was blocked this morning without any notification. I am unable to make purchases or withdrawals. I did not perform any suspicious transactions.',
-    priority: Priority.HIGH,
-    status: RequestStatus.NEW,
-    createdHoursAgo: 1,
-    deadlineHours: 12,
-    activities: [
-      { userId: meron.id, action: ActivityAction.REQUEST_CREATED, description: 'Request submitted by customer', isCustomerVisible: true, hoursAfterCreation: 0 },
+  // Incident 3: Application Division - RESOLVED (Waiting for Branch Confirmation!)
+  const inc3 = await prisma.incident.create({
+    data: {
+      incidentNumber: 'INC-2026-00003',
+      title: 'Teller computer infected with Trojan malware, popup advertisements preventing login',
+      description: 'Workstation in customer service area showing unauthorized popup windows and antivirus warning. Browser redirected to external URLs.',
+      branchId: branchMap.get('BR004')!.id,
+      categoryId: findCat('Virus / Malware').id,
+      reportedById: userMap.get('teller.jimma@coopbank.et')!.id,
+      assignedTechnicianId: userMap.get('tech.app@coopbank.et')!.id,
+      priority: Priority.HIGH,
+      status: IncidentStatus.RESOLVED,
+      slaDeadline: new Date(Date.now() - 30 * 60 * 1000),
+      slaBreached: false,
+      rootCause: 'Unauthorized USB flash drive inserted into teller workstation introducing adware and trojan binaries.',
+      resolution: 'Disconnected machine from branch network. Scanned disk with offline rescue toolkit, quarantined infected files, executed automated OS cleanup and standardized bank image re-installation. Verified endpoint antivirus signature updates and enabled USB mass-storage restriction policy.',
+      reportedAt: new Date(Date.now() - 5 * 60 * 60 * 1000),
+      assignedAt: new Date(Date.now() - 4.5 * 60 * 60 * 1000),
+      resolvedAt: new Date(Date.now() - 45 * 60 * 1000),
+    },
+  });
+
+  await prisma.incidentUpdate.createMany({
+    data: [
+      {
+        incidentId: inc3.id,
+        userId: userMap.get('teller.jimma@coopbank.et')!.id,
+        action: ActivityAction.INCIDENT_CREATED,
+        message: 'Reported workstation virus infection at Jimma Branch.',
+        createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000),
+      },
+      {
+        incidentId: inc3.id,
+        userId: userMap.get('supervisor@coopbank.et')!.id,
+        action: ActivityAction.INCIDENT_ASSIGNED,
+        message: 'Assigned to Selamawit Bekele (Application Division).',
+        createdAt: new Date(Date.now() - 4.5 * 60 * 60 * 1000),
+      },
+      {
+        incidentId: inc3.id,
+        userId: userMap.get('tech.app@coopbank.et')!.id,
+        action: ActivityAction.INVESTIGATION_STARTED,
+        message: 'Isolated machine from network and began malware scan.',
+        createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000),
+      },
+      {
+        incidentId: inc3.id,
+        userId: userMap.get('tech.app@coopbank.et')!.id,
+        action: ActivityAction.RESOLVED,
+        message: 'System sanitized, re-imaged with approved bank Windows image, and verified. Awaiting branch confirmation.',
+        createdAt: new Date(Date.now() - 45 * 60 * 1000),
+      },
     ],
   });
 
-  // SR-2026-00007: Liya — ASSIGNED  
-  await makeRequest({
-    num: 'SR-2026-00007',
-    customerId: liya.id,
-    categoryId: catMap['Mobile Banking'],
-    officerId: yonas.id,
-    title: 'Transaction History Not Loading',
-    description: 'The transaction history section in the mobile app has been showing a loading spinner for 3 days. I need to review my transactions for the past month.',
-    priority: Priority.MEDIUM,
-    status: RequestStatus.ASSIGNED,
-    createdHoursAgo: 8,
-    deadlineHours: 24,
-    activities: [
-      { userId: liya.id, action: ActivityAction.REQUEST_CREATED, description: 'Request submitted', isCustomerVisible: true, hoursAfterCreation: 0 },
-      { userId: yonas.id, action: ActivityAction.REQUEST_REVIEWED, description: 'Request reviewed', isCustomerVisible: true, hoursAfterCreation: 1 },
-      { userId: yonas.id, action: ActivityAction.REQUEST_ASSIGNED, description: 'Assigned to Yonas Tesfaye', isCustomerVisible: true, hoursAfterCreation: 1 },
+  // Incident 4: Maintenance Division - CLOSED (Verified by Branch)
+  const inc4 = await prisma.incident.create({
+    data: {
+      incidentNumber: 'INC-2026-00004',
+      title: 'Passbook printer paper feed jamming repeatedly during customer deposits',
+      description: 'Teller passbook printer model Olivetti PR2 Plus jams on every second multi-part slip. Rollers slipping.',
+      branchId: branchMap.get('BR005')!.id,
+      categoryId: findCat('Passbook / Slip Printer').id,
+      reportedById: userMap.get('user.adama@coopbank.et')!.id,
+      assignedTechnicianId: userMap.get('tech.maint@coopbank.et')!.id,
+      priority: Priority.MEDIUM,
+      status: IncidentStatus.CLOSED,
+      slaDeadline: new Date(Date.now() - 10 * 60 * 60 * 1000),
+      slaBreached: false,
+      rootCause: 'Worn paper pick-up roller assembly and micro-switch dust accumulation.',
+      resolution: 'Cleaned printer interior with compressed air and isopropyl alcohol. Replaced pickup roller rubber ring and recalibrated printhead alignment.',
+      reportedAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      assignedAt: new Date(Date.now() - 22 * 60 * 60 * 1000),
+      resolvedAt: new Date(Date.now() - 12 * 60 * 60 * 1000),
+      closedAt: new Date(Date.now() - 10 * 60 * 60 * 1000),
+    },
+  });
+
+  await prisma.incidentUpdate.createMany({
+    data: [
+      {
+        incidentId: inc4.id,
+        userId: userMap.get('user.adama@coopbank.et')!.id,
+        action: ActivityAction.INCIDENT_CREATED,
+        message: 'Reported printer hardware malfunction at Adama Branch.',
+        createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      },
+      {
+        incidentId: inc4.id,
+        userId: userMap.get('supervisor@coopbank.et')!.id,
+        action: ActivityAction.INCIDENT_ASSIGNED,
+        message: 'Assigned to Dawit Yohannes (Maintenance Division).',
+        createdAt: new Date(Date.now() - 22 * 60 * 60 * 1000),
+      },
+      {
+        incidentId: inc4.id,
+        userId: userMap.get('tech.maint@coopbank.et')!.id,
+        action: ActivityAction.RESOLVED,
+        message: 'Replaced rollers and calibrated print head.',
+        createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000),
+      },
+      {
+        incidentId: inc4.id,
+        userId: userMap.get('user.adama@coopbank.et')!.id,
+        action: ActivityAction.VERIFIED_CLOSED,
+        message: 'Branch confirmed: Passbook printing tested successfully on 10 slips. Case closed.',
+        createdAt: new Date(Date.now() - 10 * 60 * 60 * 1000),
+      },
     ],
   });
 
-  // SR-2026-00008: Dawit — RESOLVED
-  await makeRequest({
-    num: 'SR-2026-00008',
-    customerId: dawit.id,
-    categoryId: catMap['Account Services'],
-    officerId: sara.id,
-    title: 'Account Statement Request for Visa Application',
-    description: 'I urgently need a 6-month certified bank statement for my visa application. The embassy requires it within 3 days.',
-    priority: Priority.MEDIUM,
-    status: RequestStatus.RESOLVED,
-    createdHoursAgo: 48,
-    deadlineHours: 48,
-    resolvedHoursAgo: 6,
-    activities: [
-      { userId: dawit.id, action: ActivityAction.REQUEST_CREATED, description: 'Request submitted', isCustomerVisible: true, hoursAfterCreation: 0 },
-      { userId: sara.id, action: ActivityAction.REQUEST_REVIEWED, description: 'Reviewed — urgent visa requirement', isCustomerVisible: true, hoursAfterCreation: 2 },
-      { userId: sara.id, action: ActivityAction.REQUEST_ASSIGNED, description: 'Assigned to Sara Ahmed', isCustomerVisible: true, hoursAfterCreation: 2 },
-      { userId: sara.id, action: ActivityAction.INVESTIGATION_STARTED, description: 'Processing certified statement', isCustomerVisible: true, hoursAfterCreation: 4 },
-      { userId: sara.id, action: ActivityAction.RESOLVED, description: 'Certified 6-month statement prepared. Customer can collect from Hawassa Main Branch or receive via secure email.', isCustomerVisible: true, hoursAfterCreation: 42 },
-    ],
+  // Incident 5: Networking Division - OPEN (New submission awaiting supervisor review)
+  const inc5 = await prisma.incident.create({
+    data: {
+      incidentNumber: 'INC-2026-00005',
+      title: 'Branch Optical Fiber Converter showing red alarm, internet connection dropped',
+      description: 'The media converter in the branch server room has a red LOS (Loss of Signal) light. All teller machines unable to connect to central database.',
+      branchId: branchMap.get('BR003')!.id,
+      categoryId: findCat('Branch Internet Connectivity').id,
+      reportedById: userMap.get('teller.hawassa@coopbank.et')!.id,
+      priority: Priority.CRITICAL,
+      status: IncidentStatus.OPEN,
+      slaDeadline: new Date(Date.now() + 50 * 60 * 1000), // 50m remaining
+      slaBreached: false,
+      reportedAt: new Date(Date.now() - 10 * 60 * 1000),
+    },
   });
 
-  // SR-2026-00009: Meron — REOPENED
-  await makeRequest({
-    num: 'SR-2026-00009',
-    customerId: meron.id,
-    categoryId: catMap['ATM Services'],
-    officerId: khalid.id,
-    title: 'Card Retained at Addis Ababa Branch ATM',
-    description: 'The ATM at Bole Road branch retained my card on Friday at approximately 2:30 PM.',
-    priority: Priority.HIGH,
-    status: RequestStatus.REOPENED,
-    createdHoursAgo: 96,
-    deadlineHours: 8,
-    activities: [
-      { userId: meron.id, action: ActivityAction.REQUEST_CREATED, description: 'Request submitted', isCustomerVisible: true, hoursAfterCreation: 0 },
-      { userId: khalid.id, action: ActivityAction.REQUEST_REVIEWED, description: 'Reviewed', isCustomerVisible: true, hoursAfterCreation: 1 },
-      { userId: khalid.id, action: ActivityAction.REQUEST_ASSIGNED, description: 'Assigned to Khalid Omar', isCustomerVisible: true, hoursAfterCreation: 1 },
-      { userId: khalid.id, action: ActivityAction.INVESTIGATION_STARTED, description: 'Contacting branch security to retrieve card', isCustomerVisible: true, hoursAfterCreation: 2 },
-      { userId: khalid.id, action: ActivityAction.RESOLVED, description: 'Card retrieved. Customer notified to collect from branch.', isCustomerVisible: true, hoursAfterCreation: 5 },
-      { userId: meron.id, action: ActivityAction.REOPENED, description: 'Customer reopened request: I went to collect the card but was told it was destroyed as per policy. I need a replacement card.', isCustomerVisible: true, hoursAfterCreation: 12 },
-    ],
+  await prisma.incidentUpdate.create({
+    data: {
+      incidentId: inc5.id,
+      userId: userMap.get('teller.hawassa@coopbank.et')!.id,
+      action: ActivityAction.INCIDENT_CREATED,
+      message: 'Critical incident reported: Fiber converter red alarm at Finfinnee Branch.',
+      createdAt: new Date(Date.now() - 10 * 60 * 1000),
+    },
   });
 
-  // SR-2026-00010: Abel — NEW, deadline approaching
-  await makeRequest({
-    num: 'SR-2026-00010',
-    customerId: abel.id,
-    categoryId: catMap['Card Services'],
-    title: 'Credit Card Fraud Dispute',
-    description: 'I noticed two unauthorized transactions on my credit card statement: ETB 3,200 at an online merchant on 24 Aug and ETB 5,500 at another store on 25 Aug. I did not authorize these payments.',
-    priority: Priority.HIGH,
-    status: RequestStatus.NEW,
-    createdHoursAgo: 10,
-    deadlineHours: 12,
-    activities: [
-      { userId: abel.id, action: ActivityAction.REQUEST_CREATED, description: 'Request submitted', isCustomerVisible: true, hoursAfterCreation: 0 },
-    ],
-  });
-
-  // SR-2026-00011: Abel — INVESTIGATING
-  await makeRequest({
-    num: 'SR-2026-00011',
-    customerId: abel.id,
-    categoryId: catMap['General Complaint'],
-    officerId: sara.id,
-    title: 'Long Wait Time at Customer Service Desk',
-    description: 'I visited the Hawassa Main Branch on Monday and waited over 2 hours to speak to a customer service officer despite having an appointment. This is unacceptable.',
-    priority: Priority.LOW,
-    status: RequestStatus.INVESTIGATING,
-    createdHoursAgo: 24,
-    deadlineHours: 48,
-    activities: [
-      { userId: abel.id, action: ActivityAction.REQUEST_CREATED, description: 'Request submitted', isCustomerVisible: true, hoursAfterCreation: 0 },
-      { userId: sara.id, action: ActivityAction.REQUEST_REVIEWED, description: 'Reviewed — customer satisfaction issue', isCustomerVisible: true, hoursAfterCreation: 2 },
-      { userId: sara.id, action: ActivityAction.REQUEST_ASSIGNED, description: 'Assigned to Sara Ahmed', isCustomerVisible: true, hoursAfterCreation: 2 },
-      { userId: sara.id, action: ActivityAction.INVESTIGATION_STARTED, description: 'Reviewing appointment logs and interviewing branch supervisor', isCustomerVisible: true, hoursAfterCreation: 4 },
-      { userId: sara.id, action: ActivityAction.NOTE_ADDED, description: 'Branch logs confirm 2+ hour wait. Escalation path: branch manager apology letter.', isCustomerVisible: false, hoursAfterCreation: 6 },
-    ],
-  });
-
-  // SR-2026-00012: Liya — CLOSED with feedback
-  await makeRequest({
-    num: 'SR-2026-00012',
-    customerId: liya.id,
-    categoryId: catMap['Account Services'],
-    officerId: yonas.id,
-    title: 'Update Registered Phone Number',
-    description: 'I changed my phone number and need to update it in the banking system so I can receive OTPs on my new number.',
-    priority: Priority.LOW,
-    status: RequestStatus.CLOSED,
-    createdHoursAgo: 120,
-    deadlineHours: 48,
-    resolvedHoursAgo: 48,
-    activities: [
-      { userId: liya.id, action: ActivityAction.REQUEST_CREATED, description: 'Request submitted', isCustomerVisible: true, hoursAfterCreation: 0 },
-      { userId: yonas.id, action: ActivityAction.REQUEST_REVIEWED, description: 'Reviewed — identity verification required', isCustomerVisible: true, hoursAfterCreation: 3 },
-      { userId: yonas.id, action: ActivityAction.REQUEST_ASSIGNED, description: 'Assigned to Yonas Tesfaye', isCustomerVisible: true, hoursAfterCreation: 3 },
-      { userId: yonas.id, action: ActivityAction.INVESTIGATION_STARTED, description: 'Requested customer to verify identity via branch visit', isCustomerVisible: true, hoursAfterCreation: 5 },
-      { userId: yonas.id, action: ActivityAction.RESOLVED, description: 'Phone number updated after successful identity verification at Hawassa Main Branch.', isCustomerVisible: true, hoursAfterCreation: 24 },
-      { userId: liya.id, action: ActivityAction.CLOSED, description: 'Customer confirmed and submitted feedback', isCustomerVisible: true, hoursAfterCreation: 70 },
-    ],
-    withFeedback: { rating: 5, comment: 'Quick and professional. Very satisfied.' },
-  });
-
-  // SR-2026-00013: Dawit — OVERDUE (more dramatic)
-  await makeRequest({
-    num: 'SR-2026-00013',
-    customerId: dawit.id,
-    categoryId: catMap['Transfer Issues'],
-    officerId: hana.id,
-    title: 'Duplicate Debit on Account',
-    description: 'My account was debited twice for the same transaction — ETB 8,000 on the same day for a single payment to a supplier. This has caused my account to go overdrawn.',
-    priority: Priority.HIGH,
-    status: RequestStatus.OVERDUE,
-    createdHoursAgo: 30,
-    deadlineHours: 24,
-    activities: [
-      { userId: dawit.id, action: ActivityAction.REQUEST_CREATED, description: 'Request submitted', isCustomerVisible: true, hoursAfterCreation: 0 },
-      { userId: hana.id, action: ActivityAction.REQUEST_REVIEWED, description: 'Reviewed', isCustomerVisible: true, hoursAfterCreation: 2 },
-      { userId: hana.id, action: ActivityAction.REQUEST_ASSIGNED, description: 'Assigned to Hana Bekele', isCustomerVisible: true, hoursAfterCreation: 2 },
-    ],
-  });
-
-  // SR-2026-00014: Abel — ASSIGNED (deadline approaching in 2 hours)
-  await makeRequest({
-    num: 'SR-2026-00014',
-    customerId: abel.id,
-    categoryId: catMap['Mobile Banking'],
-    officerId: yonas.id,
-    title: 'Beneficiary Not Saving in Mobile App',
-    description: 'Every time I try to save a new beneficiary in the mobile banking app, it shows a success message but the beneficiary does not appear in the list on the next visit.',
-    priority: Priority.MEDIUM,
-    status: RequestStatus.ASSIGNED,
-    createdHoursAgo: 22,
-    deadlineHours: 24,
-    activities: [
-      { userId: abel.id, action: ActivityAction.REQUEST_CREATED, description: 'Request submitted', isCustomerVisible: true, hoursAfterCreation: 0 },
-      { userId: yonas.id, action: ActivityAction.REQUEST_REVIEWED, description: 'Reviewed — likely a sync issue', isCustomerVisible: true, hoursAfterCreation: 4 },
-      { userId: yonas.id, action: ActivityAction.REQUEST_ASSIGNED, description: 'Assigned to Yonas Tesfaye', isCustomerVisible: true, hoursAfterCreation: 4 },
-    ],
-  });
-
-  // SR-2026-00015: Meron — RESOLVED waiting for feedback
-  await makeRequest({
-    num: 'SR-2026-00015',
-    customerId: meron.id,
-    categoryId: catMap['General Complaint'],
-    officerId: khalid.id,
-    title: 'ATM Receipt Shows Incorrect Balance',
-    description: 'The ATM receipt shows my balance as ETB 0 but my mobile app shows the correct balance of ETB 12,500. This is confusing and concerning.',
-    priority: Priority.MEDIUM,
-    status: RequestStatus.RESOLVED,
-    createdHoursAgo: 20,
-    deadlineHours: 48,
-    resolvedHoursAgo: 3,
-    activities: [
-      { userId: meron.id, action: ActivityAction.REQUEST_CREATED, description: 'Request submitted', isCustomerVisible: true, hoursAfterCreation: 0 },
-      { userId: khalid.id, action: ActivityAction.REQUEST_REVIEWED, description: 'Reviewed — ATM display issue', isCustomerVisible: true, hoursAfterCreation: 2 },
-      { userId: khalid.id, action: ActivityAction.REQUEST_ASSIGNED, description: 'Assigned to Khalid Omar', isCustomerVisible: true, hoursAfterCreation: 2 },
-      { userId: khalid.id, action: ActivityAction.INVESTIGATION_STARTED, description: 'Investigating ATM receipt printing configuration', isCustomerVisible: true, hoursAfterCreation: 3 },
-      { userId: khalid.id, action: ActivityAction.RESOLVED, description: 'Confirmed this is an ATM receipt printer configuration issue showing cached data. The actual account balance is correct. ATM maintenance team scheduled. Customer account is unaffected.', isCustomerVisible: true, hoursAfterCreation: 17 },
-    ],
-  });
-
-  console.log('✅ Service requests created (15)');
-
-  // ─── Notifications ─────────────────────────────────────────────────────
+  // 7. Seed Notifications
   await prisma.notification.createMany({
     data: [
-      // Ahmed
       {
-        userId: ahmed.id,
-        requestId: req1.id,
-        title: 'Investigation started',
-        message: 'An officer has started investigating your ATM Card Retained request.',
-        type: NotificationType.REQUEST_UPDATE,
-        isRead: false,
+        userId: userMap.get('supervisor@coopbank.et')!.id,
+        incidentId: inc5.id,
+        title: 'New Critical Incident: INC-2026-00005',
+        message: 'Finfinnee Branch: Branch Optical Fiber Converter showing red alarm',
+        type: NotificationType.INCIDENT_CREATED,
       },
       {
-        userId: ahmed.id,
-        requestId: req2.id,
-        title: 'Your request has been resolved',
-        message: 'Request SR-2026-00002 (Transfer to Abissinia Bank) has been resolved.',
-        type: NotificationType.RESOLUTION,
-        isRead: true,
-      },
-      // Khalid
-      {
-        userId: khalid.id,
-        requestId: req1.id,
-        title: 'New request assigned to you',
-        message: 'SR-2026-00001 – ATM Card Retained has been assigned to you.',
-        type: NotificationType.ASSIGNMENT,
-        isRead: true,
-      },
-      // Fatima (manager)
-      {
-        userId: manager.id,
-        title: 'Requests need attention',
-        message: '3 requests are currently overdue and require management review.',
-        type: NotificationType.OVERDUE,
-        isRead: false,
+        userId: userMap.get('tech.atm@coopbank.et')!.id,
+        incidentId: inc2.id,
+        title: 'Assigned: INC-2026-00002',
+        message: 'You have been assigned to Main Lobby ATM Offline at Bole Branch',
+        type: NotificationType.INCIDENT_ASSIGNED,
       },
       {
-        userId: manager.id,
-        title: 'Request escalated',
-        message: 'SR-2026-00005 – International Wire Transfer has been escalated and requires your attention.',
-        type: NotificationType.ESCALATION,
-        isRead: false,
+        userId: userMap.get('teller.jimma@coopbank.et')!.id,
+        incidentId: inc3.id,
+        title: 'Incident Resolved: INC-2026-00003',
+        message: 'Malware infection resolved. Please verify if your problem is solved.',
+        type: NotificationType.INCIDENT_RESOLVED,
       },
     ],
   });
 
-  console.log('✅ Notifications created');
-  console.log('\n🎉 Seed complete! Demo accounts:');
-  console.log('   Customer: ahmed@bankcare.demo / Password123!');
-  console.log('   Officer:  sara@bankcare.demo  / Password123!');
-  console.log('   Manager:  fatima@bankcare.demo / Password123!');
-  console.log('   Admin:    admin@bankcare.demo  / Password123!');
+  console.log(`✅ Pre-populated 5 sample incidents in various lifecycle states (OPEN, ASSIGNED, IN_PROGRESS, RESOLVED, CLOSED) with full troubleshooting logs!`);
+  console.log('🎉 COOP-ITSM database seed completed successfully!');
 }
 
 main()
   .catch((e) => {
-    console.error('❌ Seed failed:', e);
+    console.error('❌ Error during seed:', e);
     process.exit(1);
   })
   .finally(async () => {
