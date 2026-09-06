@@ -52,7 +52,7 @@ export const authApi = {
     }),
   logout: () => api.post('/auth/logout'),
   getMe: () => api.get<{ success: boolean; data: User }>('/auth/me'),
-  updateProfile: (data: { name?: string; phone?: string }) =>
+  updateProfile: (data: { name?: string; phone?: string | null; avatarUrl?: string | null }) =>
     api.patch<{ success: boolean; data: User; message: string }>('/auth/profile', data),
   changePassword: (data: { currentPassword: string; newPassword: string }) =>
     api.post<{ success: boolean; message: string }>('/auth/change-password', data),

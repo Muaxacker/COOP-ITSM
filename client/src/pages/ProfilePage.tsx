@@ -1,28 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { authApi } from '../services/api';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
-import { formatDateTime } from '../utils';
 import toast from 'react-hot-toast';
 import {
   User,
-  Shield,
   KeyRound,
   Building2,
   Layers,
-  Phone,
-  Mail,
   CheckCircle2,
   Save,
+  Camera,
+  Trash2,
+  Upload,
 } from 'lucide-react';
 
 export function ProfilePage() {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Profile Form
   const [name, setName] = useState(user?.name || '');
   const [phone, setPhone] = useState(user?.phone || '');
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(user?.avatarUrl || null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(user?.avatarUrl || null);
   const [updatingProfile, setUpdatingProfile] = useState(false);
 
   // Password Form
@@ -30,6 +32,68 @@ export function ProfilePage() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [changingPassword, setChangingPassword] = useState(false);
+
+  // Handle image upload and client-side compression
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select a valid image file (JPG, PNG, WebP)');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image size must be less than 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        // Compress & resize to max 256x256
+        const canvas = document.createElement('canvas');
+        const MAX_SIZE = 256;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_SIZE) {
+            height = Math.round((height * MAX_SIZE) / width);
+            width = MAX_SIZE;
+          }
+        } else {
+          if (height > MAX_SIZE) {
+            width = Math.round((width * MAX_SIZE) / height);
+            height = MAX_SIZE;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          setAvatarPreview(compressedDataUrl);
+          setAvatarUrl(compressedDataUrl);
+          toast.success('Photo selected! Click "Save Profile" to save.');
+        }
+      };
+      img.src = event.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemovePhoto = () => {
+    setAvatarPreview(null);
+    setAvatarUrl(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+    toast('Photo cleared. Click "Save Profile" to apply.', { icon: 'ℹ️' });
+  };
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,17 +104,15 @@ export function ProfilePage() {
 
     setUpdatingProfile(true);
     try {
-      await authApi.updateProfile({ name: name.trim(), phone: phone.trim() });
-      toast.success('Profile updated successfully');
-      // Update cached user in localStorage
-      const cached = localStorage.getItem('coop_itsm_user') || localStorage.getItem('bankcare_user');
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        parsed.name = name.trim();
-        parsed.phone = phone.trim();
-        localStorage.setItem('coop_itsm_user', JSON.stringify(parsed));
-        localStorage.setItem('bankcare_user', JSON.stringify(parsed));
-      }
+      const res = await authApi.updateProfile({
+        name: name.trim(),
+        phone: phone.trim() || null,
+        avatarUrl: avatarUrl,
+      });
+
+      const updated = res.data.data;
+      updateUser(updated);
+      toast.success('Profile updated successfully!');
     } catch (err: any) {
       toast.error(err?.response?.data?.message || 'Failed to update profile');
     } finally {
@@ -100,28 +162,79 @@ export function ProfilePage() {
             <span className="text-xs font-semibold text-slate-600">Cooperative Bank of Oromia</span>
           </div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight mt-1.5">
-            My Profile & Security Console
+            My Profile
           </h1>
           <p className="text-sm font-medium text-slate-600 mt-0.5">
-            Manage your authenticated operator profile, contact telephone, and account security credentials.
+            Manage your operator profile, avatar photo, contact telephone, and account security credentials.
           </p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Left Column: Profile Card */}
-        <div className="bg-white rounded-lg border border-slate-200 p-5 shadow-subtle space-y-5 h-fit">
-          <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
-            <div className="w-12 h-12 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-lg shadow-subtle">
-              {user?.name?.charAt(0) || 'U'}
+        {/* Left Column: Profile & Photo Card */}
+        <div className="bg-white rounded-lg border border-slate-200 p-5 shadow-subtle space-y-5 h-fit text-center">
+          {/* Circular Avatar with Camera Action */}
+          <div className="flex flex-col items-center">
+            <div className="relative group mx-auto">
+              {avatarPreview ? (
+                <img
+                  src={avatarPreview}
+                  alt={user?.name || 'Operator'}
+                  className="w-24 h-24 rounded-full object-cover border-2 border-slate-200 shadow-sm"
+                />
+              ) : (
+                <div className="w-24 h-24 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-2xl shadow-subtle">
+                  {user?.name?.charAt(0) || 'U'}
+                </div>
+              )}
+
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="absolute bottom-0 right-0 p-2 bg-brand-900 hover:bg-brand-800 text-white rounded-full shadow-md transition-colors border-2 border-white"
+                title="Change profile photo"
+              >
+                <Camera className="w-4 h-4" />
+              </button>
             </div>
-            <div>
-              <h2 className="text-base font-bold text-slate-900">{user?.name}</h2>
-              <p className="text-xs text-slate-500 font-mono">{user?.email}</p>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+
+            <h2 className="text-base font-bold text-slate-900 mt-3">{user?.name}</h2>
+            <p className="text-xs text-slate-500 font-mono mt-0.5">{user?.email}</p>
+
+            {/* Photo Action Buttons */}
+            <div className="flex items-center gap-2 mt-3">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                icon={<Upload className="w-3.5 h-3.5" />}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                {avatarPreview ? 'Change Photo' : 'Upload Photo'}
+              </Button>
+
+              {avatarPreview && (
+                <button
+                  type="button"
+                  onClick={handleRemovePhoto}
+                  className="p-2 text-rose-600 hover:bg-rose-50 rounded-md border border-rose-200 transition-colors"
+                  title="Remove photo"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              )}
             </div>
           </div>
 
-          <div className="space-y-3 text-xs">
+          <div className="pt-4 border-t border-slate-100 text-left space-y-3 text-xs">
             <div>
               <span className="text-slate-500 font-bold uppercase tracking-wider block">Assigned Role</span>
               <span className="inline-flex items-center px-2 py-0.5 mt-1 rounded bg-slate-100 text-slate-800 font-bold border border-slate-200">
@@ -136,7 +249,7 @@ export function ProfilePage() {
                   <Building2 className="w-4 h-4 text-slate-500" />
                   {user.branch.name} ({user.branch.code})
                 </span>
-                <span className="text-slate-500 text-[11px]">{user.branch.location}</span>
+                <span className="text-slate-500 text-xs mt-0.5 block">{user.branch.location}</span>
               </div>
             )}
 

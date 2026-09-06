@@ -126,6 +126,7 @@ model User {
   branchId     String?
   divisionId   String?
   phone        String?
+  avatarUrl    String?
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

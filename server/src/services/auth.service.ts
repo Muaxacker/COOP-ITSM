@@ -47,6 +47,7 @@ export async function getMe(userId: string) {
       email: true,
       role: true,
       phone: true,
+      avatarUrl: true,
       isActive: true,
       createdAt: true,
       branch: { select: { id: true, name: true, code: true, location: true } },
@@ -59,10 +60,11 @@ export async function getMe(userId: string) {
   return user;
 }
 
-export async function updateProfile(userId: string, data: { name?: string; phone?: string }) {
+export async function updateProfile(userId: string, data: { name?: string; phone?: string | null; avatarUrl?: string | null }) {
   const updateData: any = {};
   if (data.name?.trim()) updateData.name = data.name.trim();
   if (data.phone !== undefined) updateData.phone = data.phone?.trim() || null;
+  if (data.avatarUrl !== undefined) updateData.avatarUrl = data.avatarUrl;
 
   const user = await prisma.user.update({
     where: { id: userId },
@@ -73,6 +75,7 @@ export async function updateProfile(userId: string, data: { name?: string; phone
       email: true,
       role: true,
       phone: true,
+      avatarUrl: true,
       isActive: true,
       createdAt: true,
       branch: { select: { id: true, name: true, code: true, location: true } },

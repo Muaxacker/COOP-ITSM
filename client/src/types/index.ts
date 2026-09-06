@@ -68,6 +68,7 @@ export interface User {
   email: string;
   role: Role;
   phone?: string | null;
+  avatarUrl?: string | null;
   branchId?: string | null;
   divisionId?: string | null;
   isActive: boolean;

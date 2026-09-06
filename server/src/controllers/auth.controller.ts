@@ -34,7 +34,8 @@ export async function me(req: AuthRequest, res: Response, next: NextFunction) {
 
 const updateProfileSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').optional(),
-  phone: z.string().optional(),
+  phone: z.string().nullable().optional(),
+  avatarUrl: z.string().nullable().optional(),
 });
 
 const changePasswordSchema = z.object({
