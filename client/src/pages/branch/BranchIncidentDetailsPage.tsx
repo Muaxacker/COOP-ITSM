@@ -1,20 +1,17 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { incidentApi } from '../../services/api';
-import { incidentApi, userApi } from '../../services/api';
-import { useAuth } from '../../hooks/useAuth';
-import { StatusBadge, PriorityBadge, SlaBadge, DivisionBadge } from '../../components/ui/Badge';
-import { TroubleshootingLogViewer } from '../../components/ui/TroubleshootingLogViewer';
-import { Button } from '../../components/ui/Button';
-import { Textarea } from '../../components/ui/Input';
-import { formatDateTime, timeAgo, formatTimeRemaining } from '../../utils';
-import { Priority } from '../../types';
-import toast from 'react-hot-toast';
+import React, { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { incidentApi, userApi } from "../../services/api";
+import { useAuth } from "../../hooks/useAuth";
+import { StatusBadge, PriorityBadge, SlaBadge, DivisionBadge } from "../../components/ui/Badge";
+import { TroubleshootingLogViewer } from "../../components/ui/TroubleshootingLogViewer";
+import { Button } from "../../components/ui/Button";
+import { Textarea } from "../../components/ui/Input";
+import { formatDateTime, timeAgo, formatTimeRemaining } from "../../utils";
+import { Priority, TechnicianWithWorkload } from "../../types";
+import toast from "react-hot-toast";
 import {
   ArrowLeft,
-  Clock,
-  User as UserIcon,
   Building2,
   CheckCircle2,
   AlertTriangle,
@@ -24,8 +21,7 @@ import {
   ShieldCheck,
   UserCheck,
   Edit3,
-  Wrench,
-} from 'lucide-react';
+} from "lucide-react";
 
 export function BranchIncidentDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -36,21 +32,21 @@ export function BranchIncidentDetailsPage() {
   // Verification modal state
   const [verifyModalOpen, setVerifyModalOpen] = useState(false);
   const [isResolvedChoice, setIsResolvedChoice] = useState<boolean | null>(null);
-  const [feedbackText, setFeedbackText] = useState('');
-  const [replyText, setReplyText] = useState('');
+  const [feedbackText, setFeedbackText] = useState("");
+  const [replyText, setReplyText] = useState("");
 
   // Supervisor Assignment Modal State
   const [assignModalOpen, setAssignModalOpen] = useState(false);
-  const [selectedTechId, setSelectedTechId] = useState('');
-  const [assignNotes, setAssignNotes] = useState('');
+  const [selectedTechId, setSelectedTechId] = useState("");
+  const [assignNotes, setAssignNotes] = useState("");
 
   // Supervisor Review Priority Modal State
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
-  const [newPriority, setNewPriority] = useState<Priority>('MEDIUM');
-  const [reviewNotes, setReviewNotes] = useState('');
+  const [newPriority, setNewPriority] = useState<Priority>("MEDIUM");
+  const [reviewNotes, setReviewNotes] = useState("");
 
   const { data: incident, isLoading, error } = useQuery({
-    queryKey: ['incident', id],
+    queryKey: ["incident", id],
     queryFn: async () => {
       const res = await incidentApi.getIncident(id!);
       return res.data.data;
@@ -58,12 +54,15 @@ export function BranchIncidentDetailsPage() {
     enabled: !!id,
   });
 
-  // Technicians Query (for assignment)
-  const canManage = user?.role === 'IT_SUPERVISOR' || user?.role === 'ADMIN';
+  const canManage = user?.role === "IT_SUPERVISOR" || user?.role === "ADMIN";
 
-  const { data: technicians } = useQuery({
-    queryKey: ['technicians', incident?.category?.division?.id],
-    queryFn: async () => (await userApi.getTechnicians(incident?.category?.division?.id)).data.data,
+  // Technicians Query (for assignment)
+  const { data: technicians } = useQuery<TechnicianWithWorkload[]>({
+    queryKey: ["technicians", incident?.category?.division?.id],
+    queryFn: async () => {
+      const res = await userApi.getTechnicians(incident?.category?.division?.id);
+      return res.data.data;
+    },
     enabled: canManage && !!incident,
   });
 
@@ -77,15 +76,15 @@ export function BranchIncidentDetailsPage() {
       );
     },
     onSuccess: () => {
-      toast.success('Technician assigned successfully!');
+      toast.success("Technician assigned successfully!");
       setAssignModalOpen(false);
-      setSelectedTechId('');
-      setAssignNotes('');
-      queryClient.invalidateQueries({ queryKey: ['incident', id] });
-      queryClient.invalidateQueries({ queryKey: ['all-incidents'] });
+      setSelectedTechId("");
+      setAssignNotes("");
+      queryClient.invalidateQueries({ queryKey: ["incident", id] });
+      queryClient.invalidateQueries({ queryKey: ["all-incidents"] });
     },
     onError: (err: any) => {
-      toast.error(err?.response?.data?.message || 'Assignment failed');
+      toast.error(err?.response?.data?.message || "Assignment failed");
     },
   });
 
@@ -98,14 +97,14 @@ export function BranchIncidentDetailsPage() {
       });
     },
     onSuccess: () => {
-      toast.success('Incident priority reviewed and updated!');
+      toast.success("Incident priority updated successfully!");
       setReviewModalOpen(false);
-      setReviewNotes('');
-      queryClient.invalidateQueries({ queryKey: ['incident', id] });
-      queryClient.invalidateQueries({ queryKey: ['all-incidents'] });
+      setReviewNotes("");
+      queryClient.invalidateQueries({ queryKey: ["incident", id] });
+      queryClient.invalidateQueries({ queryKey: ["all-incidents"] });
     },
     onError: (err: any) => {
-      toast.error(err?.response?.data?.message || 'Review failed');
+      toast.error(err?.response?.data?.message || "Review failed");
     },
   });
 
@@ -117,35 +116,36 @@ export function BranchIncidentDetailsPage() {
     onSuccess: (_, variables) => {
       toast.success(
         variables.isResolved
-          ? 'Resolution verified! Incident closed.'
-          : 'Incident reopened for further technician troubleshooting.'
+          ? "Resolution verified! Incident closed."
+          : "Incident reopened for further troubleshooting."
       );
       setVerifyModalOpen(false);
-      setFeedbackText('');
-      queryClient.invalidateQueries({ queryKey: ['incident', id] });
-      queryClient.invalidateQueries({ queryKey: ['my-incidents'] });
+      setFeedbackText("");
+      setIsResolvedChoice(null);
+      queryClient.invalidateQueries({ queryKey: ["incident", id] });
+      queryClient.invalidateQueries({ queryKey: ["my-incidents"] });
     },
     onError: (err: any) => {
-      toast.error(err?.response?.data?.message || 'Verification failed');
+      toast.error(err?.response?.data?.message || "Verification failed");
     },
   });
 
   // Reply / Provide info mutation
   const replyMutation = useMutation({
     mutationFn: async (text: string) => {
-      if (incident?.status === 'WAITING_FOR_INFO') {
+      if (incident?.status === "WAITING_FOR_INFO") {
         return incidentApi.provideMoreInfo(id!, text);
       } else {
         return incidentApi.addNote(id!, { message: text });
       }
     },
     onSuccess: () => {
-      toast.success('Information submitted');
-      setReplyText('');
-      queryClient.invalidateQueries({ queryKey: ['incident', id] });
+      toast.success("Information submitted successfully");
+      setReplyText("");
+      queryClient.invalidateQueries({ queryKey: ["incident", id] });
     },
     onError: (err: any) => {
-      toast.error(err?.response?.data?.message || 'Failed to submit message');
+      toast.error(err?.response?.data?.message || "Failed to submit message");
     },
   });
 
@@ -162,7 +162,7 @@ export function BranchIncidentDetailsPage() {
           This incident does not exist or you do not have permission to view it.
         </p>
         <button
-          onClick={() => navigate('/incidents')}
+          onClick={() => navigate("/incidents")}
           className="mt-4 px-4 py-2 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold hover:bg-slate-200"
         >
           Back to Incidents
@@ -175,20 +175,11 @@ export function BranchIncidentDetailsPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      {/* Back button */}
-      <button
-        type="button"
-        onClick={() => navigate('/incidents')}
-        className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        Back to Incidents
-      </button>
-      {/* Back button and supervisor actions */}
+      {/* Top Header with Back button and Supervisor actions */}
       <div className="flex items-center justify-between gap-3">
         <button
           type="button"
-          onClick={() => navigate('/incidents')}
+          onClick={() => navigate("/incidents")}
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -196,7 +187,7 @@ export function BranchIncidentDetailsPage() {
         </button>
 
         {/* Supervisor / Admin Quick Action Buttons */}
-        {canManage && incident.status !== 'CLOSED' && (
+        {canManage && incident.status !== "CLOSED" && (
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
@@ -216,14 +207,14 @@ export function BranchIncidentDetailsPage() {
               onClick={() => setAssignModalOpen(true)}
               className="bg-blue-600 hover:bg-blue-700 text-white font-semibold"
             >
-              {incident.assignedTechnician ? 'Reassign Technician' : 'Assign Technician'}
+              {incident.assignedTechnician ? "Reassign Technician" : "Assign Technician"}
             </Button>
           </div>
         )}
       </div>
 
       {/* Verification Banner (If RESOLVED) */}
-      {incident.status === 'RESOLVED' && (
+      {incident.status === "RESOLVED" && (
         <div className="bg-gradient-to-r from-teal-500 to-emerald-600 rounded-2xl p-5 text-white shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-start gap-3">
             <div className="p-2 bg-white/20 rounded-xl">
@@ -232,7 +223,7 @@ export function BranchIncidentDetailsPage() {
             <div>
               <h3 className="font-bold text-base">Technician Marked Issue as Resolved</h3>
               <p className="text-xs text-teal-100 mt-0.5 max-w-xl">
-                Please verify if the problem has been solved on your branch hardware or application.
+                Please verify if the problem has been solved on your branch hardware or banking application.
               </p>
             </div>
           </div>
@@ -257,8 +248,8 @@ export function BranchIncidentDetailsPage() {
                 {incident.incidentNumber}
               </span>
               <DivisionBadge
-                code={incident.category.division?.code}
-                name={incident.category.division?.name}
+                code={incident.category?.division?.code}
+                name={incident.category?.division?.name}
               />
               <PriorityBadge priority={incident.priority} />
               <StatusBadge status={incident.status} />
@@ -279,51 +270,47 @@ export function BranchIncidentDetailsPage() {
             <span className="text-slate-400 block font-medium">Bank Branch</span>
             <span className="font-semibold text-slate-800 flex items-center gap-1 mt-0.5">
               <Building2 className="w-3.5 h-3.5 text-slate-400" />
-              {incident.branch.name}
+              {incident.branch?.name}
             </span>
           </div>
 
           <div>
             <span className="text-slate-400 block font-medium">Category</span>
             <span className="font-semibold text-slate-800 block mt-0.5">
-              {incident.category.name}
+              {incident.category?.name}
             </span>
           </div>
 
           <div>
             <span className="text-slate-400 block font-medium">Reported By</span>
             <span className="font-semibold text-slate-800 block mt-0.5">
-              {incident.reportedBy.name}
+              {incident.reportedBy?.name}
             </span>
           </div>
 
           <div>
             <span className="text-slate-400 block font-medium">Assigned Technician</span>
-            <span className="font-semibold text-blue-700 block mt-0.5">
-              {incident.assignedTechnician ? incident.assignedTechnician.name : 'Awaiting Assignment'}
-            </span>
             <div className="flex items-center gap-2 mt-0.5">
               <span
                 className={`font-semibold ${
-                  incident.assignedTechnician ? 'text-blue-700' : 'text-amber-700 font-bold'
+                  incident.assignedTechnician ? "text-blue-700" : "text-amber-700 font-bold"
                 }`}
               >
-                {incident.assignedTechnician ? incident.assignedTechnician.name : 'Awaiting Assignment'}
+                {incident.assignedTechnician ? incident.assignedTechnician.name : "Awaiting Assignment"}
               </span>
-              {canManage && incident.status !== 'CLOSED' && (
+              {canManage && incident.status !== "CLOSED" && (
                 <button
                   type="button"
                   onClick={() => setAssignModalOpen(true)}
                   className="text-[11px] font-bold text-blue-600 hover:text-blue-800 hover:underline"
                 >
-                  [{incident.assignedTechnician ? 'Change' : 'Assign'}]
+                  [{incident.assignedTechnician ? "Change" : "Assign"}]
                 </button>
               )}
             </div>
           </div>
         </div>
 
-        {/* Description Box */}
         {/* Problem Description Box */}
         <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 text-xs">
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
@@ -332,7 +319,7 @@ export function BranchIncidentDetailsPage() {
           <p className="text-slate-800 leading-relaxed whitespace-pre-wrap">{incident.description}</p>
         </div>
 
-        {/* Resolution Box (if resolved or closed) */}
+        {/* Resolution Box (if recorded) */}
         {(incident.rootCause || incident.resolution) && (
           <div className="bg-emerald-50/60 rounded-xl p-4 border border-emerald-200 text-xs space-y-2">
             <span className="text-[11px] font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
@@ -341,16 +328,12 @@ export function BranchIncidentDetailsPage() {
             </span>
             {incident.rootCause && (
               <div>
-                <span className="font-semibold text-emerald-900">Root Cause: </span>
-                <span className="text-slate-800">{incident.rootCause}</span>
                 <span className="font-bold text-emerald-950">Root Cause: </span>
                 <span className="text-emerald-900">{incident.rootCause}</span>
               </div>
             )}
             {incident.resolution && (
               <div>
-                <span className="font-semibold text-emerald-900">Resolution: </span>
-                <span className="text-slate-800">{incident.resolution}</span>
                 <span className="font-bold text-emerald-950">Resolution Summary: </span>
                 <span className="text-emerald-900">{incident.resolution}</span>
               </div>
@@ -359,15 +342,11 @@ export function BranchIncidentDetailsPage() {
         )}
       </div>
 
-      {/* Troubleshooting Log Viewer Component */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-        <TroubleshootingLogViewer logs={incident.troubleshootingLogs || []} />
-      </div>
       {/* Troubleshooting Log Viewer */}
       <TroubleshootingLogViewer logs={incident.troubleshootingLogs || []} />
 
       {/* More Info Request Banner */}
-      {incident.status === 'WAITING_FOR_INFO' && (
+      {incident.status === "WAITING_FOR_INFO" && (
         <div className="bg-amber-50 rounded-2xl p-5 border border-amber-200 shadow-sm space-y-3">
           <div className="flex items-start gap-3">
             <HelpCircle className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
@@ -389,7 +368,7 @@ export function BranchIncidentDetailsPage() {
               onChange={(e) => setReplyText(e.target.value)}
               className="flex-1 text-xs px-3 py-2 border border-amber-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && replyText.trim()) {
+                if (e.key === "Enter" && replyText.trim()) {
                   replyMutation.mutate(replyText.trim());
                 }
               }}
@@ -410,51 +389,35 @@ export function BranchIncidentDetailsPage() {
         <h3 className="text-sm font-bold text-slate-800">Incident Timeline & Audit History</h3>
 
         <div className="space-y-3">
-          {incident.updates?.map((u) => (
-            <div key={u.id} className="p-3 bg-slate-50 rounded-lg border border-slate-100 text-xs">
-              <div className="flex items-center justify-between gap-2 mb-1">
-                <span className="font-semibold text-slate-800">
-                  {u.user?.name || 'System'}
-                </span>
-                <span className="text-[11px] text-slate-400">
-                  {formatDateTime(u.createdAt)} ({timeAgo(u.createdAt)})
-                </span>
-          {(incident.updates || []).map((update) => (
-            <div
-              key={update.id}
-              className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/50 flex items-start gap-3"
-            >
-              <div className="w-7 h-7 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs flex-shrink-0">
-                {update.user?.name?.charAt(0) || 'U'}
-              </div>
-              <p className="text-slate-700 whitespace-pre-wrap">{u.message}</p>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between text-xs mb-1">
-                  <span className="font-semibold text-slate-800">{update.user?.name}</span>
-                  <span className="text-slate-400">{timeAgo(update.createdAt)}</span>
+          {(incident.updates || []).length === 0 ? (
+            <p className="text-xs text-slate-400 italic">No timeline updates recorded yet.</p>
+          ) : (
+            (incident.updates || []).map((update) => (
+              <div
+                key={update.id}
+                className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/50 flex items-start gap-3"
+              >
+                <div className="w-7 h-7 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                  {update.user?.name?.charAt(0) || "U"}
                 </div>
-                <p className="text-xs text-slate-600 whitespace-pre-wrap">{update.message}</p>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between text-xs mb-1">
+                    <span className="font-semibold text-slate-800">
+                      {update.user?.name || "System"}
+                    </span>
+                    <span className="text-[11px] text-slate-400">
+                      {formatDateTime(update.createdAt)} ({timeAgo(update.createdAt)})
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-600 whitespace-pre-wrap">{update.message}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
 
-        {/* Reply / Info Form */}
-        {/* Add note field */}
-        {incident.status !== 'CLOSED' && (
-          <div className="pt-4 border-t border-slate-100">
-            <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-              {incident.status === 'WAITING_FOR_INFO'
-                ? 'Reply to Technician (Information Requested)'
-                : 'Add Message / Update'}
-            </h4>
-            <div className="flex gap-2">
-              <Textarea
-                placeholder="Type your message or response to the technician..."
-                rows={2}
-                value={replyText}
-                onChange={(e) => setReplyText(e.target.value)}
-                className="text-xs"
+        {/* Add note / message */}
+        {incident.status !== "CLOSED" && incident.status !== "WAITING_FOR_INFO" && (
           <div className="pt-2 border-t border-slate-100 flex gap-2">
             <input
               type="text"
@@ -463,7 +426,7 @@ export function BranchIncidentDetailsPage() {
               onChange={(e) => setReplyText(e.target.value)}
               className="flex-1 text-xs px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && replyText.trim()) {
+                if (e.key === "Enter" && replyText.trim()) {
                   replyMutation.mutate(replyText.trim());
                 }
               }}
@@ -491,7 +454,7 @@ export function BranchIncidentDetailsPage() {
                   Assign Technician: {incident.incidentNumber}
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Division: {incident.category.division?.name} ({incident.category.division?.code})
+                  Division: {incident.category?.division?.name} ({incident.category?.division?.code})
                 </p>
               </div>
             </div>
@@ -509,7 +472,7 @@ export function BranchIncidentDetailsPage() {
                 <option value="">-- Choose Technician --</option>
                 {technicians?.map((t) => (
                   <option key={t.id} value={t.id}>
-                    {t.name} ({t.division?.name || 'General'}) — Active Load: {t.activeWorkload} ticket{t.activeWorkload === 1 ? '' : 's'}
+                    {t.name} ({t.division?.name || "General"}) — Active Load: {t.activeWorkload} ticket{t.activeWorkload === 1 ? "" : "s"}
                   </option>
                 ))}
               </select>
@@ -534,30 +497,22 @@ export function BranchIncidentDetailsPage() {
               </Button>
               <Button
                 onClick={() => {
-                  if (!replyText.trim()) return;
-                  replyMutation.mutate(replyText.trim());
                   if (!selectedTechId) {
-                    toast.error('Please select a technician');
+                    toast.error("Please select a technician");
                     return;
                   }
                   assignMutation.mutate();
                 }}
-                loading={replyMutation.isPending}
-                className="bg-blue-600 hover:bg-blue-700 text-white self-end px-4"
                 loading={assignMutation.isPending}
                 className="bg-blue-600 text-white font-semibold"
               >
-                <Send className="w-4 h-4" />
                 Confirm Assignment
               </Button>
             </div>
           </div>
-        )}
-      </div>
         </div>
       )}
 
-      {/* Verification Modal */}
       {/* Review Priority Modal (For Supervisor / Admin) */}
       {reviewModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
@@ -622,11 +577,6 @@ export function BranchIncidentDetailsPage() {
       {/* Resolution Verification Modal (For Branch User) */}
       {verifyModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-in fade-in">
-            <h3 className="text-lg font-bold text-slate-900">Verify Resolution</h3>
-            <p className="text-xs text-slate-500">
-              Please confirm whether the technical issue has been resolved at your branch:
-            </p>
           <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
             <div>
               <h3 className="text-base font-bold text-slate-900">Verify Resolution</h3>
@@ -641,8 +591,8 @@ export function BranchIncidentDetailsPage() {
                 onClick={() => setIsResolvedChoice(true)}
                 className={`p-3 rounded-xl border text-center transition-all ${
                   isResolvedChoice === true
-                    ? 'border-emerald-500 bg-emerald-50 text-emerald-800 font-bold ring-2 ring-emerald-400/30'
-                    : 'border-slate-200 text-slate-700 hover:bg-slate-50'
+                    ? "border-emerald-500 bg-emerald-50 text-emerald-800 font-bold ring-2 ring-emerald-400/30"
+                    : "border-slate-200 text-slate-700 hover:bg-slate-50"
                 }`}
               >
                 <CheckCircle2 className="w-6 h-6 mx-auto text-emerald-600 mb-1" />
@@ -654,8 +604,8 @@ export function BranchIncidentDetailsPage() {
                 onClick={() => setIsResolvedChoice(false)}
                 className={`p-3 rounded-xl border text-center transition-all ${
                   isResolvedChoice === false
-                    ? 'border-rose-500 bg-rose-50 text-rose-800 font-bold ring-2 ring-rose-400/30'
-                    : 'border-slate-200 text-slate-700 hover:bg-slate-50'
+                    ? "border-rose-500 bg-rose-50 text-rose-800 font-bold ring-2 ring-rose-400/30"
+                    : "border-slate-200 text-slate-700 hover:bg-slate-50"
                 }`}
               >
                 <RotateCcw className="w-6 h-6 mx-auto text-rose-600 mb-1" />
@@ -667,8 +617,8 @@ export function BranchIncidentDetailsPage() {
               label="Branch Verification Feedback"
               placeholder={
                 isResolvedChoice === true
-                  ? 'e.g. Tested teller software and switch link, working smoothly.'
-                  : 'Please explain what symptoms or errors are still occurring...'
+                  ? "e.g. Tested teller software and switch link, working smoothly."
+                  : "Please explain what symptoms or errors are still occurring..."
               }
               rows={3}
               value={feedbackText}
@@ -685,7 +635,10 @@ export function BranchIncidentDetailsPage() {
               </Button>
               <Button
                 onClick={() => {
-                  if (isResolvedChoice === null) return;
+                  if (isResolvedChoice === null) {
+                    toast.error("Please select whether the problem is solved or still exists");
+                    return;
+                  }
                   verifyMutation.mutate({
                     isResolved: isResolvedChoice,
                     feedback: feedbackText.trim() || undefined,
@@ -694,11 +647,11 @@ export function BranchIncidentDetailsPage() {
                 loading={verifyMutation.isPending}
                 className={
                   isResolvedChoice === true
-                    ? 'bg-emerald-600 hover:bg-emerald-700 text-white font-semibold'
-                    : 'bg-rose-600 hover:bg-rose-700 text-white font-semibold'
+                    ? "bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
+                    : "bg-rose-600 hover:bg-rose-700 text-white font-semibold"
                 }
               >
-                {isResolvedChoice === true ? 'Confirm & Close Incident' : 'Reopen Incident'}
+                {isResolvedChoice === true ? "Confirm & Close Incident" : "Reopen Incident"}
               </Button>
             </div>
           </div>
@@ -707,4 +660,3 @@ export function BranchIncidentDetailsPage() {
     </div>
   );
 }
-
