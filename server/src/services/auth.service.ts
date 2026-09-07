@@ -11,8 +11,9 @@ import {
 } from './twoFactor.service';
 
 export async function loginUser(email: string, password: string) {
+  const cleanEmail = email ? email.trim().toLowerCase() : '';
   const user = await prisma.user.findUnique({
-    where: { email: email.toLowerCase() },
+    where: { email: cleanEmail },
     include: {
       branch: { select: { id: true, name: true, code: true, location: true } },
       division: { select: { id: true, name: true, code: true } },

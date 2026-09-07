@@ -56,13 +56,14 @@ export function LoginPage() {
 
       setLoading(true);
       try {
+        const cleanEmail = email.trim().toLowerCase();
         if (rememberMe) {
-          localStorage.setItem('coop_itsm_remembered_email', email.trim());
+          localStorage.setItem('coop_itsm_remembered_email', cleanEmail);
         } else {
           localStorage.removeItem('coop_itsm_remembered_email');
         }
 
-        const res = await login(email.trim(), password);
+        const res = await login(cleanEmail, password);
         if (res?.require2FA && res?.tempToken) {
           setTempToken(res.tempToken);
           setStep('2fa');
@@ -176,6 +177,9 @@ export function LoginPage() {
                       placeholder="username@coopbankoromia.com.et"
                       className="pl-9 pr-3 py-2 text-sm bg-slate-50/50 border-slate-300 focus:bg-white focus:border-brand-900"
                       autoComplete="username"
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                      spellCheck={false}
                       required
                     />
                     <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
