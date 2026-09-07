@@ -576,15 +576,10 @@ export async function requestMoreInfo(id: string, technicianId: string, question
   return updated;
 }
 
-// ─── Provide More Info (Branch User) ────────────────────────────────────────
-export async function provideMoreInfo(id: string, branchUserId: string, response: string) {
+// ─── Provide More Info (Branch User / Operator) ──────────────────────────────
 export async function provideMoreInfo(id: string, userId: string, response: string) {
   const incident = await prisma.incident.findUnique({ where: { id } });
   if (!incident) throw new AppError('Incident not found', 404);
-
-  if (incident.reportedById !== branchUserId) {
-    throw new AppError('Only the reporter can provide info', 403);
-  }
 
   assertTransition(incident.status, IncidentStatus.IN_PROGRESS);
 
@@ -597,7 +592,6 @@ export async function provideMoreInfo(id: string, userId: string, response: stri
   await prisma.incidentUpdate.create({
     data: {
       incidentId: id,
-      userId: branchUserId,
       userId,
       action: ActivityAction.INFO_PROVIDED,
       message: response,
@@ -609,7 +603,6 @@ export async function provideMoreInfo(id: string, userId: string, response: stri
       userId: incident.assignedTechnicianId,
       incidentId: id,
       title: `Info Provided: ${incident.incidentNumber}`,
-      message: `Branch user replied: "${response}"`,
       message: `Additional info provided: "${response}"`,
       type: NotificationType.INFO_PROVIDED,
     });
